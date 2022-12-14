@@ -23,58 +23,42 @@ module.exports = appInfo => {
     // myAppName: 'egg',
   };
 
-  config.sequelize = {
-    datasources: [
-      {
-        dialect: 'mysql',
-        timezone: '+08:00',
-        database: 'lkys_new',
-        host: '192.168.1.118',
-        port: '3306',
-        username: 'root',
-        password: 'lkys@401A',
-        app: true,
-        define: {
-          underscored: false, // 注意需要加上这个， egg-sequelize只是简单的使用Object.assign对配置和默认配置做了merge, 如果不加这个 update_at会被转变成 updateAt故报错
-          // 禁止修改表名，默认情况下，sequelize将自动将所有传递的模型名称（define的第一个参数）转换为复数
-          // 但是为了安全着想，复数的转换可能会发生变化，所以禁止该行为
-          freezeTableName: true,
-          timestamps: false,
-        },
-      },
-    ],
+  // 项目启动端口号
+  config.cluster = {
+    listen: {
+      path: '',
+      port: 3000,
+    },
   };
 
   config.swaggerdoc = {
+    basePath: '/',
     dirScanner: './app/controller',
     apiInfo: {
-      title: 'lkys api doc',
-      description: '接口文档',
+      title: 'lkys doc',
+      description: 'lkys 接口文档',
       version: '1.9.0',
     },
-    schemes: [ 'http', 'https' ],
-    consumes: [ 'application/json' ],
-    produces: [ 'application/json' ],
-    securityDefinitions: {
-      // apikey: {
-      //   type: 'apiKey',
-      //   name: 'clientkey',
-      //   in: 'header',
-      // },
-      // oauth2: {
-      //   type: 'oauth2',
-      //   tokenUrl: 'http://petstore.swagger.io/oauth/dialog',
-      //   flow: 'password',
-      //   scopes: {
-      //     'write:access_token': 'write access_token',
-      //     'read:access_token': 'read access_token',
-      //   },
-      // },
-    },
-    enableSecurity: false,
-    // enableValidate: true,
-    routerMap: false,
+    schemes: [ 'http' ],
     enable: true,
+    routerMap: false,
+    securityDefinitions: {
+      apikey: {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+      },
+      oauth2: {
+        type: 'oauth2',
+        tokenUrl: 'http://127.0.0.1:3000/api/v1/users/login',
+        flow: 'password',
+        scopes: {
+          'write:access_token': 'write access_token',
+          'read:access_token': 'read access_token',
+        },
+      },
+    },
+    enableSecurity: true,
   };
 
   return {
