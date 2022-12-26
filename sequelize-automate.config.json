@@ -9,7 +9,7 @@
     "logging": false
   },
   "options": {
-    "type": "js",
+    "type": "egg",
     "dir": "temp_models"
   }
 }

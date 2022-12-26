@@ -1,9 +1,9 @@
-/* indent size: 2 */
+'use strict';
 
 module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
-  const Model = app.model.define('departments', {
+  const attributes = {
     id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
@@ -103,13 +103,12 @@ module.exports = app => {
       comment: null,
       field: "update_at"
     }
-  }, {
-    tableName: 'departments',
-  });
-
-  Model.associate = function() {
-
   };
-
-  return Model;
+  const options = {
+    tableName: "departments",
+    comment: "",
+    indexes: []
+  };
+  const DepartmentsModel = sequelize.define("departments_model", attributes, options);
+  return DepartmentsModel;
 };

@@ -1,0 +1,17 @@
+{
+	"required": "必须，不能为空",
+	"missing_field": "字段丢失",
+	"should not be empty": "不能为空",
+	"invalid": "无效",
+	"should be an email": "应该是电子邮件格式",
+	"length should smaller than %s": "长度应该小于%s",
+	"length should bigger than %s": "长度应该大于%s",
+	"should match %s": "格式不匹配",
+	"should bigger than %s": "应该大于%s",
+	"should be a number": "应该是number型",
+	"should be one of %s": "应该是%s",
+	"should be an array": "应该是数组",
+	"should be an object": "应该是对象",
+	"should be a string": "should be a string",
+	"should smaller than %s": "should smaller than %s"
+}

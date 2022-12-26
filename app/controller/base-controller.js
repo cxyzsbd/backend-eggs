@@ -39,7 +39,7 @@ class BaseController extends Controller {
     ctx.status = 403;
   }
   // 404 Not Found：所请求的资源不存在，或不可用。
-  NOT_FOUND(body = { message: "资源未找到" }) {
+  NOT_FOUND(body = { message: "资源未找到或无操作" }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 404;
@@ -88,12 +88,12 @@ class BaseController extends Controller {
         values: [ 'desc', 'asc', '' ],
       },
       pageSize: {
-        type: 'number',
+        type: 'string',
         required: false,
         default: 20,
       },
       pageNumber: {
-        type: 'number',
+        type: 'string',
         required: false,
         default: 1,
       },

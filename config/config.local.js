@@ -1,16 +1,16 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict';
+'use strict'
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = exports = {};
+  const config = (exports = {})
 
   config.sequelize = {
     datasources: [
@@ -19,6 +19,7 @@ module.exports = appInfo => {
         timezone: '+08:00',
         database: 'lkys_new',
         host: '192.168.1.118',
+        // host: 'likongys2017.vicp.io',
         port: '3306',
         username: 'root',
         password: 'lkys@401A',
@@ -32,9 +33,48 @@ module.exports = appInfo => {
         },
       },
     ],
-  };
+  }
+
+  config.redis = {
+    clients: {
+      default: {
+        // 默认库
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: '',
+        db: 0,
+      },
+      io: {
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: '',
+        db: 1,
+      },
+      alarm: {
+        // websocket
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: '',
+        db: 2,
+      },
+      permissions: {
+        // 所有权限
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: '',
+        db: 3,
+      },
+      departments: {
+        // 所有部门
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: '',
+        db: 4,
+      },
+    },
+  }
 
   return {
     ...config,
-  };
-};
+  }
+}

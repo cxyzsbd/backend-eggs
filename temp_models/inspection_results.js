@@ -1,9 +1,9 @@
-/* indent size: 2 */
+'use strict';
 
 module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
-  const Model = app.model.define('departments', {
+  const attributes = {
     id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
@@ -13,103 +13,84 @@ module.exports = app => {
       comment: null,
       field: "id"
     },
-    name: {
-      type: DataTypes.STRING(60),
-      allowNull: false,
-      defaultValue: "",
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "部门名称",
-      field: "name"
-    },
-    parent_id: {
+    target_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "父ID",
-      field: "parent_id"
+      comment: "巡检目标id",
+      field: "target_id"
     },
-    sort: {
-      type: DataTypes.INTEGER(11),
+    task_sn: {
+      type: DataTypes.STRING(30),
       allowNull: false,
-      defaultValue: "0",
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "排序，越大越靠前",
-      field: "sort"
+      comment: "巡检任务编号",
+      field: "task_sn"
     },
-    desc: {
+    results: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "巡检结果",
+      field: "results"
+    },
+    audios: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "音频链接，','分隔",
+      field: "audios"
+    },
+    imgs: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "图片链接,','分隔",
+      field: "imgs"
+    },
+    remarks: {
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "描述",
-      field: "desc"
-    },
-    longitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "经度",
-      field: "longitude"
-    },
-    latitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "纬度",
-      field: "latitude"
-    },
-    address: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "地址信息",
-      field: "address"
+      comment: "备注",
+      field: "remarks"
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
-      defaultValue: "0",
+      allowNull: true,
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "创建人",
+      comment: "提交人",
       field: "creator"
     },
     create_at: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
       comment: null,
       field: "create_at"
-    },
-    update_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-      primaryKey: false,
-      autoIncrement: false,
-      comment: null,
-      field: "update_at"
     }
-  }, {
-    tableName: 'departments',
-  });
-
-  Model.associate = function() {
-
   };
-
-  return Model;
+  const options = {
+    tableName: "inspection_results",
+    comment: "",
+    indexes: []
+  };
+  const InspectionResultsModel = sequelize.define("inspection_results_model", attributes, options);
+  return InspectionResultsModel;
 };

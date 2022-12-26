@@ -210,5 +210,25 @@
       "  ctx.logger.error(e);",
       "}"
     ]
+  },
+  // contract
+  "contract-template": {
+    "prefix": "contract-template",
+    "body": [
+      "'use strict';",
+      "",
+      "const body = {",
+      "  objectsId: {",
+      "    id: { type: 'number', required: true, description: 'id' },",
+      "  },",
+      "  objectsBodyReq: {",
+      "",
+      "  },",
+      "};",
+      "",
+      "module.exports = {",
+      "  ...body,",
+      "};",
+    ]
   }
 }

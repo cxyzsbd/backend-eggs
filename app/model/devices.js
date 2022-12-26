@@ -1,44 +1,26 @@
-/* indent size: 2 */
+'use strict';
 
 module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
-  const Model = app.model.define('departments', {
+  const attributes = {
     id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: true,
-      comment: null,
+      comment: "id",
       field: "id"
     },
     name: {
       type: DataTypes.STRING(60),
       allowNull: false,
-      defaultValue: "",
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "部门名称",
-      field: "name"
-    },
-    parent_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "父ID",
-      field: "parent_id"
-    },
-    sort: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      defaultValue: "0",
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "排序，越大越靠前",
-      field: "sort"
+      comment: "设备名称",
+      field: "name"
     },
     desc: {
       type: DataTypes.STRING(255),
@@ -49,37 +31,19 @@ module.exports = app => {
       comment: "描述",
       field: "desc"
     },
-    longitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
+    department_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "经度",
-      field: "longitude"
-    },
-    latitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "纬度",
-      field: "latitude"
-    },
-    address: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "地址信息",
-      field: "address"
+      comment: "部门id",
+      field: "department_id"
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
-      defaultValue: "0",
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: "创建人",
@@ -96,20 +60,28 @@ module.exports = app => {
     },
     update_at: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
       comment: null,
       field: "update_at"
+    },
+    model_id: {
+      type: DataTypes.INTEGER(10).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "模型id，如果是从其他设备拷贝而来，必有",
+      field: "model_id"
     }
-  }, {
-    tableName: 'departments',
-  });
-
-  Model.associate = function() {
-
   };
-
-  return Model;
+  const options = {
+    tableName: "devices",
+    comment: "",
+    indexes: []
+  };
+  const DevicesModel = sequelize.define("devices_model", attributes, options);
+  return DevicesModel;
 };

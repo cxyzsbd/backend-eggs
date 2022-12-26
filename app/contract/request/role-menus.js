@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const body = {
   role_menuId: {
@@ -20,7 +20,7 @@ const body = {
       description: '菜单ID',
     },
   },
-};
+}
 
 module.exports = {
   ...body,
@@ -34,7 +34,7 @@ module.exports = {
       required: true,
       itemType: 'number',
       description: 'ids',
-      example: [ 1, 2 ],
+      example: [1, 2],
     },
   },
-};
+}

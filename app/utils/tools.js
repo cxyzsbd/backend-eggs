@@ -1,5 +1,4 @@
 const dayjs = require('dayjs');
-const envConfig = require('../../global.config');
 const fs = require('fs');
 const path = require('path');
 const lodash = require('lodash');
@@ -11,7 +10,6 @@ module.exports = class Tools {
     this.logger = app.logger;
     this.dayjs = dayjs;
     this.lodash = lodash;
-    this.envConfig = envConfig;
   }
   /**
    * 生成唯一编号
@@ -19,7 +17,7 @@ module.exports = class Tools {
    * 年月日时分秒+毫秒+随机数（毫秒三位，不足前补0，随机数两位，不足前补0，保持单位位数一致）
    */
   async generateSn(prefix) {
-    return `${prefix}${new Date().format('yyMMddhhmmss')}${('000' + Math.floor(Math.random() * 100)).slice(-2)}`;
+    return `${prefix}${this.dayjs().format('YYMMDDHHmmss')}${('000' + Math.floor(Math.random() * 100)).slice(-2)}`;
   }
 
   /**
@@ -73,7 +71,7 @@ module.exports = class Tools {
    * @param id
    */
   async redisCacheUserinfo(id) {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const userinfo = await ctx.model.Users.findOne({
       where: { id },
       include: [
@@ -82,7 +80,7 @@ module.exports = class Tools {
         },
       ],
     });
-    await ctx.service.cache.set(`userinfo_${id}`, userinfo, this.envConfig.BASE_CONFIG.TOKEN_INVALID_TIME, 'default');
+    await ctx.service.cache.set(`userinfo_${id}`, userinfo, app.config.jwt.expire, 'default');
   }
   /**
    * 获取redis中公共数据，不存在及执行存储

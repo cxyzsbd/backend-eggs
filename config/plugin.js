@@ -14,4 +14,20 @@ module.exports = {
     enable: true,
     package: 'egg-swagger-doc',
   },
+  jwt: {
+    enable: true,
+    package: 'egg-jwt',
+  },
+  redis: {
+    enable: true,
+    package: 'egg-redis',
+  },
+  io: {
+    enable: true,
+    package: 'egg-socket.io',
+  },
+  validate: {
+    enable: true,
+    package: 'egg-validate',
+  },
 };

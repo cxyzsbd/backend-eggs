@@ -1,9 +1,9 @@
-/* indent size: 2 */
+'use strict';
 
 module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
-  const Model = app.model.define('departments', {
+  const attributes = {
     id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
@@ -13,77 +13,86 @@ module.exports = app => {
       comment: null,
       field: "id"
     },
-    name: {
+    username: {
+      type: DataTypes.STRING(60),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "用户名",
+      field: "username"
+    },
+    password: {
+      type: DataTypes.STRING(64),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "用户密码",
+      field: "password"
+    },
+    email: {
       type: DataTypes.STRING(60),
       allowNull: false,
       defaultValue: "",
       primaryKey: false,
       autoIncrement: false,
-      comment: "部门名称",
-      field: "name"
+      comment: "邮箱",
+      field: "email"
     },
-    parent_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+    phone: {
+      type: DataTypes.STRING(15),
       allowNull: false,
-      defaultValue: null,
+      defaultValue: "",
       primaryKey: false,
       autoIncrement: false,
-      comment: "父ID",
-      field: "parent_id"
+      comment: "手机号",
+      field: "phone"
     },
-    sort: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      defaultValue: "0",
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "排序，越大越靠前",
-      field: "sort"
-    },
-    desc: {
+    avatar: {
       type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "描述",
-      field: "desc"
-    },
-    longitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "经度",
-      field: "longitude"
-    },
-    latitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "纬度",
-      field: "latitude"
-    },
-    address: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "地址信息",
-      field: "address"
-    },
-    creator: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
-      defaultValue: "0",
+      defaultValue: "",
       primaryKey: false,
       autoIncrement: false,
-      comment: "创建人",
-      field: "creator"
+      comment: "头像url",
+      field: "avatar"
+    },
+    department_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "部门id",
+      field: "department_id"
+    },
+    last_login: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "最后登录时间",
+      field: "last_login"
+    },
+    state: {
+      type: DataTypes.INTEGER(1).UNSIGNED,
+      allowNull: false,
+      defaultValue: "1",
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "用户状态(1:正常；0：停用)",
+      field: "state"
+    },
+    delete_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: "delete_at"
     },
     create_at: {
       type: DataTypes.DATE,
@@ -103,13 +112,12 @@ module.exports = app => {
       comment: null,
       field: "update_at"
     }
-  }, {
-    tableName: 'departments',
-  });
-
-  Model.associate = function() {
-
   };
-
-  return Model;
+  const options = {
+    tableName: "users",
+    comment: "",
+    indexes: []
+  };
+  const UsersModel = sequelize.define("users_model", attributes, options);
+  return UsersModel;
 };
