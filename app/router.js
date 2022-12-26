@@ -71,10 +71,17 @@ module.exports = app => {
   router.get('/api/v1/departments/:id', controller.v1.departments.findOne);
   router.delete('/api/v1/departments/:id', controller.v1.departments.destroy);
 
-  //工单
+  // 工单
   router.post('/api/v1/work-orders', controller.v1.workOrders.create);
   router.put('/api/v1/work-orders/:sn', controller.v1.workOrders.update);
   router.get('/api/v1/work-orders', controller.v1.workOrders.findAll);
   router.get('/api/v1/work-orders/:sn', controller.v1.workOrders.findOne);
   router.delete('/api/v1/work-orders/:sn', controller.v1.workOrders.destroy);
+
+  // 巡点
+  router.post('/api/v1/patrol-points', controller.v1.patrolPoints.create);
+  router.put('/api/v1/patrol-points/:sn', controller.v1.patrolPoints.update);
+  router.get('/api/v1/patrol-points', controller.v1.patrolPoints.findAll);
+  router.get('/api/v1/patrol-points/:sn', controller.v1.patrolPoints.findOne);
+  router.delete('/api/v1/patrol-points/:sn', controller.v1.patrolPoints.destroy);
 };

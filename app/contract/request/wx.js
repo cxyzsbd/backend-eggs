@@ -21,14 +21,14 @@ const body = {
       trim: true,
       example: 'password',
       description: '用户密码',
-    }
-  }
+    },
+  },
 };
 
 module.exports = {
   ...body,
   wxBindBodyReq: {
     ...body.wxLoginCodeReq,
-    ...body.userLoginBodyReq
-  }
+    ...body.userLoginBodyReq,
+  },
 };

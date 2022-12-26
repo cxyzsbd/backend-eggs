@@ -1,0 +1,132 @@
+'use strict';
+
+module.exports = app => {
+  const DataTypes = app.Sequelize;
+  const sequelize = app.model;
+  const attributes = {
+    sn: {
+      type: DataTypes.STRING(30),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: true,
+      autoIncrement: false,
+      comment: null,
+      field: 'sn',
+    },
+    asset_sn: {
+      type: DataTypes.STRING(30),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '资产编号，资产生成巡点才有',
+      field: 'asset_sn',
+    },
+    name: {
+      type: DataTypes.STRING(60),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'name',
+    },
+    type: {
+      type: DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '类型',
+      field: 'type',
+    },
+    responsible: {
+      type: DataTypes.STRING(30),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'responsible',
+    },
+    responsible_contact: {
+      type: DataTypes.STRING(30),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'responsible_contact',
+    },
+    creator: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'creator',
+    },
+    department_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'department_id',
+    },
+    address: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'address',
+    },
+    networking: {
+      type: DataTypes.INTEGER(1),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '是否物联(1：是；2：否)',
+      field: 'networking',
+    },
+    desc: {
+      type: DataTypes.STRING(300),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'desc',
+    },
+    create_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'create_at',
+    },
+    update_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'update_at',
+    },
+  };
+  const options = {
+    tableName: 'patrol_points',
+    comment: '',
+    indexes: [],
+  };
+  const PatrolPointsModel = sequelize.define('patrol_points_model', attributes, options);
+  return PatrolPointsModel;
+};

@@ -1,29 +1,29 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict'
+'use strict';
 const { v4: uuidv4 } = require('uuid');
 const I18n = require('i18n');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
-module.exports = (appInfo) => {
+module.exports = appInfo => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = (exports = {})
+  const config = (exports = {});
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1670465853068_2903'
+  config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'jwtVerify', 'errorHandler' ]
+  config.middleware = [ 'jwtVerify', 'errorHandler' ];
 
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-  }
+  };
 
   // 项目启动端口号
   config.cluster = {
@@ -31,7 +31,7 @@ module.exports = (appInfo) => {
       path: '',
       port: 3000,
     },
-  }
+  };
 
   config.swaggerdoc = {
     basePath: '/',
@@ -41,7 +41,7 @@ module.exports = (appInfo) => {
       description: 'lkys 接口文档',
       version: '1.9.0',
     },
-    schemes: ['http'],
+    schemes: [ 'http' ],
     enable: true,
     routerMap: false,
     securityDefinitions: {
@@ -61,7 +61,7 @@ module.exports = (appInfo) => {
       },
     },
     enableSecurity: true,
-  }
+  };
 
   // 将部分目录挂载到app上
   config.customLoader = {
@@ -73,19 +73,19 @@ module.exports = (appInfo) => {
       directory: 'app/enum',
       inject: 'app',
     },
-  }
+  };
 
   config.security = {
     csrf: {
       enable: false,
     },
-  }
+  };
 
   config.jwt = {
     expire: 2 * 60 * 60,
     refresh_expire: '7d',
-    secret: 'FDD693602F380E24', //"lkys"MD5加密16位大
-  }
+    secret: 'FDD693602F380E24', // "lkys"MD5加密16位大
+  };
 
   I18n.configure({
     locales: [ 'zh-CN' ],
@@ -105,5 +105,5 @@ module.exports = (appInfo) => {
   return {
     ...config,
     ...userConfig,
-  }
-}
+  };
+};

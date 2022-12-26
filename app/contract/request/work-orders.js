@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const body = {
   workOrdersId: {
@@ -49,19 +49,19 @@ const body = {
       required: false,
       description: '提交图片地址',
     },
-    
+
   },
   workOrdersApprovalBodyReq: {
     approval_result: {
       type: 'number',
       required: true,
-      description: "审核操作结果(1:通过：0不通过)",
+      description: '审核操作结果(1:通过：0不通过)',
     },
     not_pass_reason: {
       type: 'string',
       required: false,
       max: 255,
-      comment: "审核不通过原因,审核不通过必填"
+      comment: '审核不通过原因,审核不通过必填',
     },
     handler: {
       type: 'number',
@@ -92,13 +92,13 @@ const body = {
       required: false,
       description: '处理图片地址',
     },
-  }
-}
+  },
+};
 
 module.exports = {
   ...body,
   workOrdersPutBodyReq: {
     ...body.workOrdersBodyReq,
-    ...body.workOrdersId
-  }
-}
+    ...body.workOrdersId,
+  },
+};

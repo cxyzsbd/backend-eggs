@@ -1,4 +1,4 @@
-const redis = require('redis')
+const redis = require('redis');
 class AppBootHook {
   constructor(app) {
     this.app = app;
@@ -16,26 +16,26 @@ class AppBootHook {
   }
 
   async willReady() {
-    const {app} = this
+    const { app } = this;
     const ctx = await app.createAnonymousContext();
     // 所有的插件都已启动完毕，但是应用整体还未 ready
     // 可以做一些数据初始化等操作，这些操作成功才会启动应用
-    //1.将部门列表平铺数据缓存到redis
-    app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments')
-    //2.将所有权限数据缓存到redis
-    app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions')
+    // 1.将部门列表平铺数据缓存到redis
+    app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
+    // 2.将所有权限数据缓存到redis
+    app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
   }
 
   async didReady() {
     // 应用启动完毕
-    
+
   }
 
   async serverDidReady() {
-    const {app} = this
+    const { app } = this;
     // http / https server 已启动，开始接受外部请求
     // 此时可以从 app.server 拿到 server 的实例
-    this.app.server.on('timeout', (socket) => {
+    this.app.server.on('timeout', socket => {
       // handle socket timeout
     });
   }

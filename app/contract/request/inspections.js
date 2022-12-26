@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const body = {
   inspectionsId: {
@@ -53,12 +53,12 @@ const body = {
       description: '是否启用：1:启用；0:停用',
     },
   },
-}
+};
 
 module.exports = {
   ...body,
   inspectionsPutBodyReq: {
     ...body.inspectionsId,
-    ...body.inspectionsBodyReq
-  }
-}
+    ...body.inspectionsBodyReq,
+  },
+};

@@ -1,6 +1,6 @@
 'use strict';
 
-const BaseController = require('../base-controller')
+const BaseController = require('../base-controller');
 
 /**
 * @controller 巡检 inspections
@@ -24,15 +24,15 @@ class InspectionsController extends BaseController {
     });
     ctx.validate(allRule, query);
     const res = await service.inspections.findAll(query);
-    this.SUCCESS(res)
+    this.SUCCESS(res);
   }
 
   /**
   * @apikey
   * @summary 获取某个 巡检
   * @description 获取某个 巡检
-  * @router get inspections/:id
-  * @request path number *id eg:1
+  * @router get inspections/:sn
+  * @request path string *sn eg:1
   */
   async findOne() {
     const { ctx, service } = this;
@@ -59,14 +59,13 @@ class InspectionsController extends BaseController {
   * @apikey
   * @summary 更新 巡检
   * @description 更新 巡检
-  * @router put inspections/:id
-  * @request path number *id eg:1
+  * @router put inspections/:sn
+  * @request path string *sn eg:1
   * @request body inspectionsPutBodyReq
   */
   async update() {
     const { ctx, service } = this;
-    let params = {...ctx.params, ...ctx.request.body}
-    params.id = Number(params.id)
+    let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.inspectionsPutBodyReq, params);
     const res = await service.inspections.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
@@ -76,14 +75,13 @@ class InspectionsController extends BaseController {
   * @apikey
   * @summary 删除 巡检
   * @description 删除 巡检
-  * @router delete inspections/:id
-  * @request path number *id eg:1
+  * @router delete inspections/:sn
+  * @request path string *sn eg:1
   */
   async destroy() {
     const { ctx, service } = this;
     let params = ctx.params;
-    params.id = Number(params.id);
-    ctx.validate(ctx.rule.inspectionsDelBodyReq, params);
+    ctx.validate(ctx.rule.inspectionsId, params);
     const res = await service.inspections.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }

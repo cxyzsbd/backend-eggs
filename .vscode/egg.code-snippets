@@ -144,7 +144,7 @@
       "    const Order = [];",
       "    prop_order && order ? Order.push([prop_order, order]) : null;",
       "    const count = await ctx.model.MODEL_NAME.count({ where });",
-      "    const data = await ctx.model.MODEL_NAME.findAndCountAll({",
+      "    const data = await ctx.model.MODEL_NAME.findAll({",
       "      limit: pageSize,",
       "      offset: (pageSize* (pageNumber - 1))>0?(pageSize* (pageNumber - 1)) : 0,",
       "      raw: true,",
