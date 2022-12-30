@@ -51,7 +51,7 @@ module.exports = app => {
     },
     duration: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
+      allowNull: true,
       defaultValue: "1",
       primaryKey: false,
       autoIncrement: false,
@@ -60,7 +60,7 @@ module.exports = app => {
     },
     duration_unit: {
       type: DataTypes.INTEGER(1),
-      allowNull: false,
+      allowNull: true,
       defaultValue: "1",
       primaryKey: false,
       autoIncrement: false,
@@ -129,6 +129,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: null,
       field: "update_at"
+    },
+    delete_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: "delete_at"
     }
   };
   const options = {

@@ -42,13 +42,13 @@ module.exports = appInfo => {
         password: '',
         db: 0,
       },
-      io: { // 报警相关
+      io: { // websocket相关
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
         db: 1,
       },
-      alarm: { // websocket
+      iom: { // 运维相关
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
@@ -66,13 +66,7 @@ module.exports = appInfo => {
         password: '',
         db: 4,
       },
-      tagstatus: { // 所有部门
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
-        password: '',
-        db: 5,
-      },
-    }
+    },
   };
 
   return {

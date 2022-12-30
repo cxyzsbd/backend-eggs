@@ -43,7 +43,7 @@ const body = {
     networking: {
       type: 'number',
       required: true,
-      max: 2,
+      enum: [ 1, 2 ],
       description: '是否物联(1：是；2：否)',
     },
     desc: {
@@ -59,6 +59,6 @@ module.exports = {
   ...body,
   patrolPointsPutBodyReq: {
     ...body.patrolPointsId,
-    ...this.patrolPointsBodyReq,
+    ...body.patrolPointsBodyReq,
   },
 };

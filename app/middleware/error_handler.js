@@ -10,6 +10,7 @@ module.exports = () => {
       const status = err.status || 500;
       const message = err.message || 'Internal Server Error';
 
+
       // HTTP Code
       ctx.status = status;
 
@@ -20,14 +21,18 @@ module.exports = () => {
       let msg = (status === 500 && isProd) ? 'Internal Server Error' : message;
       // 参数校验错误
       if (status === 422) {
-        msg = '参数校验失败';
         if (err.errors.length) {
-          msg = `${err.errors[0].field}${err.errors[0].message}`;
+          ctx.body = err.errors;
+        } else {
+          ctx.body = {
+            message: '参数校验失败',
+          };
         }
+      } else {
+        ctx.body = {
+          message: msg,
+        };
       }
-      ctx.body = {
-        message: msg,
-      };
     }
   };
 };

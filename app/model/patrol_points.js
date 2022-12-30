@@ -121,9 +121,23 @@ module.exports = app => {
       comment: null,
       field: 'update_at',
     },
+    delete_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'delete_at',
+    },
   };
   const options = {
     tableName: 'patrol_points',
+    paranoid: true,
+    timestamps: true,
+    createdAt: false,
+    updatedAt: false,
+    deletedAt: 'delete_at',
     comment: '',
     indexes: [],
   };

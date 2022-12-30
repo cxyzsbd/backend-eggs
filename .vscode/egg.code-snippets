@@ -42,7 +42,7 @@
       "  async findOne() {",
       "    const { ctx, service } = this;",
       "    ctx.validate(ctx.rule.objectsId, ctx.params);",
-      "    const res = await service.objects.findOne(ctx.params.id);",
+      "    const res = await service.objects.findOne(ctx.params);",
       "    res ? this.SUCCESS(res) : this.NOT_FOUND();",
       "  }",
       "",
@@ -189,11 +189,11 @@
     "prefix": "restful-router",
     "body": [
       "//对象",
-      "apiV1Router.post('objects', controller.v1.objects.create);",
-      "apiV1Router.put('objects/:id', controller.v1.objects.update);",
-      "apiV1Router.get('objects', controller.v1.objects.findAll);",
-      "apiV1Router.get('objects/:id', controller.v1.objects.findOne);",
-      "apiV1Router.delete('objects/:id', controller.v1.objects.destroy);"
+      "router.post('/api/v1/objects', controller.v1.objects.create);",
+      "router.put('/api/v1/objects/:id', controller.v1.objects.update);",
+      "router.get('/api/v1/objects', controller.v1.objects.findAll);",
+      "router.get('/api/v1/objects/:id', controller.v1.objects.findOne);",
+      "router.delete('/api/v1/objects/:id', controller.v1.objects.destroy);"
     ]
   },
   //事务

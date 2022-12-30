@@ -19,6 +19,13 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [ 'jwtVerify', 'errorHandler' ];
+  // 只对 /api/v1 前缀的 url 路径生效
+  config.errorHandler = {
+    match: '/api/v1',
+  };
+  config.jwtVerify = {
+    match: '/api/v1',
+  };
 
   // add your user config here
   const userConfig = {
@@ -44,23 +51,23 @@ module.exports = appInfo => {
     schemes: [ 'http' ],
     enable: true,
     routerMap: false,
-    securityDefinitions: {
-      apikey: {
-        type: 'apiKey',
-        name: 'Authorization',
-        in: 'header',
-      },
-      oauth2: {
-        type: 'oauth2',
-        tokenUrl: 'http://127.0.0.1:3000/api/v1/users/login',
-        flow: 'password',
-        scopes: {
-          'write:access_token': 'write access_token',
-          'read:access_token': 'read access_token',
-        },
-      },
-    },
-    enableSecurity: true,
+    // securityDefinitions: {
+    //   apikey: {
+    //     type: 'apiKey',
+    //     name: 'Authorization',
+    //     in: 'header',
+    //   },
+    //   oauth2: {
+    //     type: 'oauth2',
+    //     tokenUrl: 'http://127.0.0.1:3000/api/v1/users/login',
+    //     flow: 'password',
+    //     scopes: {
+    //       'write:access_token': 'write access_token',
+    //       'read:access_token': 'read access_token',
+    //     },
+    //   },
+    // },
+    // enableSecurity: true,
   };
 
   // 将部分目录挂载到app上

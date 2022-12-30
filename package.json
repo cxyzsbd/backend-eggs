@@ -13,7 +13,7 @@
     "egg-scripts": "^2",
     "egg-sequelize": "^6.0.0",
     "egg-socket.io": "^4.1.6",
-    "egg-swagger-doc": "^2.3.2",
+    "egg-swagger-doc-feat": "^2.2.14",
     "egg-validate": "^2.0.2",
     "i18n": "^0.15.1",
     "mysql2": "^2.3.3",

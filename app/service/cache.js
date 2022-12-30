@@ -5,11 +5,12 @@ const redis = require('redis');
 class CacheService extends Service {
   /**
    * redis订阅发布
+   * @param db_default
    * @return
    */
-  async redisPubAndSub(db_default=null) {
-    const {app} = this
-    let db = db_default || app.config.redis.clients.alarm.db
+  async redisPubAndSub(db_default = null) {
+    const { app } = this;
+    let db = db_default;
     const CONF = { db };
     const redisPub = redis.createClient(CONF);
     return redisPub;

@@ -5,17 +5,16 @@ const Service = require('egg').Service;
 class PatrolPointsService extends Service {
   /**
    * 生成编号
-   * @param {*} prefix
    */
-  async generateSn(prefix) {
+  async generateSn() {
     const { ctx, app } = this;
-    const sn = await app.utils.tools.generateSn(prefix);
+    const sn = await app.utils.tools.generateSn('XJ-XD');
     // 校验是否已存在
     const checkHas = await ctx.model.PatrolPoints.count({
       where: { sn },
     });
     if (checkHas) {
-      this.generateOrderNo(prefix);
+      this.generateOrderNo('XJ-XD');
       return false;
     }
     return sn;
@@ -51,7 +50,7 @@ class PatrolPointsService extends Service {
   async create(payload) {
     const { ctx } = this;
     const { request_user, department_id } = ctx.request.header;
-    payload.sn = await this.generateSn('XD-');
+    payload.sn = await this.generateSn();
     payload.creator = request_user;
     payload.department_id = department_id;
     return await ctx.model.PatrolPoints.create(payload);
@@ -59,12 +58,12 @@ class PatrolPointsService extends Service {
 
   async update(payload) {
     const { ctx } = this;
-    return await ctx.model.PatrolPoints.update(payload, { where: { id: payload.id } });
+    return await ctx.model.PatrolPoints.update(payload, { where: { sn: payload.sn } });
   }
 
   async destroy(payload) {
     const { ctx } = this;
-    return await ctx.model.PatrolPoints.destroy({ where: { id: payload.id } });
+    return await ctx.model.PatrolPoints.destroy({ where: { sn: payload.sn } });
   }
 }
 

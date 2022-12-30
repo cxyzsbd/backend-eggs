@@ -3,49 +3,50 @@ const lodash = require('lodash');
 const Op = require('sequelize').Op;
 class BaseController extends Controller {
   // 200 OK：成功
-  SUCCESS(body = { message: "成功" }) {
+  SUCCESS(body = { message: '成功' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 200;
   }
   // 201 Created：创建成功
-  CREATED(body = { message: "插入数据成功" }) {
+  CREATED(body = { message: '插入数据成功' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 201;
   }
   // 204 No Content：删除成功
-  NO_CONTENT(body = { message: "删除成功" }) {
+  NO_CONTENT(body = { message: '删除成功' }) {
     const ctx = this.ctx;
     ctx.body = body;
-    ctx.status = 204;
+    // ctx.status = 204;
+    ctx.status = 200;
   }
   // 400 Bad Request：服务器不理解客户端的请求，未做任何处理。
-  BAD_REQUEST(body = { message: "错误的请求,无操作" }) {
+  BAD_REQUEST(body = { message: '错误的请求,无操作' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 400;
   }
   // 401 Unauthorized：用户未提供身份验证凭据，或者没有通过身份验证。
-  UNAUTHORIZED(body = { message: "身份校验失败" }) {
+  UNAUTHORIZED(body = { message: '身份校验失败' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 401;
   }
   // 403 Forbidden：用户通过了身份验证，但是不具有访问资源所需的权限。
-  FORBIDDEN(body = { message: "无权限" }) {
+  FORBIDDEN(body = { message: '无权限' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 403;
   }
   // 404 Not Found：所请求的资源不存在，或不可用。
-  NOT_FOUND(body = { message: "资源未找到或无操作" }) {
+  NOT_FOUND(body = { message: '资源未找到或无操作' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 404;
   }
   // Unprocessable Entity ：参数格式校验错误
-  VALIDATION_FAILED(body = { message: "参数错误" }) {
+  VALIDATION_FAILED(body = { message: '参数错误' }) {
     const ctx = this.ctx;
     ctx.body = body;
     ctx.status = 422;
@@ -62,12 +63,21 @@ class BaseController extends Controller {
    * @return {{query: {where: {}}, allRule: {offset: {default: number, type: string, required: boolean}, prop_order: {values, type: string, required: boolean}, limit: {type: string, required: boolean}, order: {values: [string, string, string], type: string, required: boolean}}}}
    */
   findAllParamsDeal(options) {
-    const { rule, queryOrigin, ruleOther = {}, findAllParamsOther = {}, keywordLikeExcludeParams = [] } = options;
+    let { rule, queryOrigin, ruleOther = {}, findAllParamsOther = {}, keywordLikeExcludeParams = [] } = options;
+    queryOrigin.pageNumber = Number(queryOrigin.pageNumber) || 1;
+    queryOrigin.pageSize = Number(queryOrigin.pageSize) || 20;
     const _rule = lodash.cloneDeep(rule);
     const query = {
       where: {},
     };
     for (const ruleKey in _rule) {
+      // 如果规则是数组，则视为枚举类型
+      if (Array.isArray(_rule[ruleKey])) {
+        _rule[ruleKey] = {
+          type: 'enum',
+          values: _rule[ruleKey],
+        };
+      }
       _rule[ruleKey].required = false;
     }
     const findAllParams = {
@@ -88,12 +98,12 @@ class BaseController extends Controller {
         values: [ 'desc', 'asc', '' ],
       },
       pageSize: {
-        type: 'string',
+        type: 'number',
         required: false,
         default: 20,
       },
       pageNumber: {
-        type: 'string',
+        type: 'number',
         required: false,
         default: 1,
       },

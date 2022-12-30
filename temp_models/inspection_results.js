@@ -13,14 +13,14 @@ module.exports = app => {
       comment: null,
       field: "id"
     },
-    target_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+    patrol_point_sn: {
+      type: DataTypes.STRING(30),
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡检目标id",
-      field: "target_id"
+      comment: "巡点编号",
+      field: "patrol_point_sn"
     },
     task_sn: {
       type: DataTypes.STRING(30),
@@ -84,6 +84,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: null,
       field: "create_at"
+    },
+    complete_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: "complete_at"
     }
   };
   const options = {

@@ -1,16 +1,16 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict'
+'use strict';
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
-module.exports = (appInfo) => {
+module.exports = appInfo => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = (exports = {})
+  const config = (exports = {});
 
   config.sequelize = {
     datasources: [
@@ -33,48 +33,44 @@ module.exports = (appInfo) => {
         },
       },
     ],
-  }
+  };
 
   config.redis = {
     clients: {
-      default: {
-        // 默认库
+      default: { // 默认库
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
         db: 0,
       },
-      io: {
+      io: { // websocket相关
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
         db: 1,
       },
-      alarm: {
-        // websocket
+      iom: { // 运维相关
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
         db: 2,
       },
-      permissions: {
-        // 所有权限
+      permissions: { // 所有权限
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
         db: 3,
       },
-      departments: {
-        // 所有部门
+      departments: { // 所有部门
         port: 6379, // Redis port
         host: '127.0.0.1', // Redis host
         password: '',
         db: 4,
       },
     },
-  }
+  };
 
   return {
     ...config,
-  }
-}
+  };
+};

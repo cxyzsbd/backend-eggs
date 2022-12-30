@@ -84,4 +84,15 @@ module.exports = app => {
   router.get('/api/v1/patrol-points', controller.v1.patrolPoints.findAll);
   router.get('/api/v1/patrol-points/:sn', controller.v1.patrolPoints.findOne);
   router.delete('/api/v1/patrol-points/:sn', controller.v1.patrolPoints.destroy);
+
+  // 巡检
+  router.post('/api/v1/inspections', controller.v1.inspections.create);
+  router.put('/api/v1/inspections/:sn', controller.v1.inspections.update);
+  router.get('/api/v1/inspections', controller.v1.inspections.findAll);
+  router.get('/api/v1/inspections/:sn', controller.v1.inspections.findOne);
+  router.delete('/api/v1/inspections/:sn', controller.v1.inspections.destroy);
+
+  // 用户关注报警点位
+  router.post('/api/v1/user-alarm-tags', controller.v1.userAlarmTags.bulkOperation);
+  router.get('/api/v1/user-alarm-tags', controller.v1.userAlarmTags.findAll);
 };

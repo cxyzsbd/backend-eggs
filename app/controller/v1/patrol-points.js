@@ -22,6 +22,7 @@ class PatrolPointsController extends BaseController {
       rule: ctx.rule.patrolPointsPutBodyReq,
       queryOrigin: ctx.query,
     });
+    console.log('allRule', allRule);
     ctx.validate(allRule, query);
     const res = await service.patrolPoints.findAll(query);
     this.SUCCESS(res);
@@ -37,7 +38,7 @@ class PatrolPointsController extends BaseController {
   async findOne() {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.patrolPointsId, ctx.params);
-    const res = await service.patrolPoints.findOne(ctx.params.id);
+    const res = await service.patrolPoints.findOne(ctx.params);
     res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
 

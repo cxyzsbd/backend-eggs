@@ -7,6 +7,16 @@ const BaseController = require('../base-controller');
 */
 
 class InspectionsController extends BaseController {
+  durationUnitCover(unit = 1) {
+    let result = 0;
+    switch (unit) {
+      case 1: result = 24 * 60 * 60; break;
+      case 2: result = 24 * 60 * 60; break;
+      default : result = 24 * 60 * 60; break;
+    }
+    return result;
+  }
+
   /**
   * @apikey
   * @summary 巡检列表
@@ -36,8 +46,9 @@ class InspectionsController extends BaseController {
   */
   async findOne() {
     const { ctx, service } = this;
+    console.log('params', ctx.params);
     ctx.validate(ctx.rule.inspectionsId, ctx.params);
-    const res = await service.inspections.findOne(ctx.params.id);
+    const res = await service.inspections.findOne(ctx.params);
     res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
 
@@ -49,9 +60,28 @@ class InspectionsController extends BaseController {
   * @request body inspectionsBodyReq
   */
   async create() {
-    const { ctx } = this;
-    ctx.validate(ctx.rule.inspectionsBodyReq, ctx.request.body);
-    await ctx.service.inspections.create(ctx.request.body);
+    const { ctx, app } = this;
+    const { dayjs } = app.utils.tools;
+    const params = ctx.request.body;
+    ctx.validate(ctx.rule.inspectionsBodyReq, params);
+    // 特殊参数单独校验
+    if (params.cycle !== 1) {
+      // 1.非单次巡检，需要判断每次巡检持续时间参数
+      if (!params.duration || !params.duration_unit) {
+        this.BAD_REQUEST({ message: '非单次巡检情况，单次巡检持续时间参数必传' });
+        return false;
+      }
+      const cycleTime = Number(params.duration) * this.durationUnitCover(params.duration_unit);
+      // console.log('cycleTime', cycleTime);
+      // 2.计算单次持续时间不能大于巡检计划总时间
+      const totalTime = dayjs(params.start_time).diff(dayjs(params.end_time), 'second');
+      // console.log('totalTime', totalTime);
+      if (cycleTime > totalTime) {
+        this.BAD_REQUEST({ message: '单次巡检时间不能大于结束巡检计划总时长' });
+        return false;
+      }
+    }
+    await ctx.service.inspections.create(params);
     this.CREATED();
   }
 

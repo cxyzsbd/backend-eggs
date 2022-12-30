@@ -12,7 +12,7 @@ module.exports = {
   },
   swaggerdoc: {
     enable: true,
-    package: 'egg-swagger-doc',
+    package: 'egg-swagger-doc-feat',
   },
   jwt: {
     enable: true,

@@ -11,41 +11,41 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
       comment: null,
-      field: "id"
+      field: 'id',
     },
-    inspection_sn: {
-      type: DataTypes.STRING(30),
+    user_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡检编号",
-      field: "inspection_sn"
+      comment: '用户id',
+      field: 'user_id',
     },
-    patrol_point_sn: {
-      type: DataTypes.STRING(30),
+    boxcode: {
+      type: DataTypes.STRING(20),
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡点编号",
-      field: "patrol_point_sn"
+      comment: '访问码',
+      field: 'boxcode',
     },
-    items: {
-      type: DataTypes.TEXT,
+    tagname: {
+      type: DataTypes.STRING(255),
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡检项，用逗号分隔",
-      field: "items"
-    }
+      comment: '长点名',
+      field: 'tagname',
+    },
   };
   const options = {
-    tableName: "inspection_targets",
-    comment: "",
-    indexes: []
+    tableName: 'user_alarm_tags',
+    comment: '',
+    indexes: [],
   };
-  const InspectionTargetsModel = sequelize.define("inspection_targets_model", attributes, options);
-  return InspectionTargetsModel;
+  const UserAlarmTagsModel = sequelize.define('user_alarm_tags_model', attributes, options);
+  return UserAlarmTagsModel;
 };

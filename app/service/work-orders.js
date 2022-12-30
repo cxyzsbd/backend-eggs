@@ -5,18 +5,17 @@ const Service = require('egg').Service;
 class WorkOrdersService extends Service {
   /**
    * 生成工单号
-   * @param {*} prefix
    */
-  async generateOrderNo(prefix) {
+  async generateOrderNo() {
     const { ctx, app } = this;
-    const sn = await app.utils.tools.generateSn(prefix);
+    const sn = await app.utils.tools.generateSn('GD');
     // 校验是否已存在
     const checkHas = await ctx.model.WorkOrders.count({
       where: { sn },
     });
     // 如果工单号已存在，重新生成
     if (checkHas) {
-      this.generateOrderNo(prefix);
+      this.generateOrderNo('GD');
       return false;
     }
     return sn;

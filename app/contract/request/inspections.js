@@ -19,6 +19,7 @@ const body = {
     cycle: {
       type: 'number',
       required: true,
+      enum: [ 1, 2, 3, 4, 5, 6, 7 ],
       description: '周期类型（1:单次；2:日；3:周；4:月；5:季度；6:半年；7年度）',
     },
     start_time: {
@@ -33,12 +34,12 @@ const body = {
     },
     duration: {
       type: 'number',
-      required: true,
+      required: false,
       description: '单次巡检持续时间，配合单位，默认1天',
     },
     duration_unit: {
       type: 'number',
-      required: true,
+      required: false,
       description: '持续时间单位，1:天；2:小时',
     },
     desc: {
@@ -50,7 +51,31 @@ const body = {
     state: {
       type: 'number',
       required: true,
+      enum: [ 0, 1 ],
       description: '是否启用：1:启用；0:停用',
+    },
+    handlers: {
+      type: 'array',
+      required: true,
+      example: [ 1, 2 ],
+      itemType: 'number',
+      description: '处理人集合',
+    },
+    targets: {
+      type: 'array',
+      itemType: 'object',
+      required: true,
+      example: [
+        {
+          patrol_point_sn: 'aaa',
+          items: [ '外观', '通电状态' ],
+        },
+        {
+          patrol_point_sn: 'bbb',
+          items: [ '外观', '通电状态' ],
+        },
+      ],
+      description: '巡检目标',
     },
   },
 };
