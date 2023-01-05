@@ -13,14 +13,14 @@ module.exports = app => {
       comment: null,
       field: 'id',
     },
-    device_id: {
+    model_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: '设备id',
-      field: 'device_id',
+      field: 'model_id',
     },
     tag: {
       type: DataTypes.STRING(255),
@@ -40,30 +40,12 @@ module.exports = app => {
       comment: '属性描述',
       field: 'attr_desc',
     },
-    boxcode: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '点位所属盒子访问码',
-      field: 'boxcode',
-    },
-    tagname: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '关联实际点位长点名',
-      field: 'tagname',
-    },
   };
   const options = {
-    tableName: 'device_tags',
+    tableName: 'device_model_tags',
     comment: '',
     indexes: [],
   };
-  const DeviceTagsModel = sequelize.define('device_tags_model', attributes, options);
-  return DeviceTagsModel;
+  const DeviceModelTagsModel = sequelize.define('device_model_tags_model', attributes, options);
+  return DeviceModelTagsModel;
 };

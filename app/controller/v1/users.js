@@ -15,9 +15,9 @@ class UsersController extends BaseController {
     const { ctx } = this;
     ctx.validate(ctx.rule.userCreateBodyReq, ctx.request.body);
     const res = await ctx.service.users.create(ctx.request.body);
-    if(res && res.message) {
-      this.BAD_REQUEST(res)
-      return false
+    if (res && res.message) {
+      this.BAD_REQUEST(res);
+      return false;
     }
     this.CREATED(res);
   }
@@ -30,7 +30,7 @@ class UsersController extends BaseController {
    */
   async update() {
     const { ctx, service, app } = this;
-    const {department_id} = ctx.request.header
+    const { department_id } = ctx.request.header;
     const rules = {
       ...ctx.rule.userPutBodyReq,
       username: {
@@ -57,12 +57,12 @@ class UsersController extends BaseController {
     delete params.last_login;
     delete params.create_at;
     delete params.update_at;
-    if(department_id!=0) {
+    if (department_id != 0) {
       delete params.password;
     }
-    const {res_user, rolesRes} = await service.users.update(params);
+    const { res_user, rolesRes } = await service.users.update(params);
     await app.utils.tools.redisCacheUserinfo(params.id);
-    if ((res_user && res_user[0]!==0) || (rolesRes && rolesRes.length)) {
+    if ((res_user && res_user[0] !== 0) || (rolesRes && rolesRes.length)) {
       this.SUCCESS();
       return false;
     }
@@ -156,7 +156,7 @@ class UsersController extends BaseController {
       },
     };
     ctx.validate(params, ctx.query);
-    const departments = await service.departments.getChildrenById(ctx.request.header.department_id, false)
+    const departments = await service.departments.getChildrenById(ctx.request.header.department_id, false);
     const res = await service.users.findAll(ctx.query, departments);
     this.SUCCESS(res);
   }
@@ -171,9 +171,9 @@ class UsersController extends BaseController {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.userDelBodyReq, ctx.params);
     const res = await service.users.destroy(ctx.params);
-    if(res) {
-      //删除redis用户信息缓存
-      await service.cache.del(ctx.params.id)
+    if (res) {
+      // 删除redis用户信息缓存
+      await service.cache.del(ctx.params.id);
     }
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
@@ -214,7 +214,7 @@ class UsersController extends BaseController {
     await app.utils.tools.redisCacheUserinfo(id);
     this.SUCCESS({
       access_token,
-      refresh_token
+      refresh_token,
     });
   }
 
@@ -283,12 +283,12 @@ class UsersController extends BaseController {
   */
   async updateInfo() {
     const { ctx, service, app } = this;
-    const params = ctx.request.body
-    const {request_user} = ctx.request.header
-    ctx.validate(ctx.rule.updatePersonInfoBody, params)
-    params.id = request_user
+    const params = ctx.request.body;
+    const { request_user } = ctx.request.header;
+    ctx.validate(ctx.rule.updatePersonInfoBody, params);
+    params.id = request_user;
     // 判断是不是存在同名用户
-    if(this.isParam(params.username)) {
+    if (this.isParam(params.username)) {
       const otherUser = await service.users.findOne({ id: {
         [Op.not]: params.id,
       }, username: params.username }, [], false);
@@ -301,9 +301,9 @@ class UsersController extends BaseController {
     delete params.last_login;
     delete params.create_at;
     delete params.update_at;
-    const {res_user, rolesRes} = await service.users.update(params);
+    const { res_user, rolesRes } = await service.users.update(params);
     await app.utils.tools.redisCacheUserinfo(params.id);
-    if ((res_user && res_user[0]!==0) || (rolesRes && rolesRes.length)) {
+    if ((res_user && res_user[0] !== 0) || (rolesRes && rolesRes.length)) {
       this.SUCCESS();
       return false;
     }
@@ -318,27 +318,27 @@ class UsersController extends BaseController {
   */
   async updatePassword() {
     const { ctx, service, app } = this;
-    const params = ctx.request.body
-    const {new_password, old_password} = params
-    const {request_user} = ctx.request.header
-    ctx.validate(ctx.rule.updatePasswordBody, params)
-    const user = await service.users.findOne({id: request_user}, [], false)
-    if(new_password == old_password) {
-      this.BAD_REQUEST({message: "新密码和老密码不能一致"})
-      return false
+    const params = ctx.request.body;
+    const { new_password, old_password } = params;
+    const { request_user } = ctx.request.header;
+    ctx.validate(ctx.rule.updatePasswordBody, params);
+    const user = await service.users.findOne({ id: request_user }, [], false);
+    if (new_password == old_password) {
+      this.BAD_REQUEST({ message: '新密码和老密码不能一致' });
+      return false;
     }
-    if(user.password != old_password) {
-      this.BAD_REQUEST({message: "密码验证失败"})
-      return false
+    if (user.password != old_password) {
+      this.BAD_REQUEST({ message: '密码验证失败' });
+      return false;
     }
     const res = await ctx.model.Users.update({
-      password: new_password
+      password: new_password,
     }, {
       where: {
-        id: request_user
-      }
-    })
-    this.SUCCESS({message: "修改成功"});
+        id: request_user,
+      },
+    });
+    this.SUCCESS({ message: '修改成功' });
   }
 }
 module.exports = UsersController;

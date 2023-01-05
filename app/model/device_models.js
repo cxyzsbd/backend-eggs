@@ -19,7 +19,7 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '设备名称',
+      comment: '设备模型名称',
       field: 'name',
     },
     desc: {
@@ -67,21 +67,12 @@ module.exports = app => {
       comment: null,
       field: 'update_at',
     },
-    model_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '模型id，如果是从其他设备拷贝而来，必有',
-      field: 'model_id',
-    },
   };
   const options = {
-    tableName: 'devices',
+    tableName: 'device_models',
     comment: '',
     indexes: [],
   };
-  const DevicesModel = sequelize.define('devices_model', attributes, options);
-  return DevicesModel;
+  const DeviceModelsModel = sequelize.define('device_models_model', attributes, options);
+  return DeviceModelsModel;
 };

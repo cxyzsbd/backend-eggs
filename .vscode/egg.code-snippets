@@ -148,7 +148,6 @@
       "      limit: pageSize,",
       "      offset: (pageSize* (pageNumber - 1))>0?(pageSize* (pageNumber - 1)) : 0,",
       "      raw: true,",
-      "      distinct: true,",
       "      where,",
       "      order: Order,",
       "    });",

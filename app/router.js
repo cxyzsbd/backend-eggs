@@ -92,7 +92,37 @@ module.exports = app => {
   router.get('/api/v1/inspections/:sn', controller.v1.inspections.findOne);
   router.delete('/api/v1/inspections/:sn', controller.v1.inspections.destroy);
 
+  // 巡检任务
+  router.get('/api/v1/inspection-tasks', controller.v1.inspectionTasks.findAll);
+  router.get('/api/v1/inspection-tasks/:sn', controller.v1.inspectionTasks.findOne);
+  router.delete('/api/v1/inspection-tasks/:sn', controller.v1.inspectionTasks.destroy);
+
   // 用户关注报警点位
   router.post('/api/v1/user-alarm-tags', controller.v1.userAlarmTags.bulkOperation);
   router.get('/api/v1/user-alarm-tags', controller.v1.userAlarmTags.findAll);
+
+  // 设备台账
+  router.post('/api/v1/equipment-accounts', controller.v1.equipmentAccounts.create);
+  router.put('/api/v1/equipment-accounts/:sn', controller.v1.equipmentAccounts.update);
+  router.get('/api/v1/equipment-accounts', controller.v1.equipmentAccounts.findAll);
+  router.get('/api/v1/equipment-accounts/:sn', controller.v1.equipmentAccounts.findOne);
+  router.delete('/api/v1/equipment-accounts/:sn', controller.v1.equipmentAccounts.destroy);
+
+  // 工具
+  router.post('/api/v1/tools', controller.v1.tools.create);
+  router.put('/api/v1/tools/:id', controller.v1.tools.update);
+  router.get('/api/v1/tools', controller.v1.tools.findAll);
+  router.get('/api/v1/tools/:id', controller.v1.tools.findOne);
+  router.delete('/api/v1/tools/:id', controller.v1.tools.destroy);
+  router.post('/api/v1/tools/:tool_id/inventory', controller.v1.tools.inventory);
+  router.get('/api/v1/tools/:tool_id/inventory-records', controller.v1.tools.inventoryRecords);
+
+  // 备品备件
+  router.post('/api/v1/spare-parts', controller.v1.spareParts.create);
+  router.put('/api/v1/spare-parts/:id', controller.v1.spareParts.update);
+  router.get('/api/v1/spare-parts', controller.v1.spareParts.findAll);
+  router.get('/api/v1/spare-parts/:id', controller.v1.spareParts.findOne);
+  router.delete('/api/v1/spare-parts/:id', controller.v1.spareParts.destroy);
+  router.post('/api/v1/spare-parts/:spare_parts_id/inventory', controller.v1.spareParts.inventory);
+  router.get('/api/v1/spare-parts/:spare_parts_id/inventory-records', controller.v1.spareParts.inventoryRecords);
 };
