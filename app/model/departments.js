@@ -11,16 +11,16 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
       comment: null,
-      field: "id"
+      field: 'id',
     },
     name: {
       type: DataTypes.STRING(60),
       allowNull: false,
-      defaultValue: "",
+      defaultValue: '',
       primaryKey: false,
       autoIncrement: false,
-      comment: "部门名称",
-      field: "name"
+      comment: '部门名称',
+      field: 'name',
     },
     parent_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -28,17 +28,17 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "父ID",
-      field: "parent_id"
+      comment: '父ID',
+      field: 'parent_id',
     },
     sort: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
-      defaultValue: "0",
+      defaultValue: '0',
       primaryKey: false,
       autoIncrement: false,
-      comment: "排序，越大越靠前",
-      field: "sort"
+      comment: '排序，越大越靠前',
+      field: 'sort',
     },
     desc: {
       type: DataTypes.STRING(255),
@@ -46,8 +46,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "描述",
-      field: "desc"
+      comment: '描述',
+      field: 'desc',
     },
     longitude: {
       type: DataTypes.DECIMAL,
@@ -55,8 +55,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "经度",
-      field: "longitude"
+      comment: '经度',
+      field: 'longitude',
     },
     latitude: {
       type: DataTypes.DECIMAL,
@@ -64,8 +64,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "纬度",
-      field: "latitude"
+      comment: '纬度',
+      field: 'latitude',
     },
     address: {
       type: DataTypes.STRING(255),
@@ -73,17 +73,17 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "地址信息",
-      field: "address"
+      comment: '地址信息',
+      field: 'address',
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
-      defaultValue: "0",
+      defaultValue: '0',
       primaryKey: false,
       autoIncrement: false,
-      comment: "创建人",
-      field: "creator"
+      comment: '创建人',
+      field: 'creator',
     },
     create_at: {
       type: DataTypes.DATE,
@@ -92,7 +92,7 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "create_at"
+      field: 'create_at',
     },
     update_at: {
       type: DataTypes.DATE,
@@ -101,8 +101,8 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "update_at"
-    }
+      field: 'update_at',
+    },
   }, {
     tableName: 'departments',
   });

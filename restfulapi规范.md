@@ -10,3 +10,4 @@
 #### 415 Unsupported Media Type：客户端要求的返回格式不支持。比如，API 只能返回 JSON 格式，但是客户端要求返回 XML 格式。
 #### 422 Unprocessable Entity ：参数格式校验错误。
 #### 429 Too Many Requests：客户端的请求次数超过限额。
+#### 500 Server Error 服务端通用错误。

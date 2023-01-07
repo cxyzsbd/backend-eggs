@@ -1,6 +1,6 @@
 'use strict';
 
-const BaseController = require('../base-controller')
+const BaseController = require('../base-controller');
 
 /**
 * @controller 工单 work-orders
@@ -24,7 +24,7 @@ class WorkOrdersController extends BaseController {
     });
     ctx.validate(allRule, query);
     const res = await service.workOrders.findAll(query);
-    this.SUCCESS(res)
+    this.SUCCESS(res);
   }
 
   /**
@@ -65,7 +65,7 @@ class WorkOrdersController extends BaseController {
   */
   async update() {
     const { ctx, service } = this;
-    let params = {...ctx.params, ...ctx.request.body}
+    let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.workOrdersPutBodyReq, params);
     const res = await service.workOrders.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
@@ -95,24 +95,24 @@ class WorkOrdersController extends BaseController {
   * @request body workOrdersApprovalBodyReq
   */
   async approval() {
-    const {ctx, service} = this
-    const params = { ...ctx.params, ...ctx.request.body }
+    const { ctx, service } = this;
+    const params = { ...ctx.params, ...ctx.request.body };
     ctx.validate({
       ...ctx.rule.workOrdersId,
-      ...ctx.rule.workOrdersApprovalBodyReq
-    }, params)
-    if(params.approval_result==1 && !params.handler) {
-      this.BAD_REQUEST({message: "处理人不能为空"})
+      ...ctx.rule.workOrdersApprovalBodyReq,
+    }, params);
+    if (params.approval_result == 1 && !params.handler) {
+      this.BAD_REQUEST({ message: '处理人不能为空' });
       return false;
     }
-    if(params.approval_result==0 && !params.not_pass_reason) {
-      this.BAD_REQUEST({message: "审核不通过原因不能为空"})
+    if (params.approval_result == 0 && !params.not_pass_reason) {
+      this.BAD_REQUEST({ message: '审核不通过原因不能为空' });
       return false;
     }
-    const res = await service.workOrders.approval(params)
-    res? this.SUCCESS() : this.NOT_FOUND();
+    const res = await service.workOrders.approval(params);
+    res ? this.SUCCESS() : this.NOT_FOUND();
   }
-  
+
   /**
   * @apikey
   * @summary 确认工单
@@ -121,13 +121,13 @@ class WorkOrdersController extends BaseController {
   * @request path string *sn eg:1
   */
   async confirm() {
-    const {ctx, service} = this
-    const params = ctx.params
-    ctx.validate(ctx.rule.workOrdersId, params)
-    const res = await service.workOrders.confirm(payload)
+    const { ctx, service } = this;
+    const params = ctx.params;
+    ctx.validate(ctx.rule.workOrdersId, params);
+    const res = await service.workOrders.confirm(payload);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
-  
+
   /**
   * @apikey
   * @summary 工单完成提交
@@ -137,11 +137,11 @@ class WorkOrdersController extends BaseController {
   * @request body workOrdersCompleteBodyReq
   */
   async complete() {
-    const {ctx, service} = this
-    const params = {...ctx.params, ...ctx.request.body};
-    const rule = {...ctx.rule.workOrdersId, ...ctx.rule.workOrdersCompleteBodyReq}
-    ctx.validate(rule, params)
-    const res = await ctx.model.workOrders.complete(params)
+    const { ctx, service } = this;
+    const params = { ...ctx.params, ...ctx.request.body };
+    const rule = { ...ctx.rule.workOrdersId, ...ctx.rule.workOrdersCompleteBodyReq };
+    ctx.validate(rule, params);
+    const res = await ctx.model.workOrders.complete(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 }

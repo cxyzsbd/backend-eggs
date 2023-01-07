@@ -1,9 +1,6 @@
 'use strict';
 
 const BaseController = require('../base-controller');
-const fs = require('fs');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
 
 /**
 *@controller 部门 departments
@@ -26,10 +23,10 @@ class DepartmentsController extends BaseController {
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    //查询当前用户的部门id
-    const {department_id} = ctx.request.header
-    const departmentAll = await service.departments.getChildrenById(department_id, false)
-    const ids = departmentAll.map(item => item.id)
+    // 查询当前用户的部门id
+    const { department_id } = ctx.request.header;
+    const departmentAll = await service.departments.getChildrenById(department_id, false);
+    const ids = departmentAll.map(item => item.id);
     const res = await service.departments.findAll(query, ids);
     this.SUCCESS(res);
   }
@@ -96,23 +93,23 @@ class DepartmentsController extends BaseController {
     // 判断是否有子部门
     const childrenDepartments = await ctx.model.Departments.count({
       where: {
-        parent_id: ctx.params.id
-      }
-    })
-    if(childrenDepartments>0) {
-      this.BAD_REQUEST({message: "请先删除子级部门"})
-      return false
+        parent_id: ctx.params.id,
+      },
+    });
+    if (childrenDepartments > 0) {
+      this.BAD_REQUEST({ message: '请先删除子级部门' });
+      return false;
     }
     const res = await service.departments.destroy(ctx.params);
     await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
-    if(res) {
+    if (res) {
       const department_users = await ctx.model.Users.findAll({
         where: {
-          department_id: ctx.params.id
+          department_id: ctx.params.id,
         },
-        attributes: ['id'],
-        raw: true
-      })
+        attributes: [ 'id' ],
+        raw: true,
+      });
       department_users.forEach(async id => {
         await app.utils.tools.redisCacheUserinfo(id);
       });

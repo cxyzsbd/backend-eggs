@@ -69,6 +69,9 @@ module.exports = appInfo => {
     },
   };
 
+  // 数据转发基础路径
+  config.dataForwardBaseUrl = '';
+
   return {
     ...config,
   };

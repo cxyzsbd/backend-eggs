@@ -22,6 +22,33 @@ module.exports = app => {
       comment: "设备名称",
       field: "name"
     },
+    type: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "设备类型",
+      field: "type"
+    },
+    brand: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "设备厂家/品牌",
+      field: "brand"
+    },
+    model: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "型号",
+      field: "model"
+    },
     desc: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -31,6 +58,15 @@ module.exports = app => {
       comment: "描述",
       field: "desc"
     },
+    img: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "照片url",
+      field: "img"
+    },
     department_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
@@ -39,6 +75,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: "部门id",
       field: "department_id"
+    },
+    company_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "公司id，即顶级department",
+      field: "company_id"
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,

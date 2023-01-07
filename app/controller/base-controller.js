@@ -51,6 +51,12 @@ class BaseController extends Controller {
     ctx.body = body;
     ctx.status = 422;
   }
+  // Unprocessable Entity ：参数格式校验错误
+  SERVER_ERROR(body = { message: '服务端错误' }) {
+    const ctx = this.ctx;
+    ctx.body = body;
+    ctx.status = 500;
+  }
 
   /**
    * findAll请求根据rule处理query值

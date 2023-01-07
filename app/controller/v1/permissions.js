@@ -3,7 +3,7 @@
 const BaseController = require('../base-controller');
 
 /**
- * @controller 资源 permission
+ * @controller 资源 permissions
  */
 
 class PermissionsController extends BaseController {

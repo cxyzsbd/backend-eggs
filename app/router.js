@@ -125,4 +125,35 @@ module.exports = app => {
   router.delete('/api/v1/spare-parts/:id', controller.v1.spareParts.destroy);
   router.post('/api/v1/spare-parts/:spare_parts_id/inventory', controller.v1.spareParts.inventory);
   router.get('/api/v1/spare-parts/:spare_parts_id/inventory-records', controller.v1.spareParts.inventoryRecords);
+
+  // 数据转发接口路由
+  router.post(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
+  router.get(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
+
+  // 设备模型
+  router.post('/api/v1/device-models', controller.v1.deviceModels.create);
+  router.put('/api/v1/device-models/:id', controller.v1.deviceModels.update);
+  router.get('/api/v1/device-models', controller.v1.deviceModels.findAll);
+  router.get('/api/v1/device-models/:id', controller.v1.deviceModels.findOne);
+  router.delete('/api/v1/device-models/:id', controller.v1.deviceModels.destroy);
+
+  // 设备
+  router.post('/api/v1/devices', controller.v1.devices.create);
+  router.put('/api/v1/devices/:id', controller.v1.devices.update);
+  router.get('/api/v1/devices', controller.v1.devices.findAll);
+  router.get('/api/v1/devices/:id', controller.v1.devices.findOne);
+  router.delete('/api/v1/devices/:id', controller.v1.devices.destroy);
+  router.post('/api/v1/model-to-device', controller.v1.devices.modelToDevice);
+
+  // 设备模型绑定点位
+  router.post('/api/v1/device-model-tags', controller.v1.deviceModelTags.create);
+  router.put('/api/v1/device-model-tags/:id', controller.v1.deviceModelTags.update);
+  router.get('/api/v1/device-model-tags', controller.v1.deviceModelTags.findAll);
+  router.delete('/api/v1/device-model-tags/:id', controller.v1.deviceModelTags.destroy);
+
+  // 设备绑定点位
+  router.post('/api/v1/device-tags', controller.v1.deviceTags.create);
+  router.put('/api/v1/device-tags/:id', controller.v1.deviceTags.update);
+  router.get('/api/v1/device-tags', controller.v1.deviceTags.findAll);
+  router.delete('/api/v1/device-tags/:id', controller.v1.deviceTags.destroy);
 };
