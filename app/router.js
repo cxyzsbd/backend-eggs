@@ -127,8 +127,12 @@ module.exports = app => {
   router.get('/api/v1/spare-parts/:spare_parts_id/inventory-records', controller.v1.spareParts.inventoryRecords);
 
   // 数据转发接口路由
-  router.post(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
-  router.get(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
+  router.post(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
+  router.get(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
+
+  // 无token转发接口路由
+  router.post(/^\/api\/v1\/api-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
+  router.get(/^\/api\/v1\/api-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
 
   // 设备模型
   router.post('/api/v1/device-models', controller.v1.deviceModels.create);
@@ -156,4 +160,31 @@ module.exports = app => {
   router.put('/api/v1/device-tags/:id', controller.v1.deviceTags.update);
   router.get('/api/v1/device-tags', controller.v1.deviceTags.findAll);
   router.delete('/api/v1/device-tags/:id', controller.v1.deviceTags.destroy);
+
+  // 超管管理公司
+  router.post('/api/v1/super-user/companys', controller.v1.companys.create);
+  router.put('/api/v1/super-user/companys/:id', controller.v1.companys.update);
+  router.get('/api/v1/super-user/companys', controller.v1.companys.findAll);
+  router.get('/api/v1/super-user/companys/:id', controller.v1.companys.findOne);
+  router.post('/api/v1/super-user/add-admin', controller.v1.companys.addAdmin);
+
+  // 站点
+  router.post('/api/v1/stations', controller.v1.stations.create);
+  router.put('/api/v1/stations/:id', controller.v1.stations.update);
+  router.get('/api/v1/stations', controller.v1.stations.findAll);
+  router.get('/api/v1/stations/:id', controller.v1.stations.findOne);
+  router.delete('/api/v1/stations/:id', controller.v1.stations.destroy);
+
+  // 文件
+  router.post('/api/v1/files', controller.v1.files.upload);
+
+  // 流程图
+  router.post('/api/v1/flows', controller.v1.flows.create);
+  router.put('/api/v1/flows/:id', controller.v1.flows.update);
+  router.get('/api/v1/flows', controller.v1.flows.findAll);
+  router.get('/api/v1/flows/:id', controller.v1.flows.findOne);
+  router.delete('/api/v1/flows/:id', controller.v1.flows.destroy);
+  router.delete('/api/v1/recovery-flows/:id', controller.v1.flows.forceDelete);
+  router.patch('/api/v1/recovery-flows/:id', controller.v1.flows.recoveryFlows);
+  router.get('/api/v1/recovery-flows', controller.v1.flows.recoveryFlowsList);
 };

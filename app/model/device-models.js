@@ -76,6 +76,15 @@ module.exports = app => {
       comment: '部门id',
       field: 'department_id',
     },
+    company_id: {
+      type: DataTypes.INTEGER(10).UNSIGNED,
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '公司id',
+      field: 'company_id',
+    },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,

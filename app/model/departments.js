@@ -1,9 +1,9 @@
-/* indent size: 2 */
+'use strict';
 
 module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
-  const Model = app.model.define('departments', {
+  const attributes = {
     id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
@@ -49,33 +49,6 @@ module.exports = app => {
       comment: '描述',
       field: 'desc',
     },
-    longitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '经度',
-      field: 'longitude',
-    },
-    latitude: {
-      type: DataTypes.DECIMAL,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '纬度',
-      field: 'latitude',
-    },
-    address: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '地址信息',
-      field: 'address',
-    },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
@@ -103,13 +76,21 @@ module.exports = app => {
       comment: null,
       field: 'update_at',
     },
-  }, {
-    tableName: 'departments',
-  });
-
-  Model.associate = function() {
-
+    company_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '公司id',
+      field: 'company_id',
+    },
   };
-
-  return Model;
+  const options = {
+    tableName: 'departments',
+    comment: '',
+    indexes: [],
+  };
+  const DepartmentsModel = sequelize.define('departments_model', attributes, options);
+  return DepartmentsModel;
 };

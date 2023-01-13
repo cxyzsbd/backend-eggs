@@ -50,11 +50,11 @@ class RoleMenusController extends BaseController {
    * @request body role_menuBodyReq
    */
   async create() {
-    const {ctx, app} = this
+    const { ctx, app } = this;
     ctx.validate(ctx.rule.role_menuBodyReq, ctx.request.body);
     const res = await ctx.service.roleMenus.create(ctx.request.body);
-    //1.将部门列表平铺数据缓存到redis
-    await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments')
+    // 1.将部门列表平铺数据缓存到redis
+    await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
     res ? this.CREATED() : this.BAD_REQUEST();
   }
 
@@ -75,8 +75,8 @@ class RoleMenusController extends BaseController {
       this.BAD_REQUEST();
       return false;
     }
-    //1.将部门列表平铺数据缓存到redis
-    await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments')
+    // 1.将部门列表平铺数据缓存到redis
+    await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -91,8 +91,8 @@ class RoleMenusController extends BaseController {
     const { ctx, service, app } = this;
     ctx.validate(ctx.rule.role_menuId, ctx.params);
     const res = await service.roleMenus.destroy(ctx.params);
-    //1.将部门列表平铺数据缓存到redis
-    await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments')
+    // 1.将部门列表平铺数据缓存到redis
+    await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
@@ -106,7 +106,7 @@ class RoleMenusController extends BaseController {
    * @request body array *menu_ids ex:[1,2] menu_ids
    */
   async bulkMenus() {
-    const {ctx,app} = this
+    const { ctx, app } = this;
     const rule = {
       role_id: ctx.rule.role_menuPutBodyReq.role_id,
       menu_ids: {
@@ -128,13 +128,13 @@ class RoleMenusController extends BaseController {
     switch (params.type) {
       case 'create':
         await ctx.service.roleMenus.bulkCreateMenus(params);
-        //1.将部门列表平铺数据缓存到redis
+        // 1.将部门列表平铺数据缓存到redis
         await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
         this.CREATED();
         break;
       case 'delete':
         await ctx.service.roleMenus.bulkDeleteMenus(params);
-        //1.将部门列表平铺数据缓存到redis
+        // 1.将部门列表平铺数据缓存到redis
         await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
         this.NO_CONTENT();
         break;

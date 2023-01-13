@@ -2,6 +2,8 @@ const dayjs = require('dayjs');
 const fs = require('fs');
 const path = require('path');
 const lodash = require('lodash');
+const md5 = require('md5');
+const { v4: uuidv4 } = require('uuid');
 module.exports = class Tools {
   constructor(app) {
     this.app = app;
@@ -10,6 +12,8 @@ module.exports = class Tools {
     this.logger = app.logger;
     this.dayjs = dayjs;
     this.lodash = lodash;
+    this.md5 = md5;
+    this.uuidv4 = uuidv4;
   }
   /**
    * 生成唯一编号

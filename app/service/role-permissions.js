@@ -10,17 +10,18 @@ class _objectName_Service extends Service {
     const where = payload.where;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const res = await ctx.model.RolePermissions.findAndCountAll({
+    const count = await ctx.model.RolePermissions.count({ where });
+    const data = await ctx.model.RolePermissions.findAll({
       // limit: pageSize,
       // offset: (pageSize* (pageNumber - 1))>0?(pageSize* (pageNumber - 1)) : 0,
       where,
       order: Order,
     });
     return {
-      rows: res.rows,
+      data,
       // pageNumber,
       // pageSize,
-      total: res.count,
+      total: count,
     };
   }
 

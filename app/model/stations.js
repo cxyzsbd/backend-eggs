@@ -10,44 +10,17 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: true,
       autoIncrement: true,
-      comment: "id",
-      field: "id"
+      comment: null,
+      field: 'id',
     },
     name: {
       type: DataTypes.STRING(60),
       allowNull: false,
-      defaultValue: null,
+      defaultValue: '',
       primaryKey: false,
       autoIncrement: false,
-      comment: "设备名称",
-      field: "name"
-    },
-    type: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "设备类型",
-      field: "type"
-    },
-    brand: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "设备厂家/品牌",
-      field: "brand"
-    },
-    model: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "型号",
-      field: "model"
+      comment: '部门名称',
+      field: 'name',
     },
     desc: {
       type: DataTypes.STRING(255),
@@ -55,8 +28,35 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "描述",
-      field: "desc"
+      comment: '描述',
+      field: 'desc',
+    },
+    longitude: {
+      type: DataTypes.DECIMAL,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '经度',
+      field: 'longitude',
+    },
+    latitude: {
+      type: DataTypes.DECIMAL,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '纬度',
+      field: 'latitude',
+    },
+    address: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '地址信息',
+      field: 'address',
     },
     img: {
       type: DataTypes.STRING(255),
@@ -64,35 +64,17 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "照片url",
-      field: "img"
-    },
-    department_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "部门id",
-      field: "department_id"
-    },
-    company_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "公司id",
-      field: "company_id"
+      comment: '图片',
+      field: 'img',
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
-      defaultValue: null,
+      defaultValue: '0',
       primaryKey: false,
       autoIncrement: false,
-      comment: "创建人",
-      field: "creator"
+      comment: '创建人',
+      field: 'creator',
     },
     create_at: {
       type: DataTypes.DATE,
@@ -101,32 +83,44 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "create_at"
+      field: 'create_at',
     },
     update_at: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "update_at"
+      field: 'update_at',
     },
-    model_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
-      allowNull: true,
+    department_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "模型id，如果是从其他设备拷贝而来，必有",
-      field: "model_id"
-    }
+      comment: '部门id',
+      field: 'department_id',
+    },
+    company_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '公司id',
+      field: 'company_id',
+    },
   };
   const options = {
-    tableName: "devices",
-    comment: "",
-    indexes: []
+    tableName: 'stations',
+    comment: '',
+    indexes: [],
   };
-  const DevicesModel = sequelize.define("devices_model", attributes, options);
-  return DevicesModel;
+  const StationsModel = sequelize.define('stations_model', attributes, options);
+  StationsModel.associate = function() {
+    StationsModel.hasMany(app.model.StationTags, { sourceKey: 'id', foreignKey: 'station_id' });
+  };
+  return StationsModel;
 };

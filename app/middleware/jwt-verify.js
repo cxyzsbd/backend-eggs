@@ -16,8 +16,8 @@ module.exports = options => {
           const decoded = ctx.app.jwt.verify(token, secret) || 'false';
           if (decoded !== 'false' && decoded.type === 'access_token') {
             // 根据用户id获取公司id
-            const user = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);
-            if (user.state !== 1) {
+            const { state, id, department_id, company_id } = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);
+            if (state !== 1) {
               ctx.status = 401;
               ctx.body = {
                 message: '账号被停用',
@@ -25,8 +25,7 @@ module.exports = options => {
               return false;
             }
             // 将公共参数放到请求头
-            ctx.request.header.request_user = user.id;
-            ctx.request.header.department_id = user.department_id;
+            ctx.request.header = { ...ctx.request.header, request_user: id, department_id, company_id };
             await next();
           } else {
             ctx.status = 401;

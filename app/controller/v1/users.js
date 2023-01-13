@@ -19,7 +19,7 @@ class UsersController extends BaseController {
       this.BAD_REQUEST(res);
       return false;
     }
-    this.CREATED(res);
+    this.CREATED();
   }
   /**
    * @summary 更新 用户
@@ -156,7 +156,7 @@ class UsersController extends BaseController {
       },
     };
     ctx.validate(params, ctx.query);
-    const departments = await service.departments.getChildrenById(ctx.request.header.department_id, false);
+    const departments = await service.departments.getUserDepartments();
     const res = await service.users.findAll(ctx.query, departments);
     this.SUCCESS(res);
   }
@@ -206,8 +206,12 @@ class UsersController extends BaseController {
       return false;
     }
     // 生成token并返回
-    const access_token = app.jwt.sign({ user_id: user.id, type: 'access_token' }, app.config.jwt.secret, { expiresIn: app.config.jwt.expire });
-    const refresh_token = app.jwt.sign({ user_id: user.id, type: 'refresh_token' }, app.config.jwt.secret, { expiresIn: app.config.jwt.refresh_expire });
+    let is_super_user = false;
+    if (!user.department_id) {
+      is_super_user = true;
+    }
+    const access_token = app.jwt.sign({ user_id: user.id, type: 'access_token', is_super_user }, app.config.jwt.secret, { expiresIn: app.config.jwt.expire });
+    const refresh_token = app.jwt.sign({ user_id: user.id, type: 'refresh_token', is_super_user }, app.config.jwt.secret, { expiresIn: app.config.jwt.refresh_expire });
     const last_login = app.utils.tools.dayjs().format('YYYY-MM-DD HH:mm:ss');
     // 更新登录时间
     await service.users.update({ id, last_login });
@@ -215,6 +219,7 @@ class UsersController extends BaseController {
     this.SUCCESS({
       access_token,
       refresh_token,
+      is_super_user,
     });
   }
 
@@ -237,11 +242,12 @@ class UsersController extends BaseController {
       const decoded = ctx.app.jwt.verify(header.refresh_token, secret) || 'false';
       if (decoded !== 'false' && decoded.type === 'refresh_token') {
         // 校验通过,下发新token
-        const access_token = app.jwt.sign({ user_id: decoded.user_id, type: 'access_token' }, secret, { expiresIn: expire });
-        const refresh_token = app.jwt.sign({ user_id: decoded.user_id, type: 'refresh_token' }, secret, { expiresIn: refresh_expire });
+        const access_token = app.jwt.sign({ user_id: decoded.user_id, type: 'access_token', is_super_user: decoded.is_super_user }, secret, { expiresIn: expire });
+        const refresh_token = app.jwt.sign({ user_id: decoded.user_id, type: 'refresh_token', is_super_user: decoded.is_super_user }, secret, { expiresIn: refresh_expire });
         this.SUCCESS({
           access_token,
           refresh_token,
+          is_super_user: decoded.is_super_user,
         });
       } else {
         this.UNAUTHORIZED({ message: 'refresh_token无效' });

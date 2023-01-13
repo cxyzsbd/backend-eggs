@@ -90,7 +90,7 @@ class PermissionsController extends BaseController {
     ctx.validate(ctx.rule.permissionDelBodyReq, ctx.params);
     const res = await service.permissions.destroy(ctx.params);
     await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
-    res ? this.NO_CONTENT(res) : this.NOT_FOUND();
+    res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 }
 

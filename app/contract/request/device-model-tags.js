@@ -10,17 +10,35 @@ const body = {
       required: true,
       description: '模型id',
     },
-    tag: {
-      type: 'string',
-      required: true,
-      max: 255,
-      description: '点名',
-    },
-    attr_desc: {
+
+    name: {
       type: 'string',
       required: true,
       max: 20,
+      description: '属性名称',
+    },
+    desc: {
+      type: 'string',
+      required: false,
+      max: 60,
       description: '属性描述',
+    },
+    type: {
+      type: 'number',
+      required: false,
+      description: '类型(1:int;2:float;3:int;4:string)',
+    },
+    range: {
+      type: 'string',
+      required: false,
+      max: 100,
+      description: '范围',
+    },
+    unit: {
+      type: 'string',
+      required: false,
+      max: 20,
+      description: '单位',
     },
   },
 };

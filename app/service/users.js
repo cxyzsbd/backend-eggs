@@ -11,27 +11,27 @@ class UserService extends Service {
    */
   async create(payload) {
     const { ctx, app } = this;
-    const username_check = await ctx.model.Users.findOne({where: {
-      username: payload.username
-    }})
-    if(username_check) {
-      return {message: "用户名已存在"}
+    const username_check = await ctx.model.Users.findOne({ where: {
+      username: payload.username,
+    } });
+    if (username_check) {
+      return { message: '用户名已存在' };
     }
     const transaction = await ctx.model.transaction();
     try {
       const res_user = await ctx.model.Users.create(payload, { transaction });
       const roles = await ctx.model.Roles.findAll({ where: { id: {
-        [Op.in]: payload.roles
+        [Op.in]: payload.roles,
       } } });
-      let userRoles = []
-      roles.forEach(role=> {
+      let userRoles = [];
+      roles.forEach(role => {
         userRoles.push({
           user_id: res_user.id,
           role_id: role.id,
-        })
-      })
+        });
+      });
       // 分配 默认角色
-      await ctx.model.UserRoles.bulkCreate(userRoles, {transaction});
+      await ctx.model.UserRoles.bulkCreate(userRoles, { transaction });
       await transaction.commit();
       return res_user;
     } catch (e) {
@@ -63,16 +63,16 @@ class UserService extends Service {
       attributes: { exclude },
     });
   }
-  async findAll(payload, departments=[]) {
+  async findAll(payload, departments = []) {
     const { ctx, app } = this;
     // await ctx.helper.sendSocketToClientOfRoom({a:12312313123},4)
     const { pageSize, pageNumber, prop_order, order, state, username, email, phone, department_id, keyword, date_after_created } = payload;
     const where = {};
-    if(departments.length) {
-      const ids = departments.map(item => item.id)
+    if (departments.length) {
+      const ids = departments.map(item => item.id);
       where.department_id = {
-        [Op.in]: ids
-      }
+        [Op.in]: ids,
+      };
     }
     keyword
       ? (where[Op.or] = [{ username: { [Op.like]: `%${keyword}%` } }, { email: { [Op.like]: `%${keyword}%` } }, { phone: { [Op.like]: `%${keyword}%` } }])
@@ -95,7 +95,8 @@ class UserService extends Service {
     } else {
       where[Op.and] = [{ id: { [Op.ne]: 1 } }];
     }
-    const res = await ctx.model.Users.findAndCountAll({
+    const total = await ctx.model.Users.count({ where });
+    const data = await ctx.model.Users.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       where,
@@ -109,48 +110,48 @@ class UserService extends Service {
       distinct: true,
     });
     return {
-      data: res.rows,
+      data,
       pageNumber,
       pageSize,
-      total: res.count,
+      total,
     };
   }
   async update(payload) {
     const { ctx } = this;
     const transaction = await ctx.model.transaction();
     try {
-      const res_user = await ctx.model.Users.update(payload, { 
+      const res_user = await ctx.model.Users.update(payload, {
         where: {
-          id: payload.id
+          id: payload.id,
         },
-        transaction
+        transaction,
       });
       let rolesRes = null;
-      if(payload.roles) {
+      if (payload.roles) {
         const roles = await ctx.model.Roles.findAll({ where: { id: {
-          [Op.in]: payload.roles
+          [Op.in]: payload.roles,
         } } });
-        let userRoles = []
-        roles.forEach(role=> {
+        let userRoles = [];
+        roles.forEach(role => {
           userRoles.push({
             user_id: payload.id,
             role_id: role.id,
-          })
-        })
+          });
+        });
         // 先删除角色
         await ctx.model.UserRoles.destroy({
           where: {
-            user_id: payload.id
+            user_id: payload.id,
           },
-          transaction
+          transaction,
         });
         // 分配 默认角色
-        rolesRes = await ctx.model.UserRoles.bulkCreate(userRoles, {transaction, returning: true});
+        rolesRes = await ctx.model.UserRoles.bulkCreate(userRoles, { transaction, returning: true });
       }
       await transaction.commit();
       return {
-        res_user, 
-        rolesRes
+        res_user,
+        rolesRes,
       };
     } catch (e) {
       // 异常情况回滚数据库
@@ -165,15 +166,15 @@ class UserService extends Service {
     try {
       const res_user = await ctx.model.Users.destroy({
         where: {
-          id: payload.id
+          id: payload.id,
         },
-        transaction
+        transaction,
       });
-      let rolesRes =await ctx.model.UserRoles.destroy({
+      let rolesRes = await ctx.model.UserRoles.destroy({
         where: {
-          user_id: payload.id
+          user_id: payload.id,
         },
-        transaction
+        transaction,
       });
       await transaction.commit();
       return res_user && rolesRes;
@@ -204,8 +205,12 @@ class UserService extends Service {
         },
         {
           model: ctx.model.Departments,
-          as: "department"
-        }
+          as: 'department',
+        },
+        {
+          model: ctx.model.Companys,
+          as: 'company',
+        },
       ],
       where: { id: Number(request_user) },
       attributes: { exclude: [ 'password', 'deleted_at' ] },
@@ -268,8 +273,8 @@ class UserService extends Service {
   }
 
   async getUserPermissions(id) {
-    const {ctx, app} = this
-    const {request_user} = ctx.request.header
+    const { ctx, app } = this;
+    const { request_user } = ctx.request.header;
     // 获取所有资源列表和角色资源绑定关系
     const { role_permissions } = await app.utils.tools.getRedisCachePublic('permissions');
     // 获取用户所有权限

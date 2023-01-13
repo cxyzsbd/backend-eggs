@@ -18,13 +18,16 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'jwtVerify', 'errorHandler' ];
+  config.middleware = [ 'jwtVerify', 'validateSuperUser', 'errorHandler' ];
   // 只对 /api/v1 前缀的 url 路径生效
   config.errorHandler = {
     match: '/api/v1',
   };
   config.jwtVerify = {
     match: '/api/v1',
+  };
+  config.validateSuperUser = {
+    match: '/api/v1/super-user',
   };
 
   // add your user config here
@@ -107,6 +110,12 @@ module.exports = appInfo => {
       const args = Array.prototype.slice.call(arguments);
       return I18n.__.apply(I18n, args);
     },
+  };
+  config.signSecret = 'FDD693602F380E24';
+
+  config.multipart = {
+    fileSize: '50mb', // 文件大小限制
+    fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.dwg' ], // 上传文件类型扩展
   };
 
   return {

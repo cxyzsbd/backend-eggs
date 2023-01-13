@@ -41,13 +41,13 @@ const body = {
       max: 255,
       description: '照片url',
     },
-    model_id: {
-      type: 'number',
-      required: false,
-      description: '模型id',
-    },
   },
   modelToDeviceBodyReq: {
+    station_id: {
+      type: 'number',
+      required: true,
+      description: '站点id',
+    },
     model_id: {
       type: 'number',
       required: true,

@@ -5,8 +5,10 @@ const Service = require('egg').Service;
 class DevicesService extends Service {
   async findAll(payload) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    let where = payload.where;
+    where.company_id = company_id;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Devices.count({ where });
@@ -32,9 +34,8 @@ class DevicesService extends Service {
 
   async create(payload) {
     const { ctx } = this;
-    const { request_user, department_id } = ctx.request.header;
-    payload.creator = request_user;
-    payload.department_id = department_id;
+    const { request_user, department_id, company_id } = ctx.request.header;
+    payload = { ...payload, creator: request_user, department_id, company_id };
     return await ctx.model.Devices.create(payload);
   }
 
@@ -51,8 +52,8 @@ class DevicesService extends Service {
 
   async modelToDevice(payload) {
     const { ctx } = this;
-    const { request_user, department_id } = ctx.request.header;
-    const { model_id } = payload;
+    const { request_user, department_id, company_id } = ctx.request.header;
+    const { model_id, station_id } = payload;
     let modelData = await ctx.model.DeviceModels.findOne({ where: { id: model_id }, raw: true });
     const { name, type, brand, model, desc, img } = modelData;
     let tags = await ctx.model.DeviceModelTags.findAll({ where: { model_id }, raw: true });
@@ -63,6 +64,8 @@ class DevicesService extends Service {
         name, type, brand, model, desc, img,
         creator: request_user,
         department_id,
+        company_id,
+        station_id,
       }, { raw: true, transaction });
       if (device) {
         tags.map(t => {

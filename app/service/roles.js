@@ -18,7 +18,8 @@ class RoleService extends Service {
     //     where[Op.and] = [{ id: { [Op.ne]: 1 } }];
     //   }
     // }
-    const res = await ctx.model.Roles.findAndCountAll({
+    const total = await ctx.model.Roles.count({ where });
+    const data = await ctx.model.Roles.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       where,
@@ -29,13 +30,13 @@ class RoleService extends Service {
           as: 'department',
           model: ctx.model.Departments,
         },
-      ]
+      ],
     });
     return {
-      rows: res.rows,
+      data,
       pageNumber,
       pageSize,
-      total: res.count,
+      total,
     };
   }
 
@@ -46,8 +47,8 @@ class RoleService extends Service {
 
   async create(payload) {
     const { ctx } = this;
-    const {department_id} = ctx.request.header
-    payload.department_id = department_id
+    const { department_id } = ctx.request.header;
+    payload.department_id = department_id;
     return await ctx.model.Roles.create(payload);
   }
 

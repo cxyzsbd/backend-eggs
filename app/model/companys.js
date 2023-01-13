@@ -10,8 +10,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: true,
       autoIncrement: true,
-      comment: "id",
-      field: "id"
+      comment: '公司id，对应departments表中parent_id=0的数据id',
+      field: 'id',
     },
     name: {
       type: DataTypes.STRING(60),
@@ -19,35 +19,35 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "设备名称",
-      field: "name"
+      comment: '公司名称',
+      field: 'name',
     },
-    type: {
-      type: DataTypes.STRING(20),
+    platform_name: {
+      type: DataTypes.STRING(60),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '平台名称',
+      field: 'platform_name',
+    },
+    connection_limit: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '连接数限制',
+      field: 'connection_limit',
+    },
+    logo: {
+      type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "设备类型",
-      field: "type"
-    },
-    brand: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "设备厂家/品牌",
-      field: "brand"
-    },
-    model: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "型号",
-      field: "model"
+      comment: 'logo',
+      field: 'logo',
     },
     desc: {
       type: DataTypes.STRING(255),
@@ -55,35 +55,17 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "描述",
-      field: "desc"
+      comment: '描述',
+      field: 'desc',
     },
-    img: {
-      type: DataTypes.STRING(255),
+    time_limit: {
+      type: DataTypes.DATE,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "照片url",
-      field: "img"
-    },
-    department_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "部门id",
-      field: "department_id"
-    },
-    company_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "公司id",
-      field: "company_id"
+      comment: '使用期限',
+      field: 'time_limit',
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -91,8 +73,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "创建人",
-      field: "creator"
+      comment: '创建人',
+      field: 'creator',
     },
     create_at: {
       type: DataTypes.DATE,
@@ -100,33 +82,36 @@ module.exports = app => {
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
-      comment: null,
-      field: "create_at"
+      comment: '创建时间',
+      field: 'create_at',
     },
     update_at: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: null,
-      field: "update_at"
+      comment: '更新时间',
+      field: 'update_at',
     },
-    model_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+    admin: {
+      type: DataTypes.INTEGER(11),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "模型id，如果是从其他设备拷贝而来，必有",
-      field: "model_id"
-    }
+      comment: '管理员',
+      field: 'admin',
+    },
   };
   const options = {
-    tableName: "devices",
-    comment: "",
-    indexes: []
+    tableName: 'companys',
+    comment: '',
+    indexes: [],
   };
-  const DevicesModel = sequelize.define("devices_model", attributes, options);
-  return DevicesModel;
+  const CompanysModel = sequelize.define('companys_model', attributes, options);
+  CompanysModel.associate = function() {
+    CompanysModel.hasOne(app.model.Users, { sourceKey: 'admin', foreignKey: 'id', as: 'admin_info' });
+  };
+  return CompanysModel;
 };

@@ -9,7 +9,7 @@ class _objectName_Service extends Service {
     const where = payload.where;
     const Order = [];
     // prop_order && order ? Order.push([prop_order, order]) : null;
-    const res = await ctx.model.Menus.findAndCountAll({
+    const res = await ctx.model.Menus.findAll({
       // limit: pageSize,
       // offset: (pageSize* (pageNumber - 1))>0?(pageSize* (pageNumber - 1)) : 0,
       where,
@@ -17,12 +17,7 @@ class _objectName_Service extends Service {
         [ 'sort', 'DESC' ],
       ],
     });
-    return {
-      rows: res.rows,
-      // pageNumber,
-      // pageSize,
-      // total: res.count
-    };
+    return res;
   }
 
   async findOne(id) {

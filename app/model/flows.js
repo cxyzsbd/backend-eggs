@@ -5,12 +5,12 @@ module.exports = app => {
   const sequelize = app.model;
   const attributes = {
     id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      defaultValue: null,
       primaryKey: true,
-      autoIncrement: true,
-      comment: 'id',
+      autoIncrement: false,
+      comment: '流程图id，uuid',
       field: 'id',
     },
     name: {
@@ -19,35 +19,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '设备名称',
+      comment: '名称',
       field: 'name',
-    },
-    type: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '设备类型',
-      field: 'type',
-    },
-    brand: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '设备厂家/品牌',
-      field: 'brand',
-    },
-    model: {
-      type: DataTypes.STRING(20),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '型号',
-      field: 'model',
     },
     desc: {
       type: DataTypes.STRING(255),
@@ -58,32 +31,41 @@ module.exports = app => {
       comment: '描述',
       field: 'desc',
     },
-    img: {
+    image: {
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '照片url',
-      field: 'img',
+      comment: '缩略图',
+      field: 'image',
     },
-    department_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
+    class: {
+      type: DataTypes.STRING(60),
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '类型',
+      field: 'class',
     },
-    company_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
+    tags: {
+      type: DataTypes.JSON,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '公司id',
-      field: 'company_id',
+      comment: '标签',
+      field: 'tags',
+    },
+    component: {
+      type: DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: '0',
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "'图纸类型： 0 - 图纸；1 - “我创建的”组件'",
+      field: 'component',
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -94,39 +76,65 @@ module.exports = app => {
       comment: '创建人',
       field: 'creator',
     },
+    department_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '部门id',
+      field: 'department_id',
+    },
+    company_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '公司id',
+      field: 'company_id',
+    },
     create_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
-      comment: null,
+      comment: '创建时间',
       field: 'create_at',
     },
     update_at: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: null,
+      comment: '更新时间',
       field: 'update_at',
     },
-    model_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+    delete_at: {
+      type: DataTypes.DATE,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '模型id，如果是从其他设备拷贝而来，必有',
-      field: 'model_id',
+      comment: '删除时间',
+      field: 'delete_at',
     },
   };
   const options = {
-    tableName: 'devices',
+    tableName: 'flows',
+    paranoid: true,
+    timestamps: true,
+    createdAt: false,
+    updatedAt: false,
+    deletedAt: 'delete_at',
     comment: '',
     indexes: [],
   };
-  const DevicesModel = sequelize.define('devices_model', attributes, options);
-  return DevicesModel;
+  const FlowsModel = sequelize.define('flows_model', attributes, options);
+  FlowsModel.associate = () => {
+    FlowsModel.hasOne(app.model.Users, { sourceKey: 'creator', foreignKey: 'id' });
+  };
+  return FlowsModel;
 };

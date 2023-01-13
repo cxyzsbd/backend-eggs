@@ -71,7 +71,7 @@ module.exports = appInfo => {
   };
 
   // 数据转发基础路径
-  config.dataForwardBaseUrl = '';
+  config.dataForwardBaseUrl = 'https://sunwayland-lkys.com:8081/';
 
   return {
     ...config,

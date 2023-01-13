@@ -24,8 +24,7 @@ class RoleController extends BaseController {
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const { department_id } = ctx.request.header;
-    const departments = await service.departments.getChildrenById(department_id, false);
+    const departments = await service.departments.getUserDepartments();
     const department_ids = departments.map(item => item.id);
     query.where.department_id = {
       [Op.in]: [ ...department_ids, 0 ],

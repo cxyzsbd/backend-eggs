@@ -16,8 +16,8 @@ const body = {
     parent_id: {
       type: 'number',
       required: true,
-      min: 0,
-      example: 0,
+      min: 1,
+      example: 1,
       description: '父ID',
     },
     sort: {
@@ -31,21 +31,6 @@ const body = {
       type: 'string',
       required: false,
       description: '描述',
-    },
-    longitude: {
-      type: 'number',
-      required: false,
-      description: '经度',
-    },
-    latitude: {
-      type: 'number',
-      required: false,
-      description: '纬度',
-    },
-    address: {
-      type: 'string',
-      required: false,
-      description: '地址信息',
     },
   },
 };

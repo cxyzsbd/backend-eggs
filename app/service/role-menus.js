@@ -10,17 +10,18 @@ class _objectName_Service extends Service {
     const where = payload.where;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const res = await ctx.model.RoleMenus.findAndCountAll({
+    const total = await ctx.model.RoleMenus.count({ where });
+    const data = await ctx.model.RoleMenus.findAll({
       // limit: pageSize,
       // offset: (pageSize* (pageNumber - 1))>0?(pageSize* (pageNumber - 1)) : 0,
       where,
       order: Order,
     });
     return {
-      rows: res.rows,
+      data,
       // pageNumber,
       // pageSize,
-      total: res.count,
+      total,
     };
   }
 

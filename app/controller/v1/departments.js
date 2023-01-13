@@ -23,11 +23,7 @@ class DepartmentsController extends BaseController {
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    // 查询当前用户的部门id
-    const { department_id } = ctx.request.header;
-    const departmentAll = await service.departments.getChildrenById(department_id, false);
-    const ids = departmentAll.map(item => item.id);
-    const res = await service.departments.findAll(query, ids);
+    const res = await service.departments.getUserDepartments();
     this.SUCCESS(res);
   }
 
