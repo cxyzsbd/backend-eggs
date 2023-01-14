@@ -17,14 +17,15 @@ class DataForwardController extends BaseController {
   async dataForward() {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
-    if (params.code) {
-      // 判断是否有盒子权限
-    }
+    // if (params.code) {
+    //   // 判断是否有盒子权限
+    // }
     const requestBaseUrl = app.config.dataForwardBaseUrl;
     const { method, url, header, body } = ctx.request;
     const data = body || {};
     const apiUrl = url.slice(21, url.indexOf('?'));
     const params = { ...ctx.query, ...body };
+    console.log('apiUrl', apiUrl);
     try {
       const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.slice(url.indexOf('?'))}`, {
         method,

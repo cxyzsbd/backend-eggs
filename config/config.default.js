@@ -85,12 +85,6 @@ module.exports = appInfo => {
     },
   };
 
-  config.security = {
-    csrf: {
-      enable: false,
-    },
-  };
-
   config.jwt = {
     expire: 2 * 60 * 60,
     refresh_expire: '7d',

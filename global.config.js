@@ -14,6 +14,7 @@ const WX_GZH_CONFIG = {
   WORK_ORDER_APPROVER_RESULT_ID: 'pf6682uQuDBq4xFTpnAMIivcg4xAwv9Qyg8pAKP5Hoc', // 审批结果
   NEW_TASK_TEMPLATE_ID: '', // 新任务提醒
 };
+
 module.exports = {
   WX_GZH_CONFIG,
   WX_XCX_CONFIG,

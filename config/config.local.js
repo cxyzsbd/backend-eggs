@@ -12,6 +12,14 @@ module.exports = appInfo => {
    **/
   const config = (exports = {});
 
+  config.security = {
+    csrf: {
+      enable: false,
+      ignore: ctx => ctx.app.config.security.domainWhiteList.includes(ctx.ip),
+    },
+    domainWhiteList: [ '127.0.0.1' ],
+  };
+
   config.sequelize = {
     datasources: [
       {
@@ -38,40 +46,41 @@ module.exports = appInfo => {
   config.redis = {
     clients: {
       default: { // 默认库
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
-        password: '',
+        port: 31379, // Redis port
+        host: '42.192.189.220', // Redis host
+        password: 'mySQL13test14',
         db: 0,
       },
       io: { // websocket相关
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
-        password: '',
+        port: 31379, // Redis port
+        host: '42.192.189.220', // Redis host
+        password: 'mySQL13test14',
         db: 1,
       },
       iom: { // 运维相关
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
-        password: '',
+        port: 31379, // Redis port
+        host: '42.192.189.220', // Redis host
+        password: 'mySQL13test14',
         db: 2,
       },
       permissions: { // 所有权限
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
-        password: '',
+        port: 31379, // Redis port
+        host: '42.192.189.220', // Redis host
+        password: 'mySQL13test14',
         db: 3,
       },
       departments: { // 所有部门
-        port: 6379, // Redis port
-        host: '127.0.0.1', // Redis host
-        password: '',
+        port: 31379, // Redis port
+        host: '42.192.189.220', // Redis host
+        password: 'mySQL13test14',
         db: 4,
       },
     },
   };
 
   // 数据转发基础路径
-  config.dataForwardBaseUrl = 'https://sunwayland-lkys.com:8081/';
+  config.dataForwardBaseUrl = 'http://cloudnative.lkysiot.com/';
+  // config.dataForwardBaseUrl = 'http://192.168.20.11/';
 
   return {
     ...config,
