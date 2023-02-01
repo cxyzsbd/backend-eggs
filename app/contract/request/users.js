@@ -98,6 +98,11 @@ const body = {
       required: false,
       description: '部门id',
     },
+    company_id: {
+      type: 'number',
+      required: false,
+      description: '公司id',
+    },
     state: {
       type: 'number',
       required: false,
