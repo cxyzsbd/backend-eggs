@@ -186,4 +186,8 @@ module.exports = class Tools {
     }
     return mkdirStatus;
   }
+
+  async isParam(param) {
+    return !param && param !== 0;
+  }
 };

@@ -81,10 +81,10 @@ class UserService extends Service {
     date_after_created ? (where[Op.and] = [{ created_at: { [Op.gte]: date_after_created } }]) : null;
     const Order = [];
     username ? (where.username = { [Op.like]: `%${username}%` }) : null;
-    !ctx.helper.tools.isParam(state) ? (where.state = state) : null;
+    !app.utils.tools.isParam(state) ? (where.state = state) : null;
     email ? (where.email = { [Op.like]: `%${email}%` }) : null;
     phone ? (where.phone = { [Op.like]: `%${phone}%` }) : null;
-    !ctx.helper.tools.isParam(department_id) ? (where.department_id = department_id === 0 ? null : department_id) : null;
+    !app.utils.tools.isParam(department_id) ? (where.department_id = department_id === 0 ? null : department_id) : null;
     if (department_id === -1) {
       where.department_id = null;
     }

@@ -207,7 +207,7 @@ class UsersController extends BaseController {
     }
     // 生成token并返回
     let is_super_user = false;
-    if (!user.department_id) {
+    if (!user.company_id) {
       is_super_user = true;
     }
     const access_token = app.jwt.sign({ user_id: user.id, type: 'access_token', is_super_user }, app.config.jwt.secret, { expiresIn: app.config.jwt.expire });
@@ -261,7 +261,7 @@ class UsersController extends BaseController {
   * @apikey
   * @summary 获取用户信息、角色、资源等
   * @description 获取用户信息
-  * @router get users/info
+  * @router get user-info
   */
   async getInfo() {
     const { ctx, service } = this;
@@ -272,7 +272,7 @@ class UsersController extends BaseController {
   * @apikey
   * @summary 获取当前登录用户菜单
   * @description 获取当前用户菜单列表
-  * @router get users/menus
+  * @router get user-menus
   */
   async getMenus() {
     const { ctx, service } = this;

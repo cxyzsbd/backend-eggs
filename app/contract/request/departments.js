@@ -16,7 +16,6 @@ const body = {
     parent_id: {
       type: 'number',
       required: true,
-      min: 1,
       example: 1,
       description: '父ID',
     },

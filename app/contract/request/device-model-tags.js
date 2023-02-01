@@ -10,7 +10,6 @@ const body = {
       required: true,
       description: '模型id',
     },
-
     name: {
       type: 'string',
       required: true,
