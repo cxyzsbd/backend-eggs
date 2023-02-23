@@ -98,6 +98,10 @@ class DataForwardController extends BaseController {
     }
   }
 
+  // 签名规则：1.先将参数按照`key=value`的形式加入到数组，
+  // 2.再将数组按照正序1-9|a-z排序，
+  // 3.再用&连接成新的字符串str，
+  // 4.最后str拼接秘钥，`str+&secret=sss`的形式再通过md5加密字符串得到签名
   async getSign(params, secret) {
     if (typeof params === 'string') {
       return this.paramsStrSort(params, secret);

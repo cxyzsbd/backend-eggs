@@ -30,11 +30,6 @@ module.exports = appInfo => {
     match: '/api/v1/super-user',
   };
 
-  // add your user config here
-  const userConfig = {
-    // myAppName: 'egg',
-  };
-
   // 项目启动端口号
   config.cluster = {
     listen: {
@@ -107,9 +102,33 @@ module.exports = appInfo => {
   };
   config.signSecret = 'FDD693602F380E24';
 
+  // socket.io
+  exports.io = {
+    init: {}, // passed to engine.io
+    namespace: {
+      '/': {
+        connectionMiddleware: [ 'connection' ],
+        packetMiddleware: [ 'packet' ],
+      },
+    },
+    redis: {
+      host: '192.168.1.90',
+      port: 6379,
+      auth_pass: '',
+      db: 1,
+    },
+  };
+
   config.multipart = {
     fileSize: '50mb', // 文件大小限制
     fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.dwg' ], // 上传文件类型扩展
+  };
+
+  // add your user config here
+  const userConfig = {
+    // myAppName: 'egg',
+    socketOnlineUserRoomName: '',
+    socketDepartmentRoomNamePrefix: '',
   };
 
   return {

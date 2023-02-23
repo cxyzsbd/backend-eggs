@@ -1,6 +1,7 @@
 'use strict';
 
 const BaseController = require('../base-controller');
+const { Sequelize, Op } = require('sequelize');
 
 /**
 * @controller 设备绑定点位 device-tags
@@ -35,9 +36,16 @@ class DeviceTagsController extends BaseController {
   * @request body deviceTagsBodyReq
   */
   async create() {
-    const { ctx } = this;
-    ctx.validate(ctx.rule.deviceTagsBodyReq, ctx.request.body);
-    await ctx.service.deviceTags.create(ctx.request.body);
+    const { ctx, service } = this;
+    const params = ctx.request.body;
+    ctx.validate(ctx.rule.deviceTagsBodyReq, params);
+    // 忽略大小写查询
+    const attr = await service.deviceTags.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), device_id: params.device_id });
+    if (attr) {
+      this.BAD_REQUEST({ message: '该属性已存在' });
+      return false;
+    }
+    await ctx.service.deviceTags.create(params);
     this.CREATED();
   }
 
@@ -54,6 +62,12 @@ class DeviceTagsController extends BaseController {
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.deviceTagsPutBodyReq, params);
+    // 忽略大小写查询
+    const attr = await service.deviceTags.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), device_id: params.device_id, id: { [Op.not]: params.id } });
+    if (attr) {
+      this.BAD_REQUEST({ message: '该属性已存在' });
+      return false;
+    }
     const res = await service.deviceTags.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
@@ -69,7 +83,7 @@ class DeviceTagsController extends BaseController {
     const { ctx, service } = this;
     let params = ctx.params;
     params.id = Number(params.id);
-    ctx.validate(ctx.rule.deviceTagsDelBodyReq, params);
+    ctx.validate(ctx.rule.deviceTagsId, params);
     const res = await service.deviceTags.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }

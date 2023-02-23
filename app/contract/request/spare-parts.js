@@ -2,7 +2,7 @@
 
 const body = {
   sparePartsId: {
-    id: { type: 'number', required: true, description: 'id' },
+    id: { type: 'string', required: true, description: 'id' },
   },
   sparePartsBodyReq: {
     name: {
@@ -36,14 +36,14 @@ const body = {
     },
     desc: {
       type: 'string',
-      required: true,
+      required: false,
       max: 255,
       description: '描述',
     },
   },
   sparePartsInventoryBodyReq: {
     spare_parts_id: {
-      type: 'number',
+      type: 'string',
       required: true,
       description: '工具id',
     },
@@ -83,7 +83,7 @@ const body = {
     },
     remark: {
       type: 'string',
-      required: true,
+      required: false,
       max: 300,
       description: '备注',
     },

@@ -39,6 +39,11 @@ const body = {
       max: 255,
       description: '图片',
     },
+    department_id: {
+      type: 'number',
+      required: true,
+      description: '部门id',
+    },
   },
 };
 

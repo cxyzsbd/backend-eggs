@@ -2,9 +2,9 @@
 
 const body = {
   inspectionsId: {
-    sn: {
+    id: {
       type: 'string',
-      max: 30,
+      max: 20,
       required: true,
       description: '计划编号',
     },
@@ -60,6 +60,11 @@ const body = {
       example: [ 1, 2 ],
       itemType: 'number',
       description: '处理人集合',
+    },
+    remind_time: {
+      type: 'number',
+      required: true,
+      description: '任务开始前多久通知，单位秒',
     },
     targets: {
       type: 'array',

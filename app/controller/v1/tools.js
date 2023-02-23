@@ -65,7 +65,7 @@ class ToolsController extends BaseController {
   async update() {
     const { ctx, service } = this;
     let params = { ...ctx.params, ...ctx.request.body };
-    params.id = Number(params.id);
+    // params.id = Number(params.id);
     ctx.validate(ctx.rule.toolsPutBodyReq, params);
     const res = await service.tools.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
@@ -81,7 +81,7 @@ class ToolsController extends BaseController {
   async destroy() {
     const { ctx, service } = this;
     let params = ctx.params;
-    params.id = Number(params.id);
+    // params.id = Number(params.id);
     ctx.validate(ctx.rule.toolsId, params);
     const res = await service.tools.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();

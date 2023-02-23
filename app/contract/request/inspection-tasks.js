@@ -2,13 +2,13 @@
 
 const body = {
   inspectionTasksId: {
-    sn: { type: 'string', required: true, description: '编号' },
+    id: { type: 'string', required: true, description: '编号' },
   },
   inspectionTasksBodyReq: {
-    inspection_sn: {
+    inspection_id: {
       type: 'string',
       required: true,
-      max: 30,
+      max: 20,
       description: '巡检编号',
     },
     name: {

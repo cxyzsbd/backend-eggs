@@ -4,23 +4,23 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    sn: {
-      type: DataTypes.STRING(30),
+    id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: false,
-      comment: "任务编号",
-      field: "sn"
+      comment: '任务编号',
+      field: 'id',
     },
-    inspection_sn: {
-      type: DataTypes.STRING(30),
+    inspection_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡检编号",
-      field: "inspection_sn"
+      comment: '巡检编号',
+      field: 'inspection_id',
     },
     name: {
       type: DataTypes.STRING(80),
@@ -28,8 +28,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "任务名称",
-      field: "name"
+      comment: '任务名称',
+      field: 'name',
     },
     start_time: {
       type: DataTypes.DATE,
@@ -37,8 +37,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "开始时间",
-      field: "start_time"
+      comment: '开始时间',
+      field: 'start_time',
     },
     end_time: {
       type: DataTypes.DATE,
@@ -46,8 +46,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "结束时间",
-      field: "end_time"
+      comment: '结束时间',
+      field: 'end_time',
     },
     department_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -55,17 +55,17 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "部门id",
-      field: "department_id"
+      comment: '部门id',
+      field: 'department_id',
     },
     status: {
       type: DataTypes.INTEGER(1),
       allowNull: false,
-      defaultValue: "1",
+      defaultValue: '1',
       primaryKey: false,
       autoIncrement: false,
-      comment: "状态（1:待确认；2:已确认，执行中；3:已完成；）",
-      field: "status"
+      comment: '状态（1:待确认；2:已确认，执行中；3:已完成；）',
+      field: 'status',
     },
     create_at: {
       type: DataTypes.DATE,
@@ -74,14 +74,23 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "create_at"
-    }
+      field: 'create_at',
+    },
   };
   const options = {
-    tableName: "inspection_tasks",
-    comment: "",
-    indexes: []
+    tableName: 'inspection_tasks',
+    comment: '',
+    indexes: [],
   };
-  const InspectionTasksModel = sequelize.define("inspection_tasks_model", attributes, options);
+  const InspectionTasksModel = sequelize.define('inspection_tasks_model', attributes, options);
+  InspectionTasksModel.associate = function() {
+    InspectionTasksModel.hasOne(app.model.Inspections, { foreignKey: 'id', sourceKey: 'inspection_id' });
+    InspectionTasksModel.belongsToMany(app.model.Users, {
+      as: 'handlers',
+      through: app.model.InspectionTaskHandlers,
+      foreignKey: 'task_id',
+      otherKey: 'handler',
+    });
+  };
   return InspectionTasksModel;
 };

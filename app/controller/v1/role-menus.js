@@ -25,7 +25,7 @@ class RoleMenusController extends BaseController {
     });
     ctx.validate(allRule, query);
     const res = await service.roleMenus.findAll(query);
-    this.SUCCESS();
+    this.SUCCESS(res);
   }
 
   /**
@@ -37,8 +37,8 @@ class RoleMenusController extends BaseController {
    */
   async findOne() {
     const { ctx, service } = this;
-    ctx.validate(ctx.rule.role_menuId, ctx.query);
-    const res = await service.roleMenus.findOne(ctx.query.id);
+    ctx.validate(ctx.rule.role_menuId, ctx.params);
+    const res = await service.roleMenus.findOne(ctx.params.id);
     res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
 

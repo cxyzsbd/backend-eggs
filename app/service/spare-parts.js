@@ -5,16 +5,25 @@ const Service = require('egg').Service;
 class SparePartsService extends Service {
   async findAll(payload) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    let where = payload.where;
+    where.company_id = company_id;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.SpareParts.count({ where });
     const data = await ctx.model.SpareParts.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
-      raw: true,
-      distinct: true,
+      // raw: true,
+      // distinct: true,
+      include: [
+        {
+          model: ctx.model.Users,
+          as: 'creator_info',
+          attributes: [ 'username' ],
+        },
+      ],
       where,
       order: Order,
     });
@@ -28,14 +37,25 @@ class SparePartsService extends Service {
 
   async findOne(payload) {
     const { ctx } = this;
-    return await ctx.model.SpareParts.findOne({ where: payload, raw: true });
+    return await ctx.model.SpareParts.findOne({
+      where: payload,
+      // raw: true,
+      include: [
+        {
+          model: ctx.model.Users,
+          as: 'creator_info',
+          attributes: [ 'username' ],
+        },
+      ],
+    });
   }
 
   async create(payload) {
-    const { ctx } = this;
-    const { request_user, department_id } = ctx.request.header;
+    const { ctx, app } = this;
+    const { request_user, company_id } = ctx.request.header;
+    payload.id = await app.utils.tools.SnowFlake();
     payload.creator = request_user;
-    payload.department_id = department_id;
+    payload.company_id = company_id;
     return await ctx.model.SpareParts.create(payload);
   }
 
@@ -52,9 +72,9 @@ class SparePartsService extends Service {
   // 库存操作
   async inventory(payload) {
     const { ctx } = this;
-    const { request_user, department_id } = ctx.request.header;
+    const { request_user, company_id } = ctx.request.header;
     payload.creator = request_user;
-    payload.department_id = department_id;
+    payload.company_id = company_id;
     const { spare_parts_id, type, quantity } = payload;
     const transaction = await ctx.model.transaction();
     try {
@@ -89,14 +109,30 @@ class SparePartsService extends Service {
   async inventoryRecords(payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    const { company_id } = ctx.request.header;
+    let where = payload.where;
+    if (Number(where.spare_parts_id) === 0) {
+      delete where.spare_parts_id;
+    }
+    where.company_id = company_id;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.SparePartsInventoryRecords.count({ where });
     const data = await ctx.model.SparePartsInventoryRecords.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
-      raw: true,
+      // raw: true,
+      include: [
+        {
+          model: ctx.model.Users,
+          as: 'creator_info',
+          attributes: [ 'username' ],
+        },
+        {
+          model: ctx.model.SpareParts,
+          as: 'spare_parts_info',
+        },
+      ],
       where,
       order: Order,
     });

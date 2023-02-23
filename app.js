@@ -27,8 +27,20 @@ class AppBootHook {
   }
 
   async didReady() {
+    const { app } = this;
+    const ctx = await app.createAnonymousContext();
+    const id = await app.utils.tools.SnowFlake();
+    console.log('id', id);
+    console.log('id', Number(id));
+    await ctx.model.TestFlake.create({ id, name: '11111' });
     // 应用启动完毕
-
+    app.messenger.on('redis_expire_subscribe', data => {
+      console.log('data', data);
+      // 执行对应到期任务
+      // ctx.logger.info('data========================', data);
+      // 测试不同的进程通讯时发送消息逻辑
+      // app.redis.clients.get('default').set(app.utils.tools.uuidv4(), 1);
+    });
   }
 
   async serverDidReady() {

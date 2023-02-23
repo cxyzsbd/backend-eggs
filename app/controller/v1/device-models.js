@@ -82,7 +82,7 @@ class DeviceModelsController extends BaseController {
     const { ctx, service } = this;
     let params = ctx.params;
     params.id = Number(params.id);
-    ctx.validate(ctx.rule.deviceModelsDelBodyReq, params);
+    ctx.validate(ctx.rule.deviceModelsId, params);
     const res = await service.deviceModels.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }

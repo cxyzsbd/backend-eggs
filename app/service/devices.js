@@ -47,15 +47,27 @@ class DevicesService extends Service {
 
   async destroy(payload) {
     const { ctx } = this;
-    return await ctx.model.Devices.destroy({ where: { id: payload.id } });
+    const transaction = await ctx.model.transaction();
+    try {
+      await transaction.commit();
+      // 删除模型
+      const res = await ctx.model.Devices.destroy({ where: { id: payload.id }, transaction });
+      // 删除属性
+      await ctx.model.DeviceTags.destroy({ where: { device_id: payload.id }, transaction });
+      return res;
+    } catch (e) {
+      // 异常情况回滚数据库
+      await transaction.rollback();
+      ctx.logger.error(e);
+    }
   }
 
   async modelToDevice(payload) {
     const { ctx } = this;
     const { request_user, department_id, company_id } = ctx.request.header;
-    const { model_id, station_id } = payload;
-    let modelData = await ctx.model.DeviceModels.findOne({ where: { id: model_id }, raw: true });
-    const { name, type, brand, model, desc, img } = modelData;
+    const { model_id, station_id, name, type, brand, model, desc, img } = payload;
+    // let modelData = await ctx.model.DeviceModels.findOne({ where: { id: model_id }, raw: true });
+    // const { name, type, brand, model, desc, img } = modelData;
     let tags = await ctx.model.DeviceModelTags.findAll({ where: { model_id }, raw: true });
     const transaction = await ctx.model.transaction();
     try {
@@ -63,7 +75,6 @@ class DevicesService extends Service {
       const device = await ctx.model.Devices.create({
         name, type, brand, model, desc, img,
         creator: request_user,
-        department_id,
         company_id,
         station_id,
       }, { raw: true, transaction });

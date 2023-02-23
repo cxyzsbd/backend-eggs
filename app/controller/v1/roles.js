@@ -24,11 +24,11 @@ class RoleController extends BaseController {
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const departments = await service.departments.getUserDepartments();
-    const department_ids = departments.map(item => item.id);
-    query.where.department_id = {
-      [Op.in]: [ ...department_ids, 0 ],
-    };
+    // const departments = await service.departments.getUserDepartments();
+    // const department_ids = departments.map(item => item.id);
+    // query.where.department_id = {
+    //   [Op.in]: [ ...department_ids, 0 ],
+    // };
     const res = await service.roles.findAll(query);
     this.SUCCESS(res);
   }
@@ -89,10 +89,10 @@ class RoleController extends BaseController {
    */
   async destroy() {
     const { ctx, service } = this;
-    const { request_user, department_id } = ctx.request.header;
+    const { request_user, company_id } = ctx.request.header;
     ctx.validate(ctx.rule.roleId, ctx.params);
     const role = await ctx.model.Roles.findOne({ where: { id: ctx.params.id }, raw: true });
-    if (role && role.department_id == 0 && department_id != 0) {
+    if (role && role.company_id == 0 && company_id != 0) {
       this.BAD_REQUEST({ message: '无权限删除该角色' });
       return false;
     }

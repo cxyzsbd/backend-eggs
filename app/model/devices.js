@@ -67,14 +67,14 @@ module.exports = app => {
       comment: '照片url',
       field: 'img',
     },
-    department_id: {
+    station_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '站点id',
+      field: 'station_id',
     },
     company_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,

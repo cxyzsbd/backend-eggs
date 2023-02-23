@@ -65,14 +65,23 @@ class UserService extends Service {
   }
   async findAll(payload, departments = []) {
     const { ctx, app } = this;
-    // await ctx.helper.sendSocketToClientOfRoom({a:12312313123},4)
+    // console.log('departments', departments);
+    const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order, state, username, email, phone, department_id, keyword, date_after_created } = payload;
-    const where = {};
+    let where = { company_id };
     if (departments.length) {
-      const ids = departments.map(item => item.id);
+      let ids = departments.map(item => item.id);
       where.department_id = {
-        [Op.in]: ids,
+        [Op.or]: [
+          { [Op.in]: ids },
+          null,
+        ],
       };
+      if (department_id && ids.includes(department_id)) {
+        where.department_id = department_id;
+      } else if (department_id === 0) {
+        where.department_id = null;
+      }
     }
     keyword
       ? (where[Op.or] = [{ username: { [Op.like]: `%${keyword}%` } }, { email: { [Op.like]: `%${keyword}%` } }, { phone: { [Op.like]: `%${keyword}%` } }])
@@ -84,10 +93,11 @@ class UserService extends Service {
     !app.utils.tools.isParam(state) ? (where.state = state) : null;
     email ? (where.email = { [Op.like]: `%${email}%` }) : null;
     phone ? (where.phone = { [Op.like]: `%${phone}%` }) : null;
-    !app.utils.tools.isParam(department_id) ? (where.department_id = department_id === 0 ? null : department_id) : null;
-    if (department_id === -1) {
-      where.department_id = null;
-    }
+    // !app.utils.tools.isParam(department_id) ? (where.department_id = department_id === 0 ? null : department_id) : null;
+    // if (department_id === -1) {
+    //   where.department_id = null;
+    // }
+    // console.log('where=============', where);
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     // 不返回id为1的超级管理员用户
     if (where[Op.and]) {
@@ -107,7 +117,7 @@ class UserService extends Service {
       ],
       order: Order,
       attributes: { exclude: [ 'password', 'delete_at' ] },
-      distinct: true,
+      // distinct: true,
     });
     return {
       data,

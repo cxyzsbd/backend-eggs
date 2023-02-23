@@ -13,7 +13,14 @@ class ToolInventoryRecordsService extends Service {
     const data = await ctx.model.ToolInventoryRecords.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
-      raw: true,
+      // raw: true,
+      include: [
+        {
+          model: ctx.model.Users,
+          attributes: [ 'username' ],
+          as: 'creator_info',
+        },
+      ],
       where,
       order: Order,
     });

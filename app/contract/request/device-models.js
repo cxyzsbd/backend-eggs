@@ -42,15 +42,6 @@ const body = {
       description: '照片url',
     },
   },
-  deviceModelTagsBodyReq: {
-    tags: {
-      type: 'array',
-      required: false,
-      itemType: 'object',
-      example: [{ tag: 'tag1', attr_desc: '温度' }, { tag: 'tag2', attr_desc: '湿度' }],
-      description: '模型关联数据',
-    },
-  },
 };
 
 module.exports = {

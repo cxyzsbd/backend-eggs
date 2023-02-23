@@ -1,6 +1,7 @@
 'use strict';
 
 const BaseController = require('../base-controller');
+const { Sequelize, Op } = require('sequelize');
 
 /**
 * @controller 设备 devices
@@ -50,8 +51,9 @@ class devicesController extends BaseController {
   */
   async create() {
     const { ctx } = this;
-    ctx.validate(ctx.rule.devicesBodyReq, ctx.request.body);
-    await ctx.service.devices.create(ctx.request.body);
+    const params = ctx.request.body;
+    ctx.validate(ctx.rule.devicesBodyReq, params);
+    await ctx.service.devices.create(params);
     this.CREATED();
   }
 
@@ -68,6 +70,12 @@ class devicesController extends BaseController {
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.devicesPutBodyReq, params);
+    // 忽略大小写查询
+    const device = await service.devices.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), station_id: params.station_id, id: { [Op.not]: params.id } });
+    if (device) {
+      this.BAD_REQUEST({ message: '设备名已存在' });
+      return false;
+    }
     const res = await service.devices.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
@@ -97,13 +105,20 @@ class devicesController extends BaseController {
   */
   async modelToDevice() {
     const { ctx, service } = this;
-    ctx.validate(ctx.rule.modelToDeviceBodyReq, ctx.request.body);
-    const model = await service.deviceModels.findOne({ id: ctx.request.body.model_id });
+    const params = ctx.request.header;
+    ctx.validate(ctx.rule.modelToDeviceBodyReq, params);
+    const model = await service.deviceModels.findOne({ id: params.model_id });
     if (!model) {
       this.BAD_REQUEST({ message: '模型不存在' });
       return false;
     }
-    await service.devices.modelToDevice(ctx.request.body);
+    // 忽略大小写查询
+    const device = await service.devices.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), station_id: params.station_id });
+    if (device) {
+      this.BAD_REQUEST({ message: '该站点下已存在同名设备，不能重复添加' });
+      return false;
+    }
+    await service.devices.modelToDevice(params);
     this.CREATED();
   }
 }

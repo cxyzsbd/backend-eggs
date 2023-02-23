@@ -22,15 +22,6 @@ module.exports = app => {
       comment: "角色名",
       field: "name"
     },
-    department_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: "部门id",
-      field: "department_id"
-    },
     create_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -48,6 +39,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: null,
       field: "update_at"
+    },
+    company_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "公司id",
+      field: "company_id"
     }
   };
   const options = {

@@ -14,7 +14,7 @@ module.exports = app => {
       field: 'id',
     },
     tool_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
@@ -112,14 +112,14 @@ module.exports = app => {
       comment: '备注',
       field: 'remark',
     },
-    department_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+    company_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '公司id',
+      field: 'company_id',
     },
   };
   const options = {
@@ -128,5 +128,9 @@ module.exports = app => {
     indexes: [],
   };
   const ToolInventoryRecordsModel = sequelize.define('tool_inventory_records_model', attributes, options);
+  ToolInventoryRecordsModel.associate = () => {
+    ToolInventoryRecordsModel.hasOne(app.model.Users, { sourceKey: 'creator', foreignKey: 'id', as: 'creator_info' });
+    ToolInventoryRecordsModel.hasOne(app.model.Tools, { sourceKey: 'tool_id', foreignKey: 'id', as: 'tools_info' });
+  };
   return ToolInventoryRecordsModel;
 };

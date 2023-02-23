@@ -6,8 +6,12 @@ const { Op } = require('sequelize');
 class RoleService extends Service {
   async findAll(payload) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    let where = payload.where;
+    where.company_id = {
+      [Op.in]: [ company_id, 0 ],
+    };
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     // 如果请求者不是用户id为1的超级管理员，则不返回id为1的超级管理员角色
@@ -24,11 +28,10 @@ class RoleService extends Service {
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       where,
       order: Order,
-      distinct: true,
       include: [
         {
-          as: 'department',
-          model: ctx.model.Departments,
+          as: 'company',
+          model: ctx.model.Companys,
         },
       ],
     });
@@ -47,8 +50,8 @@ class RoleService extends Service {
 
   async create(payload) {
     const { ctx } = this;
-    const { department_id } = ctx.request.header;
-    payload.department_id = department_id;
+    const { company_id } = ctx.request.header;
+    payload.company_id = company_id;
     return await ctx.model.Roles.create(payload);
   }
 

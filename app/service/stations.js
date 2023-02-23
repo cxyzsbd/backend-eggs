@@ -26,8 +26,11 @@ class StationsService extends Service {
     };
   }
 
-  async findOne(payload) {
+  async findOne(payload, hasInclude = true) {
     const { ctx } = this;
+    if (!hasInclude) {
+      return await ctx.model.Stations.findOne({ where: payload });
+    }
     return await ctx.model.Stations.findOne({
       where: payload,
       include: [
@@ -40,11 +43,10 @@ class StationsService extends Service {
 
   async create(payload) {
     const { ctx } = this;
-    const { company_id, request_user, department_id } = ctx.request.header;
+    const { company_id, request_user } = ctx.request.header;
     payload = {
       ...payload,
       creator: request_user,
-      department_id,
       company_id,
     };
     return await ctx.model.Stations.create(payload);

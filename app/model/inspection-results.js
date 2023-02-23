@@ -13,23 +13,23 @@ module.exports = app => {
       comment: null,
       field: 'id',
     },
-    patrol_point_sn: {
-      type: DataTypes.STRING(30),
+    patrol_point_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: '巡点编号',
-      field: 'patrol_point_sn',
+      field: 'patrol_point_id',
     },
-    task_sn: {
-      type: DataTypes.STRING(30),
+    task_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: '巡检任务编号',
-      field: 'task_sn',
+      field: 'task_id',
     },
     results: {
       type: DataTypes.TEXT,

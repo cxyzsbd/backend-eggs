@@ -61,11 +61,11 @@ class InspectionsService extends Service {
   }
 
   async create(payload) {
-    const { ctx } = this;
-    const { request_user, department_id } = ctx.request.header;
-    payload.sn = await this.generateSn();
+    const { ctx, app } = this;
+    const { request_user, company_id } = ctx.request.header;
+    payload.id = await app.utils.tools.SnowFlake();
     payload.creator = request_user;
-    payload.department_id = department_id;
+    payload.company_id = company_id;
     payload.status = 1;
     const transaction = await ctx.model.transaction();
     try {
@@ -87,7 +87,7 @@ class InspectionsService extends Service {
           items: t.items,
         };
       });
-      await ctx.model.InspectionTargets.bulkCreate(targetArr);
+      await ctx.model.InspectionTargets.bulkCreate(targetArr, { transaction });
       await transaction.commit();
       return res;
     } catch (e) {

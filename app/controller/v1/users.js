@@ -233,7 +233,7 @@ class UsersController extends BaseController {
     const { ctx, app } = this;
     const { header } = ctx.request;
     if (!header || !header.refresh_token) {
-      this.UNAUTHORIZED({ message: 'refresh_token已失效' });
+      this.UNAUTHORIZED({ message: '无效的refresh_token' });
       return false;
     }
     // 校验refresh_token

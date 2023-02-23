@@ -4,23 +4,23 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    sn: {
-      type: DataTypes.STRING(30),
+    id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: false,
       comment: '任务编号',
-      field: 'sn',
+      field: 'id',
     },
-    inspection_sn: {
-      type: DataTypes.STRING(30),
+    inspection_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: '巡检编号',
-      field: 'inspection_sn',
+      field: 'inspection_id',
     },
     name: {
       type: DataTypes.STRING(80),
@@ -84,11 +84,11 @@ module.exports = app => {
   };
   const InspectionTasksModel = sequelize.define('inspection_tasks_model', attributes, options);
   InspectionTasksModel.associate = function() {
-    InspectionTasksModel.hasOne(app.model.Inspections, { foreignKey: 'sn', sourceKey: 'inspection_sn' });
+    InspectionTasksModel.hasOne(app.model.Inspections, { foreignKey: 'id', sourceKey: 'inspection_id' });
     InspectionTasksModel.belongsToMany(app.model.Users, {
       as: 'handlers',
       through: app.model.InspectionTaskHandlers,
-      foreignKey: 'sn',
+      foreignKey: 'task_id',
       otherKey: 'handler',
     });
   };

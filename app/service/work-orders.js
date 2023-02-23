@@ -23,14 +23,16 @@ class WorkOrdersService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    const { company_id } = ctx.request.header;
+    let where = payload.where;
+    where.company_id = company_id;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.WorkOrders.count({ where });
     const data = await ctx.model.WorkOrders.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
-      raw: true,
+      // raw: true,
       where,
       order: Order,
     });
@@ -49,54 +51,39 @@ class WorkOrdersService extends Service {
 
   async create(payload) {
     const { ctx } = this;
-    const { department_id, request_user } = ctx.request.header;
+    const { company_id, request_user } = ctx.request.header;
     payload.sn = await this.generateOrderNo('GD-');
     payload.creator = request_user;
-    payload.department_id = department_id;
-    const transaction = await ctx.model.transaction();
-    try {
-      console.log('payload', payload);
-      const res = await ctx.model.WorkOrders.create(payload, { transaction });
-      console.log('res', res);
-      // 操作记录
+    payload.company_id = company_id;
+    const res = await ctx.model.WorkOrders.create(payload);
+    // 操作记录
+    if (res) {
       await ctx.model.WorkOrderOperationRecords.create({
         work_order_sn: payload.sn,
         type: 1,
         operator: request_user,
-      }, { transaction });
-      await transaction.commit();
-      return res;
-    } catch (e) {
-      // 异常情况回滚数据库
-      await transaction.rollback();
-      ctx.logger.error(e);
+      });
     }
+    return res;
   }
 
   async update(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
-    const transaction = await ctx.model.transaction();
-    try {
-      let res = await ctx.model.WorkOrders.update(payload, {
-        where: {
-          sn: payload.sn,
-        },
-        transaction,
-      });
-      // 操作记录
+    let res = await ctx.model.WorkOrders.update(payload, {
+      where: {
+        sn: payload.sn,
+      },
+    });
+    // 操作记录
+    if (res && res[0]) {
       await ctx.model.WorkOrderOperationRecords.create({
         work_order_sn: payload.sn,
         type: 2,
         operator: request_user,
       });
-      await transaction.commit();
-      return res;
-    } catch (e) {
-      // 异常情况回滚数据库
-      await transaction.rollback();
-      ctx.logger.error(e);
     }
+    return res;
   }
 
   async destroy(payload) {
@@ -137,54 +124,40 @@ class WorkOrdersService extends Service {
   async confirm(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
-    const transaction = await ctx.model.transaction();
-    try {
-      const res = await ctx.model.WorkOrders.update({
-        status: 2,
-      }, {
-        where: { sn: payload.sn },
-        transaction,
-      });
+    const res = await ctx.model.WorkOrders.update({
+      status: 2,
+    }, {
+      where: { sn: payload.sn },
+    });
+    if (res && res[0]) {
       await ctx.model.WorkOrderOperationRecords.create({
         work_order_sn: payload.sn,
         type: 4,
         operator: request_user,
       });
-      await transaction.commit();
-      return res;
-    } catch (e) {
-      // 异常情况回滚数据库
-      await transaction.rollback();
-      ctx.logger.error(e);
     }
+    return res;
   }
 
   async complete(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     const { handle_result, sn } = payload;
-    const transaction = await ctx.model.transaction();
-    try {
-      const res = await ctx.model.WorkOrders.update({
-        status: 3,
-        handle_result,
-      }, {
-        where: { sn },
-        transaction,
-      });
+    const res = await ctx.model.WorkOrders.update({
+      status: 3,
+      handle_result,
+    }, {
+      where: { sn },
+    });
+    if (res && res[0]) {
       // 操作日志
       await ctx.model.WorkOrderOperationRecords.create({
         work_order_sn: sn,
         type: 5,
         operator: request_user,
       });
-      await transaction.commit();
-      return res;
-    } catch (e) {
-      // 异常情况回滚数据库
-      await transaction.rollback();
-      ctx.logger.error(e);
     }
+    return res;
   }
 }
 

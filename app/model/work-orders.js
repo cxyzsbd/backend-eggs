@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 
-module.exports = (app) => {
-  const DataTypes = app.Sequelize
-  const sequelize = app.model
+module.exports = app => {
+  const DataTypes = app.Sequelize;
+  const sequelize = app.model;
   const attributes = {
     sn: {
       type: DataTypes.STRING(30),
@@ -58,14 +58,14 @@ module.exports = (app) => {
       comment: '创建人',
       field: 'creator',
     },
-    department_id: {
+    company_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '公司id',
+      field: 'company_id',
     },
     end_time: {
       type: DataTypes.DATE,
@@ -166,19 +166,19 @@ module.exports = (app) => {
       comment: null,
       field: 'create_at',
     },
-  }
+  };
   const options = {
     tableName: 'work_orders',
     comment: '',
     indexes: [],
-  }
+  };
   const WorkOrdersModel = sequelize.define(
     'work_orders_model',
     attributes,
     options
-  )
+  );
   WorkOrdersModel.associate = function() {
-    WorkOrdersModel.hasMany(sequelize.WorkOrderOperationRecords, { as: 'operation_records', sourceKey: "sn", foreignKey: "work_order_sn" })
-  }
-  return WorkOrdersModel
-}
+    WorkOrdersModel.hasMany(sequelize.WorkOrderOperationRecords, { as: 'operation_records', sourceKey: 'sn', foreignKey: 'work_order_sn' });
+  };
+  return WorkOrdersModel;
+};

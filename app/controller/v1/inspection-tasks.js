@@ -30,8 +30,8 @@ class InspectionTasksController extends BaseController {
   * @apikey
   * @summary 获取某个 巡检任务
   * @description 获取某个 巡检任务
-  * @router get inspection-tasks/:sn
-  * @request path string *sn eg:1
+  * @router get inspection-tasks/:id
+  * @request path string *id eg:1
   */
   async findOne() {
     const { ctx, service } = this;
@@ -44,8 +44,8 @@ class InspectionTasksController extends BaseController {
   * @apikey
   * @summary 删除 巡检任务
   * @description 删除 巡检任务
-  * @router delete inspection-tasks/:sn
-  * @request path string *sn eg:1
+  * @router delete inspection-tasks/:id
+  * @request path string *id eg:1
   */
   async destroy() {
     const { ctx, service } = this;

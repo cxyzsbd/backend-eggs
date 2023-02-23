@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "await-stream-ready": "^1.0.1",
+    "biguint-format": "^1.0.2",
     "egg": "^3",
     "egg-jwt": "^3.1.7",
     "egg-redis": "^2.4.0",
@@ -16,6 +17,7 @@
     "egg-socket.io": "^4.1.6",
     "egg-swagger-doc-feat": "^2.2.14",
     "egg-validate": "^2.0.2",
+    "flake-idgen": "^1.4.0",
     "i18n": "^0.15.1",
     "md5": "^2.3.0",
     "mysql2": "^2.3.3",
@@ -34,9 +36,9 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-web_backend",
+    "start": "egg-scripts start --daemon --title=egg-server-web_backend --sticky",
     "stop": "egg-scripts stop --title=egg-server-web_backend",
-    "dev": "egg-bin dev",
+    "dev": "egg-bin dev --sticky",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "dbload": "sequelize-automate -c sequelize-automate.config.json",

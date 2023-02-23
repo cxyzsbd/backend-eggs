@@ -1,6 +1,7 @@
 'use strict';
 
 const BaseController = require('../base-controller');
+const { Sequelize, Op } = require('sequelize');
 
 /**
 * @controller 站点 stations
@@ -49,9 +50,17 @@ class StationsController extends BaseController {
   * @request body stationsBodyReq
   */
   async create() {
-    const { ctx } = this;
-    ctx.validate(ctx.rule.stationsBodyReq, ctx.request.body);
-    await ctx.service.stations.create(ctx.request.body);
+    const { ctx, service } = this;
+    const { company_id } = ctx.request.header;
+    const params = ctx.request.body;
+    ctx.validate(ctx.rule.stationsBodyReq, params);
+    // 忽略大小写查询
+    const station = await service.stations.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), company_id }, false);
+    if (station) {
+      this.BAD_REQUEST({ message: '已存在同名站点，不能重复添加' });
+      return false;
+    }
+    await service.stations.create(params);
     this.CREATED();
   }
 
@@ -65,9 +74,16 @@ class StationsController extends BaseController {
   */
   async update() {
     const { ctx, service } = this;
+    const { company_id } = ctx.request.header;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.stationsPutBodyReq, params);
+    // 忽略大小写查询
+    const station = await service.stations.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), company_id, id: { [Op.not]: params.id } }, false);
+    if (station) {
+      this.BAD_REQUEST({ message: '站点名已存在' });
+      return false;
+    }
     const res = await service.stations.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }

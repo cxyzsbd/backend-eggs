@@ -22,14 +22,14 @@ module.exports = app => {
       comment: "处理人",
       field: "handler"
     },
-    sn: {
-      type: DataTypes.STRING(30),
+    inspection_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: "巡检编号",
-      field: "sn"
+      field: "inspection_id"
     }
   };
   const options = {

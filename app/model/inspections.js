@@ -4,14 +4,14 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    sn: {
-      type: DataTypes.STRING(30),
+    id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: false,
       comment: '计划编号',
-      field: 'sn',
+      field: 'id',
     },
     name: {
       type: DataTypes.STRING(60),
@@ -85,19 +85,19 @@ module.exports = app => {
       comment: '创建人',
       field: 'creator',
     },
-    department_id: {
+    company_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '公司id',
+      field: 'company_id',
     },
     status: {
       type: DataTypes.INTEGER(1),
       allowNull: false,
-      defaultValue: null,
+      defaultValue: '1',
       primaryKey: false,
       autoIncrement: false,
       comment: '状态：1:进行中；2:已完成',
@@ -111,6 +111,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: '是否启用：1:启用；0:停用',
       field: 'state',
+    },
+    remind_time: {
+      type: DataTypes.INTEGER(10),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '任务开始前多久提醒，单位秒',
+      field: 'remind_time',
     },
     create_at: {
       type: DataTypes.DATE,
@@ -130,25 +139,29 @@ module.exports = app => {
       comment: null,
       field: 'update_at',
     },
+    delete_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'delete_at',
+    },
   };
   const options = {
     tableName: 'inspections',
-    paranoid: true,
-    timestamps: true,
-    createdAt: false,
-    updatedAt: false,
-    deletedAt: 'delete_at',
     comment: '',
     indexes: [],
   };
   const InspectionsModel = sequelize.define('inspections_model', attributes, options);
   InspectionsModel.associate = function() {
-    InspectionsModel.hasMany(app.model.InspectionTasks, { foreignKey: 'inspection_sn', sourceKey: 'sn' });
-    InspectionsModel.hasMany(app.model.InspectionTargets, { foreignKey: 'inspection_sn', sourceKey: 'sn' });
+    InspectionsModel.hasMany(app.model.InspectionTasks, { foreignKey: 'inspection_id', sourceKey: 'id' });
+    InspectionsModel.hasMany(app.model.InspectionTargets, { foreignKey: 'inspection_id', sourceKey: 'id' });
     InspectionsModel.belongsToMany(app.model.Users, {
       as: 'handlers',
       through: app.model.InspectionHandlers,
-      foreignKey: 'sn',
+      foreignKey: 'inspection_id',
       otherKey: 'handler',
     });
   };

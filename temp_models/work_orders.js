@@ -58,14 +58,14 @@ module.exports = app => {
       comment: "创建人",
       field: "creator"
     },
-    department_id: {
+    company_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "部门id",
-      field: "department_id"
+      comment: "公司id",
+      field: "company_id"
     },
     end_time: {
       type: DataTypes.DATE,

@@ -11,25 +11,25 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
       comment: null,
-      field: "id"
+      field: 'id',
     },
-    patrol_point_sn: {
-      type: DataTypes.STRING(30),
+    patrol_point_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡点编号",
-      field: "patrol_point_sn"
+      comment: '巡点编号',
+      field: 'patrol_point_id',
     },
-    task_sn: {
-      type: DataTypes.STRING(30),
+    task_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡检任务编号",
-      field: "task_sn"
+      comment: '巡检任务编号',
+      field: 'task_id',
     },
     results: {
       type: DataTypes.TEXT,
@@ -37,8 +37,15 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "巡检结果",
-      field: "results"
+      comment: '巡检结果',
+      field: 'results',
+      get() {
+        const rawValue = this.getDataValue('items');
+        return rawValue ? JSON.parse(rawValue) : null;
+      },
+      set(value) {
+        this.setDataValue('items', JSON.stringify(value));
+      },
     },
     audios: {
       type: DataTypes.TEXT,
@@ -47,7 +54,7 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: "音频链接，','分隔",
-      field: "audios"
+      field: 'audios',
     },
     imgs: {
       type: DataTypes.TEXT,
@@ -56,7 +63,7 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: "图片链接,','分隔",
-      field: "imgs"
+      field: 'imgs',
     },
     remarks: {
       type: DataTypes.STRING(255),
@@ -64,8 +71,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "备注",
-      field: "remarks"
+      comment: '备注',
+      field: 'remarks',
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -73,8 +80,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "提交人",
-      field: "creator"
+      comment: '提交人',
+      field: 'creator',
     },
     create_at: {
       type: DataTypes.DATE,
@@ -83,7 +90,7 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "create_at"
+      field: 'create_at',
     },
     complete_at: {
       type: DataTypes.DATE,
@@ -92,14 +99,14 @@ module.exports = app => {
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "complete_at"
-    }
+      field: 'complete_at',
+    },
   };
   const options = {
-    tableName: "inspection_results",
-    comment: "",
-    indexes: []
+    tableName: 'inspection_results',
+    comment: '',
+    indexes: [],
   };
-  const InspectionResultsModel = sequelize.define("inspection_results_model", attributes, options);
+  const InspectionResultsModel = sequelize.define('inspection_results_model', attributes, options);
   return InspectionResultsModel;
 };

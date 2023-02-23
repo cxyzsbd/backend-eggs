@@ -1,7 +1,7 @@
 // 小程序配置
 const WX_XCX_CONFIG = {
-  APPID: 'wxffa3147b8ed9774f',
-  APP_SECRET: '5d011a7d6c195109b33bcbc8362e9b15',
+  APPID: 'wx0b37bb94242747ae',
+  APP_SECRET: '18640fd56cd22b0a06cd3bc7d1c9a299',
 };
 const WX_GZH_CONFIG = {
   REDIS_ACCESS_TOKEN_KEY: 'WX_ACCESS_TOKEN',

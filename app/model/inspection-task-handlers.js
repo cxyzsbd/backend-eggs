@@ -11,7 +11,7 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
       comment: null,
-      field: "id"
+      field: 'id',
     },
     handler: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -19,24 +19,24 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "处理人",
-      field: "handler"
+      comment: '处理人',
+      field: 'handler',
     },
-    sn: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
+    task_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "sn"
-    }
+      field: 'task_id',
+    },
   };
   const options = {
-    tableName: "inspection_task_handlers",
-    comment: "",
-    indexes: []
+    tableName: 'inspection_task_handlers',
+    comment: '',
+    indexes: [],
   };
-  const InspectionTaskHandlersModel = sequelize.define("inspection_task_handlers_model", attributes, options);
+  const InspectionTaskHandlersModel = sequelize.define('inspection_task_handlers_model', attributes, options);
   return InspectionTaskHandlersModel;
 };

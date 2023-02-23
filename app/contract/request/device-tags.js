@@ -7,6 +7,7 @@ const body = {
   deviceTagsBodyReq: {
     device_id: {
       type: 'number',
+      min: 1,
       required: true,
       description: '设备id',
     },

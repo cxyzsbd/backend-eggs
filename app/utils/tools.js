@@ -4,6 +4,8 @@ const path = require('path');
 const lodash = require('lodash');
 const md5 = require('md5');
 const { v4: uuidv4 } = require('uuid');
+const FlakeId = require('flake-idgen');
+const intformat = require('biguint-format');
 module.exports = class Tools {
   constructor(app) {
     this.app = app;
@@ -14,6 +16,13 @@ module.exports = class Tools {
     this.lodash = lodash;
     this.md5 = md5;
     this.uuidv4 = uuidv4;
+  }
+  /**
+   * 雪花算法生成id
+   */
+  async SnowFlake() {
+    return intformat((new FlakeId({ epoch: 1300000000000 })).next(), 'dec');
+    // return intformat((new FlakeId()).next(), 'dec');
   }
   /**
    * 生成唯一编号
@@ -122,6 +131,45 @@ module.exports = class Tools {
       return await this.getRedisCacheUserinfo(id);
     }
     return data;
+  }
+
+  async setAttrsRedisCache() {
+    const { ctx } = this;
+    // 获取所有的公司、站点、设备、属性
+    const companys = await ctx.model.Companys.findAll({ raw: true });
+    let newCompanysObj = {};
+    companys.forEach(c => {
+      newCompanysObj[`attrs_${c.id}`] = c.id;
+    });
+    const stations = await ctx.model.Stations.findAll({ raw: true });
+    let devices = await ctx.model.Devices.findAll({ raw: true });
+    const deviceTags = await ctx.model.DeviceTags.findAll({ raw: true });
+    await ctx.service.cache.set('attr_tags', deviceTags, 2 * 60 * 60, 'attrs');
+    devices = devices.map(d => {
+      let tags = deviceTags.filter(t => t.device_id === d.id);
+      let tagsObj = {};
+      tags.forEach(tag => {
+        tagsObj[tag.name.toLowerCase()] = tag.id;
+      });
+      d.tags = tagsObj;
+      return d;
+    });
+    Object.keys(newCompanysObj).forEach(async key => {
+      let stationsArr = stations.filter(s => s.company_id === newCompanysObj[key]);
+      let tempObj = {};
+      stationsArr.forEach(s => {
+        let newObj = {};
+        const devicesArr = devices.filter(d => d.station_id === s.id);
+        devicesArr.forEach(d => {
+          newObj[d.name.toLowerCase()] = d.tags;
+        });
+        tempObj[s.name.toLowerCase()] = newObj;
+      });
+      // newCompanysObj[key] = tempObj;
+      // 存到redis中
+      await ctx.service.cache.set(key, tempObj, 2 * 60 * 60, 'attrs');
+    });
+    // console.log('companys========', newCompanysObj);
   }
 
   /**

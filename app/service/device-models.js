@@ -46,7 +46,19 @@ class DeviceModelsService extends Service {
 
   async destroy(payload) {
     const { ctx } = this;
-    return await ctx.model.DeviceModels.destroy({ where: { id: payload.id } });
+    const transaction = await ctx.model.transaction();
+    try {
+      await transaction.commit();
+      // 删除模型
+      const res = await ctx.model.DeviceModels.destroy({ where: { id: payload.id }, transaction });
+      // 删除属性
+      await ctx.model.DeviceModelTags.destroy({ where: { model_id: payload.id }, transaction });
+      return res;
+    } catch (e) {
+      // 异常情况回滚数据库
+      await transaction.rollback();
+      ctx.logger.error(e);
+    }
   }
 }
 

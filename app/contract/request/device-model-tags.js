@@ -8,6 +8,7 @@ const body = {
     model_id: {
       type: 'number',
       required: true,
+      min: 1,
       description: '模型id',
     },
     name: {

@@ -65,7 +65,7 @@ class SparePartsController extends BaseController {
   async update() {
     const { ctx, service } = this;
     let params = { ...ctx.params, ...ctx.request.body };
-    params.id = Number(params.id);
+    // params.id = Number(params.id);
     ctx.validate(ctx.rule.sparePartsPutBodyReq, params);
     const res = await service.spareParts.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
@@ -81,7 +81,7 @@ class SparePartsController extends BaseController {
   async destroy() {
     const { ctx, service } = this;
     let params = ctx.params;
-    params.id = Number(params.id);
+    // params.id = Number(params.id);
     ctx.validate(ctx.rule.sparePartsId, params);
     const res = await service.spareParts.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
@@ -97,6 +97,7 @@ class SparePartsController extends BaseController {
   async inventory() {
     const { ctx, service } = this;
     const params = { ...ctx.request.body, ...ctx.params };
+    console.log('params', params);
     ctx.validate(ctx.rule.sparePartsInventoryBodyReq, params);
     // 特殊参数校验
     if (params.type === 4 && !params.receiving_record_id) {

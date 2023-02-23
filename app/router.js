@@ -87,15 +87,15 @@ module.exports = app => {
 
   // 巡检
   router.post('/api/v1/inspections', controller.v1.inspections.create);
-  router.put('/api/v1/inspections/:sn', controller.v1.inspections.update);
+  router.put('/api/v1/inspections/:id', controller.v1.inspections.update);
   router.get('/api/v1/inspections', controller.v1.inspections.findAll);
-  router.get('/api/v1/inspections/:sn', controller.v1.inspections.findOne);
-  router.delete('/api/v1/inspections/:sn', controller.v1.inspections.destroy);
+  router.get('/api/v1/inspections/:id', controller.v1.inspections.findOne);
+  router.delete('/api/v1/inspections/:id', controller.v1.inspections.destroy);
 
   // 巡检任务
   router.get('/api/v1/inspection-tasks', controller.v1.inspectionTasks.findAll);
-  router.get('/api/v1/inspection-tasks/:sn', controller.v1.inspectionTasks.findOne);
-  router.delete('/api/v1/inspection-tasks/:sn', controller.v1.inspectionTasks.destroy);
+  router.get('/api/v1/inspection-tasks/:id', controller.v1.inspectionTasks.findOne);
+  router.delete('/api/v1/inspection-tasks/:id', controller.v1.inspectionTasks.destroy);
 
   // 用户关注报警点位
   router.post('/api/v1/user-alarm-tags', controller.v1.userAlarmTags.bulkOperation);
@@ -127,6 +127,10 @@ module.exports = app => {
   router.get('/api/v1/spare-parts/:spare_parts_id/inventory-records', controller.v1.spareParts.inventoryRecords);
 
   // 数据转发接口路由
+  router.post(/^\/api\/v1\/box-data\/([\w-.\/]+)$/, controller.v1.boxData.dataAndAlarm);
+  router.get(/^\/api\/v1\/box-data\/([\w-.\/]+)$/, controller.v1.boxData.dataAndAlarm);
+
+  // 数据转发接口路由
   router.post(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
   router.get(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
 
@@ -142,7 +146,7 @@ module.exports = app => {
   router.delete('/api/v1/device-models/:id', controller.v1.deviceModels.destroy);
 
   // 设备
-  router.post('/api/v1/devices', controller.v1.devices.create);
+  // router.post('/api/v1/devices', controller.v1.devices.create);
   router.put('/api/v1/devices/:id', controller.v1.devices.update);
   router.get('/api/v1/devices', controller.v1.devices.findAll);
   router.get('/api/v1/devices/:id', controller.v1.devices.findOne);
@@ -187,4 +191,8 @@ module.exports = app => {
   router.delete('/api/v1/recovery-flows/:id', controller.v1.flows.forceDelete);
   router.patch('/api/v1/recovery-flows/:id', controller.v1.flows.recoveryFlows);
   router.get('/api/v1/recovery-flows', controller.v1.flows.recoveryFlowsList);
+
+  // 对象
+  router.post('/api/v1/wx-mini/login', controller.v1.wechat.login);
+  router.post('/api/v1/wx-mini/bind', controller.v1.wechat.bind);
 };

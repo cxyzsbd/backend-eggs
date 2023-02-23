@@ -22,14 +22,14 @@ module.exports = app => {
       comment: "处理人",
       field: "handler"
     },
-    sn: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
+    task_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: null,
-      field: "sn"
+      field: "task_id"
     }
   };
   const options = {

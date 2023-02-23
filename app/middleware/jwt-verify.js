@@ -1,4 +1,4 @@
-const whiteList = [ '/api/v1/users/login', '/api/v1/users/refresh-token', '/doc' ];
+const whiteList = [ '/api/v1/users/login', '/api/v1/users/refresh-token', '/doc', '/api/v1/wx-mini/login', '/api/v1/wx-mini/bind' ];
 
 module.exports = options => {
   return async function jwt_verify(ctx, next) {
