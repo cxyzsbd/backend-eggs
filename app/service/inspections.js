@@ -70,20 +70,20 @@ class InspectionsService extends Service {
     const transaction = await ctx.model.transaction();
     try {
       // 创建巡检计划
-      const res = await ctx.model.Inspections.create(payload, { raw: true, transaction });
+      const res = await ctx.model.Inspections.create(payload, { transaction });
       // 巡检人
       const handlersArr = payload.handlers.map(handler => {
         return {
           handler,
-          sn: res.sn,
+          id: res.id,
         };
       });
       await ctx.model.InspectionHandlers.bulkCreate(handlersArr, { transaction });
       // 巡检目标
       const targetArr = payload.targets.map(t => {
         return {
-          inspection_sn: res.sn,
-          patrol_point_sn: t.patrol_point_sn,
+          inspection_id: res.id,
+          patrol_point_id: t.patrol_point_id,
           items: t.items,
         };
       });

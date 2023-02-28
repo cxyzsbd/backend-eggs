@@ -1,6 +1,7 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
+const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -32,9 +33,9 @@ module.exports = appInfo => {
         username: 'root',
         password: 'lkys@401A',
 
-        // database: 'youzhi',
-        // host: 'mysql-svc.bms-ns.svc',
-        // port: '3306',
+        // database: 'lkys_new',
+        // host: '42.192.189.220',
+        // port: '30306',
         // username: 'root',
         // password: 'mySQL13test14',
         app: true,

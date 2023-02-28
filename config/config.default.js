@@ -3,6 +3,9 @@
 'use strict';
 const { v4: uuidv4 } = require('uuid');
 const I18n = require('i18n');
+const {
+  REDIS_DEFAULT,
+} = require('../global.config');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -43,7 +46,7 @@ module.exports = appInfo => {
     dirScanner: './app/controller',
     apiInfo: {
       title: 'lkys doc',
-      description: 'lkys 接口文档',
+      description: '每个列表接口都支持prop_order和order参数方便自定义字段排序，例如按时间倒序排序可以传prop_order=create_at;order=DESC即可',
       version: '1.9.0',
     },
     schemes: [ 'http' ],
@@ -111,12 +114,7 @@ module.exports = appInfo => {
         packetMiddleware: [ 'packet' ],
       },
     },
-    redis: {
-      host: '192.168.1.90',
-      port: 6379,
-      auth_pass: '',
-      db: 1,
-    },
+    redis: REDIS_DEFAULT.io,
   };
 
   config.multipart = {
@@ -127,8 +125,11 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-    socketOnlineUserRoomName: '',
-    socketDepartmentRoomNamePrefix: '',
+    socketOnlineUserRoomName: 'SOCKET_ONLINE_ROOM', // 所有用户在线房间
+    socketDepartmentRoomNamePrefix: 'SOCKET_DEPARTMENT_ROOM_', // 部门房间前缀
+    socketCompanyRoomNamePrefix: 'SOCKET_COMPANY_ROOM_', // 公司房间前缀
+    socketCompanyAdminPrefix: 'SOCKET_COMPANY_ADMIN_ROOM_', // 公司管理员房间前缀
+    IORedisUserKeyPrefix: 'SOCKET_USER_', // redis存用户socketId前缀
   };
 
   return {

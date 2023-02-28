@@ -10,19 +10,30 @@ class DeviceTagsService extends Service {
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.DeviceTags.count({ where });
-    const data = await ctx.model.DeviceTags.findAll({
-      limit: pageSize,
-      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
-      raw: true,
+    let tempObj = {
       where,
       order: Order,
-    });
-    return {
+    };
+    if (pageSize > 0) {
+      tempObj = {
+        ...tempObj,
+        limit: pageSize,
+        offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+      };
+    }
+    const data = await ctx.model.DeviceTags.findAll(tempObj);
+    let resObj = {
       data,
-      pageNumber,
-      pageSize,
       total: count,
     };
+    if (pageSize > 0) {
+      resObj = {
+        ...resObj,
+        pageNumber,
+        pageSize,
+      };
+    }
+    return resObj;
   }
 
   async create(payload) {

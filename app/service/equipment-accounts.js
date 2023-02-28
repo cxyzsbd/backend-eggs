@@ -13,7 +13,7 @@ class EquipmentAccountsService extends Service {
     const data = await ctx.model.EquipmentAccounts.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
-      raw: true,
+      // raw: true,
       where,
       order: Order,
     });
@@ -31,21 +31,22 @@ class EquipmentAccountsService extends Service {
   }
 
   async create(payload) {
-    const { ctx } = this;
-    const { request_user, department_id } = ctx.request.header;
+    const { ctx, app } = this;
+    const { request_user, company_id } = ctx.request.header;
+    payload.id = await app.utils.tools.SnowFlake();
     payload.creator = request_user;
-    payload.department_id = department_id;
+    payload.company_id = company_id;
     return await ctx.model.EquipmentAccounts.create(payload);
   }
 
   async update(payload) {
     const { ctx } = this;
-    return await ctx.model.EquipmentAccounts.update(payload, { where: { sn: payload.sn } });
+    return await ctx.model.EquipmentAccounts.update(payload, { where: { id: payload.id } });
   }
 
   async destroy(payload) {
     const { ctx } = this;
-    return await ctx.model.EquipmentAccounts.destroy({ where: { sn: payload.sn } });
+    return await ctx.model.EquipmentAccounts.destroy({ where: { id: payload.id } });
   }
 }
 

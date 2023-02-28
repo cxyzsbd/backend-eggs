@@ -4,14 +4,14 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    sn: {
-      type: DataTypes.STRING(30),
+    id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: false,
       comment: '工单号',
-      field: 'sn',
+      field: 'id',
     },
     name: {
       type: DataTypes.STRING(60),
@@ -94,6 +94,15 @@ module.exports = app => {
       comment: '完成时间',
       field: 'complete_at',
     },
+    approver: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '审核人',
+      field: 'approver',
+    },
     handler: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: true,
@@ -172,13 +181,12 @@ module.exports = app => {
     comment: '',
     indexes: [],
   };
-  const WorkOrdersModel = sequelize.define(
-    'work_orders_model',
-    attributes,
-    options
-  );
+  const WorkOrdersModel = sequelize.define('work_orders_model', attributes, options);
   WorkOrdersModel.associate = function() {
-    WorkOrdersModel.hasMany(sequelize.WorkOrderOperationRecords, { as: 'operation_records', sourceKey: 'sn', foreignKey: 'work_order_sn' });
+    WorkOrdersModel.hasMany(app.model.WorkOrderOperationRecords, { as: 'operation_records', sourceKey: 'id', foreignKey: 'work_order_id' });
+    WorkOrdersModel.hasOne(app.model.Users, { as: 'creator_info', sourceKey: 'creator', foreignKey: 'id' });
+    WorkOrdersModel.hasOne(app.model.Users, { as: 'approver_info', sourceKey: 'approver', foreignKey: 'id' });
+    WorkOrdersModel.hasOne(app.model.Users, { as: 'handler_info', sourceKey: 'handler', foreignKey: 'id' });
   };
   return WorkOrdersModel;
 };

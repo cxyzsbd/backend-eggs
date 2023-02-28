@@ -4,14 +4,14 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    sn: {
-      type: DataTypes.STRING(30),
+    id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: false,
       comment: '编号',
-      field: 'sn',
+      field: 'id',
     },
     name: {
       type: DataTypes.STRING(60),
@@ -130,14 +130,14 @@ module.exports = app => {
       comment: '更新时间',
       field: 'update_at',
     },
-    department_id: {
+    company_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '公司id',
+      field: 'company_id',
     },
   };
   const options = {

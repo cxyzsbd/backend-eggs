@@ -105,7 +105,7 @@ class devicesController extends BaseController {
   */
   async modelToDevice() {
     const { ctx, service } = this;
-    const params = ctx.request.header;
+    const params = ctx.request.body;
     ctx.validate(ctx.rule.modelToDeviceBodyReq, params);
     const model = await service.deviceModels.findOne({ id: params.model_id });
     if (!model) {

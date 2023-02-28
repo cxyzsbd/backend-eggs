@@ -80,6 +80,12 @@ class InspectionsController extends BaseController {
         return false;
       }
     }
+    // 任务开始前多久提醒的时间应小于1天(单次巡检则要小于巡检时长)
+    // let tempTime = params.cycle === 1 ? dayjs(params.start_time).diff(dayjs(params.end_time), 'second') : 24 * 60 * 60;
+    if (params.remind_time < 24 * 60 * 60) {
+      this.BAD_REQUEST({ message: '提前提醒时间要小于1天' });
+      return false;
+    }
     await ctx.service.inspections.create(params);
     this.CREATED();
   }

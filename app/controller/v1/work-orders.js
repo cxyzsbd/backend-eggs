@@ -37,7 +37,7 @@ class WorkOrdersController extends BaseController {
   async findOne() {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.workOrdersId, ctx.params);
-    const res = await service.workOrders.findOne(ctx.params.id);
+    const res = await service.workOrders.findOne(ctx.params);
     res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
 
@@ -59,8 +59,8 @@ class WorkOrdersController extends BaseController {
   * @apikey
   * @summary 更新 工单
   * @description 更新 工单
-  * @router put work-orders/:sn
-  * @request path string *sn eg:1
+  * @router put work-orders/:id
+  * @request path string *id eg:1
   * @request body workOrdersPutBodyReq
   */
   async update() {
@@ -75,8 +75,8 @@ class WorkOrdersController extends BaseController {
   * @apikey
   * @summary 删除 工单
   * @description 删除 工单
-  * @router delete work-orders/:sn
-  * @request path string *sn eg:1
+  * @router delete work-orders/:id
+  * @request path string *id eg:1
   */
   async destroy() {
     const { ctx, service } = this;
@@ -117,14 +117,14 @@ class WorkOrdersController extends BaseController {
   * @apikey
   * @summary 确认工单
   * @description 确认接收工单
-  * @router patch work-orders/:sn/confirm
-  * @request path string *sn eg:1
+  * @router patch work-orders/:id/confirm
+  * @request path string *id eg:1
   */
   async confirm() {
     const { ctx, service } = this;
     const params = ctx.params;
     ctx.validate(ctx.rule.workOrdersId, params);
-    const res = await service.workOrders.confirm(payload);
+    const res = await service.workOrders.confirm(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -132,8 +132,8 @@ class WorkOrdersController extends BaseController {
   * @apikey
   * @summary 工单完成提交
   * @description 工单完成提交
-  * @router patch work-orders/:sn/complete
-  * @request path string *sn eg:1
+  * @router patch work-orders/:id/complete
+  * @request path string *id eg:1
   * @request body workOrdersCompleteBodyReq
   */
   async complete() {
@@ -141,7 +141,7 @@ class WorkOrdersController extends BaseController {
     const params = { ...ctx.params, ...ctx.request.body };
     const rule = { ...ctx.rule.workOrdersId, ...ctx.rule.workOrdersCompleteBodyReq };
     ctx.validate(rule, params);
-    const res = await ctx.model.workOrders.complete(params);
+    const res = await service.workOrders.complete(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 }

@@ -2,11 +2,11 @@
 
 const body = {
   workOrdersId: {
-    sn: {
+    id: {
       type: 'string',
-      max: 30,
+      max: 20,
       required: true,
-      description: '工单',
+      description: '工单编号',
     },
   },
   workOrdersBodyReq: {

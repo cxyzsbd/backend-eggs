@@ -11,17 +11,35 @@ const body = {
       required: true,
       description: '设备id',
     },
-    tag: {
+    name: {
       type: 'string',
-      required: true,
-      max: 255,
-      description: '点名',
-    },
-    attr_desc: {
-      type: 'string',
-      required: true,
       max: 20,
-      description: '属性描述',
+      required: true,
+      description: '属性名称',
+    },
+    type: {
+      type: 'string',
+      max: 20,
+      required: false,
+      description: '类型',
+    },
+    desc: {
+      type: 'string',
+      max: 60,
+      required: false,
+      description: '描述',
+    },
+    unit: {
+      type: 'string',
+      max: 20,
+      required: false,
+      description: '单位',
+    },
+    range: {
+      type: 'string',
+      max: 100,
+      required: false,
+      description: '范围',
     },
     boxcode: {
       type: 'string',

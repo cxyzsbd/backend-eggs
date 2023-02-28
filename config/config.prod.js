@@ -1,6 +1,12 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
+const path = require('path');
+const {
+  DB_CONFIG,
+  REDIS_DEFAULT,
+  DATA_FORWARD_URL,
+} = require('../global.config');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -11,6 +17,12 @@ module.exports = appInfo => {
    * @type {Egg.EggAppConfig}
    **/
   const config = (exports = {});
+
+  config.logger = {
+    level: 'WARN', // 避免记录数据库执行语句
+    dir: path.join(__dirname, '../../logs'),
+  };
+
 
   config.security = {
     csrf: {
@@ -25,18 +37,11 @@ module.exports = appInfo => {
       {
         dialect: 'mysql',
         timezone: '+08:00',
-        database: 'lkys_new',
-        host: '192.168.1.118',
-        // host: 'likongys2017.vicp.io',
-        port: '3306',
-        username: 'root',
-        password: 'lkys@401A',
-
-        // database: 'youzhi',
-        // host: 'mysql-svc.bms-ns.svc',
-        // port: '3306',
-        // username: 'root',
-        // password: 'mySQL13test14',
+        database: DB_CONFIG.DATABASE,
+        host: DB_CONFIG.HOST,
+        port: DB_CONFIG.PORT,
+        username: DB_CONFIG.USERNAME,
+        password: DB_CONFIG.PASSWORD,
         app: true,
         define: {
           underscored: false, // 注意需要加上这个， egg-sequelize只是简单的使用Object.assign对配置和默认配置做了merge, 如果不加这个 update_at会被转变成 updateAt故报错
@@ -50,51 +55,12 @@ module.exports = appInfo => {
   };
 
   config.redis = {
-    clients: {
-      default: { // 默认库
-        port: 6379, // Redis port
-        host: '192.168.1.90', // Redis host
-        password: '',
-        db: 0,
-      },
-      io: { // websocket相关
-        port: 6379, // Redis port
-        host: '192.168.1.90', // Redis host
-        password: '',
-        db: 1,
-      },
-      iom: { // 运维相关
-        port: 6379, // Redis port
-        host: '192.168.1.90', // Redis host
-        password: '',
-        db: 2,
-      },
-      permissions: { // 所有权限
-        port: 6379, // Redis port
-        host: '192.168.1.90', // Redis host
-        password: '',
-        db: 3,
-      },
-      departments: { // 所有部门
-        port: 6379, // Redis port
-        host: '192.168.1.90', // Redis host
-        password: '',
-        db: 4,
-      },
-      attrs: {
-        port: 6379, // Redis port
-        host: '192.168.1.90', // Redis host
-        password: '',
-        db: 5,
-      },
-    },
+    clients: REDIS_DEFAULT,
     agent: true,
   };
 
   // 数据转发基础路径
-  // config.dataForwardBaseUrl = 'http://cloudnative.lkysiot.com/';
-  config.dataForwardBaseUrl = 'http://192.168.20.11/';
-  // config.dataForwardBaseUrl = 'http://javaweb.bms-ns.svc:555/';
+  config.dataForwardBaseUrl = DATA_FORWARD_URL;
 
   return {
     ...config,

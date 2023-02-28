@@ -2,7 +2,7 @@
 
 const body = {
   equipmentAccountsId: {
-    sn: { type: 'string', required: true, description: 'sn' },
+    id: { type: 'string', required: true, description: 'id' },
   },
   equipmentAccountsBodyReq: {
     name: {

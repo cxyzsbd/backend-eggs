@@ -25,6 +25,11 @@ class DeviceModelTagsService extends Service {
     };
   }
 
+  async findOne(payload) {
+    const { ctx } = this;
+    return await ctx.model.DeviceModelTags.findOne({ where: payload });
+  }
+
   async create(payload) {
     const { ctx } = this;
     return await ctx.model.DeviceModelTags.create(payload);

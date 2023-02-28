@@ -1,4 +1,3 @@
-const redis = require('redis');
 class AppBootHook {
   constructor(app) {
     this.app = app;
@@ -17,9 +16,13 @@ class AppBootHook {
 
   async willReady() {
     const { app } = this;
-    const ctx = await app.createAnonymousContext();
     // 所有的插件都已启动完毕，但是应用整体还未 ready
     // 可以做一些数据初始化等操作，这些操作成功才会启动应用
+    // const { IORedisUserKeyPrefix } = app.config;
+    // const IORedis = app.redis.clients.get('io');
+    // const res = await IORedis.sscan({ match: `${IORedisUserKeyPrefix}*` });
+    // console.log('res============================', res);
+    // 删除所有用户IO Key
     // 1.将部门列表平铺数据缓存到redis
     app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
     // 2.将所有权限数据缓存到redis
@@ -28,11 +31,6 @@ class AppBootHook {
 
   async didReady() {
     const { app } = this;
-    const ctx = await app.createAnonymousContext();
-    const id = await app.utils.tools.SnowFlake();
-    console.log('id', id);
-    console.log('id', Number(id));
-    await ctx.model.TestFlake.create({ id, name: '11111' });
     // 应用启动完毕
     app.messenger.on('redis_expire_subscribe', data => {
       console.log('data', data);

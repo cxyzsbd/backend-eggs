@@ -1,6 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
+const { Sequelize } = require('sequelize');
 
 class WorkOrdersService extends Service {
   /**
@@ -33,6 +34,13 @@ class WorkOrdersService extends Service {
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       // raw: true,
+      include: [
+        {
+          model: ctx.model.Users,
+          attributes: [ 'username' ],
+          as: 'creator_info',
+        },
+      ],
       where,
       order: Order,
     });
@@ -46,20 +54,47 @@ class WorkOrdersService extends Service {
 
   async findOne(payload) {
     const { ctx } = this;
-    return await ctx.model.WorkOrders.findOne({ where: payload });
+    return await ctx.model.WorkOrders.findOne({
+      where: payload,
+      attributes: {
+        include: [
+          [ Sequelize.col('creator_info.username'), 'creator_name' ],
+          [ Sequelize.col('handler_info.username'), 'handler_name' ],
+          [ Sequelize.col('approver_info.username'), 'approver_name' ],
+        ],
+      },
+      include: [
+        {
+          model: ctx.model.Users,
+          attributes: [],
+          as: 'creator_info',
+        },
+        {
+          model: ctx.model.Users,
+          attributes: [],
+          as: 'handler_info',
+        },
+        {
+          model: ctx.model.Users,
+          attributes: [],
+          as: 'approver_info',
+        },
+      ],
+    });
   }
 
   async create(payload) {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const { company_id, request_user } = ctx.request.header;
-    payload.sn = await this.generateOrderNo('GD-');
+    // payload.sn = await this.generateOrderNo('GD-');
+    payload.id = await app.utils.tools.SnowFlake();
     payload.creator = request_user;
     payload.company_id = company_id;
     const res = await ctx.model.WorkOrders.create(payload);
     // 操作记录
     if (res) {
       await ctx.model.WorkOrderOperationRecords.create({
-        work_order_sn: payload.sn,
+        work_order_id: payload.id,
         type: 1,
         operator: request_user,
       });
@@ -72,13 +107,13 @@ class WorkOrdersService extends Service {
     const { request_user } = ctx.request.header;
     let res = await ctx.model.WorkOrders.update(payload, {
       where: {
-        sn: payload.sn,
+        id: payload.id,
       },
     });
     // 操作记录
     if (res && res[0]) {
       await ctx.model.WorkOrderOperationRecords.create({
-        work_order_sn: payload.sn,
+        work_order_id: payload.id,
         type: 2,
         operator: request_user,
       });
@@ -97,7 +132,7 @@ class WorkOrdersService extends Service {
     const transaction = await ctx.model.transaction();
     try {
       let operationObj = {
-        work_order_sn: payload.sn,
+        work_order_id: payload.id,
         type: 3,
         operator: request_user,
         operation_result: payload.approval_result,
@@ -108,7 +143,7 @@ class WorkOrdersService extends Service {
       await ctx.model.WorkOrders.update({
         status: payload.approval_result == 1 ? 1 : 0,
       }, {
-        where: { sn: payload.sn },
+        where: { id: payload.id },
         transaction,
       });
       const res = await ctx.model.WorkOrderOperationRecords.create(operationObj, { transaction });
@@ -127,11 +162,11 @@ class WorkOrdersService extends Service {
     const res = await ctx.model.WorkOrders.update({
       status: 2,
     }, {
-      where: { sn: payload.sn },
+      where: { id: payload.id },
     });
     if (res && res[0]) {
       await ctx.model.WorkOrderOperationRecords.create({
-        work_order_sn: payload.sn,
+        work_order_id: payload.id,
         type: 4,
         operator: request_user,
       });
@@ -142,17 +177,17 @@ class WorkOrdersService extends Service {
   async complete(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
-    const { handle_result, sn } = payload;
+    const { handle_result, id } = payload;
     const res = await ctx.model.WorkOrders.update({
       status: 3,
       handle_result,
     }, {
-      where: { sn },
+      where: { id },
     });
     if (res && res[0]) {
       // 操作日志
       await ctx.model.WorkOrderOperationRecords.create({
-        work_order_sn: sn,
+        work_order_id: id,
         type: 5,
         operator: request_user,
       });

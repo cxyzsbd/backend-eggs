@@ -11,16 +11,16 @@ module.exports = app => {
       primaryKey: true,
       autoIncrement: true,
       comment: null,
-      field: "id"
+      field: 'id',
     },
-    work_order_sn: {
-      type: DataTypes.STRING(30),
+    work_order_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "工单号",
-      field: "work_order_sn"
+      comment: '工单号',
+      field: 'work_order_id',
     },
     type: {
       type: DataTypes.INTEGER(1),
@@ -28,8 +28,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "1:新建；2:审核；3:认领；4:处理",
-      field: "type"
+      comment: '1:新建；2:编辑；3:审核；4:认领；5:处理',
+      field: 'type',
     },
     operator: {
       type: DataTypes.INTEGER(11),
@@ -37,8 +37,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "操作人",
-      field: "operator"
+      comment: '操作人',
+      field: 'operator',
     },
     operation_time: {
       type: DataTypes.DATE,
@@ -46,8 +46,8 @@ module.exports = app => {
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
-      comment: "操作时间",
-      field: "operation_time"
+      comment: '操作时间',
+      field: 'operation_time',
     },
     operation_result: {
       type: DataTypes.INTEGER(1),
@@ -55,8 +55,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "审核操作结果(1:通过：0不通过)",
-      field: "operation_result"
+      comment: '审核操作结果(1:通过：0不通过)',
+      field: 'operation_result',
     },
     not_pass_reason: {
       type: DataTypes.STRING(255),
@@ -64,15 +64,15 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: "审核不通过原因",
-      field: "not_pass_reason"
-    }
+      comment: '审核不通过原因',
+      field: 'not_pass_reason',
+    },
   };
   const options = {
-    tableName: "work_order_operation_records",
-    comment: "",
-    indexes: []
+    tableName: 'work_order_operation_records',
+    comment: '',
+    indexes: [],
   };
-  const WorkOrderOperationRecordsModel = sequelize.define("work_order_operation_records_model", attributes, options);
+  const WorkOrderOperationRecordsModel = sequelize.define('work_order_operation_records_model', attributes, options);
   return WorkOrderOperationRecordsModel;
 };

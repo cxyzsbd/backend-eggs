@@ -92,5 +92,8 @@ module.exports = app => {
     indexes: [],
   };
   const DepartmentsModel = sequelize.define('departments_model', attributes, options);
+  DepartmentsModel.associate = () => {
+    DepartmentsModel.hasMany(app.model.Stations, { sourceKey: 'id', foreignKey: 'department_id' });
+  };
   return DepartmentsModel;
 };

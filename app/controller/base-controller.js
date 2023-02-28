@@ -71,7 +71,7 @@ class BaseController extends Controller {
   findAllParamsDeal(options) {
     let { rule, queryOrigin, ruleOther = {}, findAllParamsOther = {}, keywordLikeExcludeParams = [] } = options;
     queryOrigin.pageNumber = Number(queryOrigin.pageNumber) || 1;
-    queryOrigin.pageSize = Number(queryOrigin.pageSize) || 20;
+    queryOrigin.pageSize = (Number(queryOrigin.pageSize) || Number(queryOrigin.pageSize) <= 0) ? Number(queryOrigin.pageSize) : 20;
     const _rule = lodash.cloneDeep(rule);
     const query = {
       where: {},
