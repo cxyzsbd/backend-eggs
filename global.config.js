@@ -63,7 +63,7 @@ const REDIS_DEFAULT = {
   },
 };
 
-const DATA_FORWARD_URL = 'http://42.192.189.220:30350';
+const DATA_FORWARD_URL = 'http://42.192.189.220:30530';
 
 module.exports = {
   WX_GZH_CONFIG,
