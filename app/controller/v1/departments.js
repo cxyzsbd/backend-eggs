@@ -23,7 +23,8 @@ class DepartmentsController extends BaseController {
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.departments.getUserDepartments();
+    const { prop_order, order } = query;
+    const res = await service.departments.getUserDepartments(prop_order, order);
     this.SUCCESS(res);
   }
 

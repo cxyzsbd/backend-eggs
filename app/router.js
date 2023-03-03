@@ -192,7 +192,11 @@ module.exports = app => {
   router.patch('/api/v1/recovery-flows/:id', controller.v1.flows.recoveryFlows);
   router.get('/api/v1/recovery-flows', controller.v1.flows.recoveryFlowsList);
 
-  // 对象
+  // 小程序
   router.post('/api/v1/wx-mini/login', controller.v1.wechat.login);
   router.post('/api/v1/wx-mini/bind', controller.v1.wechat.bind);
+
+  // 网关
+  router.get('/api/v1/box-info', controller.v1.boxInfo.findAll);
+  router.get('/api/v1/box-info/:id', controller.v1.boxInfo.findOne);
 };

@@ -23,12 +23,12 @@ module.exports = app => {
       field: 'name',
     },
     type: {
-      type: DataTypes.INTEGER(1),
+      type: DataTypes.STRING(20),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '类型（1：PLC；2：仪表；3：网关；4：传感器；5：其他）',
+      comment: '类型',
       field: 'type',
     },
     brand: {

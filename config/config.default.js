@@ -129,6 +129,7 @@ module.exports = appInfo => {
     socketDepartmentRoomNamePrefix: 'SOCKET_DEPARTMENT_ROOM_', // 部门房间前缀
     socketCompanyRoomNamePrefix: 'SOCKET_COMPANY_ROOM_', // 公司房间前缀
     socketCompanyAdminPrefix: 'SOCKET_COMPANY_ADMIN_ROOM_', // 公司管理员房间前缀
+    socketUserPrefix: 'SOCKET_USER_ROOM_', // 单个用户房间
     IORedisUserKeyPrefix: 'SOCKET_USER_', // redis存用户socketId前缀
   };
 

@@ -12,9 +12,10 @@ const body = {
       description: '名称',
     },
     type: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: false,
-      description: '类型（1：PLC；2：仪表；3：网关；4：传感器；5：其他）',
+      description: '类型',
     },
     brand: {
       type: 'string',

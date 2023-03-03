@@ -6,6 +6,7 @@ module.exports = app => {
       socketDepartmentRoomNamePrefix,
       socketCompanyRoomNamePrefix,
       IORedisUserKeyPrefix,
+      socketUserPrefix,
       socketCompanyAdminPrefix,
     } = app.config;
     const nsp = app.io.of('/');
@@ -29,6 +30,8 @@ module.exports = app => {
       // console.log('userinfo', userinfo);
       // 2.加入在线用户room
       await socket.join(socketOnlineUserRoomName);
+      // 同一个用户加入一个room
+      await socket.join(`${socketUserPrefix}${user_id}`);
       if (userinfo.company_id) {
         // 3.加入公司统一room
         await socket.join(`${socketCompanyRoomNamePrefix}${userinfo.company_id}`);
@@ -42,15 +45,15 @@ module.exports = app => {
         }
       }
       // 测试推送
-      setTimeout(() => {
-        nsp.to(`${socketCompanyRoomNamePrefix}${userinfo.company_id}`).emit('baordcast', { aaa: 123123123 });
-        nsp.to(`${socketCompanyAdminPrefix}${userinfo.company_id}`).emit('baordcast', { bbb: 22222 });
-      }, 3000);
+      // setTimeout(() => {
+      //   nsp.to(`${socketCompanyRoomNamePrefix}${userinfo.company_id}`).emit('baordcast', { aaa: 123123123 });
+      //   nsp.to(`${socketCompanyAdminPrefix}${userinfo.company_id}`).emit('baordcast', { bbb: 22222 });
+      // }, 3000);
       // 5.更新redis中用户socketid Set
 
-      await IORedis.sadd(`${IORedisUserKeyPrefix}${user_id}`, socket.id);
-      const list = await IORedis.smembers(`${IORedisUserKeyPrefix}${user_id}`);
-      console.log('list==============', list);
+      // await IORedis.sadd(`${IORedisUserKeyPrefix}${user_id}`, socket.id);
+      // const list = await IORedis.smembers(`${IORedisUserKeyPrefix}${user_id}`);
+      // console.log('list==============', list);
       // const res = await app.redis.clients.get('io').sadd('testList', 14);
       // const res = await app.redis.clients.get('io').srem('testList', 13);
     } catch (error) {
@@ -58,12 +61,12 @@ module.exports = app => {
     }
     await next();
     // 离线之后更新用户在redis中存储的socketID list
-    console.log('退出');
-    if (userinfo) {
-      console.log('删除socketID');
-      await IORedis.srem(`${IORedisUserKeyPrefix}${userinfo.id}`, socket.id);
-      const newList = await IORedis.smembers(`${IORedisUserKeyPrefix}${userinfo.id}`);
-      console.log('newList==================', newList);
-    }
+    // console.log('退出');
+    // if (userinfo) {
+    //   console.log('删除socketID');
+    //   await IORedis.srem(`${IORedisUserKeyPrefix}${userinfo.id}`, socket.id);
+    //   const newList = await IORedis.smembers(`${IORedisUserKeyPrefix}${userinfo.id}`);
+    //   console.log('newList==================', newList);
+    // }
   };
 };

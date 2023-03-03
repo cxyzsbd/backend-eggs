@@ -46,9 +46,19 @@ class _objectName_Service extends Service {
     }
   }
   // 获取用户可以管理的所有部门
-  async getUserDepartments() {
+  async getUserDepartments(prop_order = null, order = null) {
     const { ctx, app } = this;
+    function sortBy(prop_order, rev) {
+      return function(a, b) {
+        a = a[prop_order];
+        b = b[prop_order];
+        if (a < b) { return rev * -1; }
+        if (a > b) { return rev * 1; }
+        return 0;
+      };
+    }
     const { request_user, department_id, company_id } = ctx.request.header;
+    const rev = order === 'asc' ? 1 : -1;
     if (!company_id) {
       // 超管
       return [];
@@ -56,7 +66,7 @@ class _objectName_Service extends Service {
     const departments = await app.utils.tools.getRedisCachePublic('departments');
     if (!department_id) {
       // 管理员
-      return departments.filter(item => item.company_id === company_id);
+      return (departments.filter(item => item.company_id === company_id)).sort(sortBy(prop_order, rev));
     }
     // 普通用户
     // 获取当前用户的部门信息
@@ -67,7 +77,7 @@ class _objectName_Service extends Service {
     }
     // 其他情况递归获取子级所有部门
     let departmentChildren = await this.recursionDepartments([ departmentInfo ]);
-    return [ departmentInfo, ...departmentChildren ];
+    return ([ departmentInfo, ...departmentChildren ]).sort(sortBy(prop_order, rev));
   }
 
   // 根据id获取部门信息

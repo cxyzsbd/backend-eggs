@@ -36,6 +36,11 @@ class DeviceTagsService extends Service {
     return resObj;
   }
 
+  async findOne(payload) {
+    const { ctx } = this;
+    return await ctx.model.DeviceTags.findOne({ where: payload });
+  }
+
   async create(payload) {
     const { ctx } = this;
     return await ctx.model.DeviceTags.create(payload);

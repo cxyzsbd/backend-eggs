@@ -45,7 +45,7 @@ class DeviceTagsController extends BaseController {
       this.BAD_REQUEST({ message: '该属性已存在' });
       return false;
     }
-    await ctx.service.deviceTags.create(params);
+    await service.deviceTags.create(params);
     this.CREATED();
   }
 

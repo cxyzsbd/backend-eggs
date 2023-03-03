@@ -74,7 +74,7 @@ class DevicesService extends Service {
   }
 
   async modelToDevice(payload) {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const { request_user, department_id, company_id } = ctx.request.header;
     const { model_id, station_id, name, type, brand, model, desc, img } = payload;
     // let modelData = await ctx.model.DeviceModels.findOne({ where: { id: model_id }, raw: true });
@@ -99,7 +99,10 @@ class DevicesService extends Service {
         await ctx.model.DeviceTags.bulkCreate(tags, { transaction });
       }
       // 生成台账
-      // await ctx.model.EquipmentAccounts.create()
+      const equipmentAccountId = await app.utils.tools.SnowFlake();
+      await ctx.model.EquipmentAccounts.create({
+        id: equipmentAccountId, name, type, brand, model, desc, networking: 1, creator: request_user, company_id,
+      }, { transaction });
       await transaction.commit();
     } catch (e) {
       // 异常情况回滚数据库

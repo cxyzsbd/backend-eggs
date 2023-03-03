@@ -16,34 +16,34 @@ class BoxDataController extends BaseController {
   */
   async dataAndAlarm() {
     const { ctx, app } = this;
-    let { method, url, header: { param_arr, param_type }, body } = ctx.request;
-    // console.log('body', body);
-    if (param_arr && param_type) {
-      param_arr = decodeURIComponent(param_arr).split('&');
-      param_type = Number(param_type);
-      body = { ...body, param_arr, param_type };
+    let { method, url, header: { paramarr, paramtype }, body } = ctx.request;
+    console.log('url================', url);
+    console.log('header', ctx.request.header);
+    if (paramarr && paramtype) {
+      paramarr = decodeURIComponent(paramarr).split('&');
+      paramtype = Number(paramtype);
+      body = { ...body, param_arr: paramarr, param_type: paramtype };
     }
-    // console.log('body1===============', body);
+    console.log('body1===============', body);
     body.param_arr = body.param_arr.map(item => String(item));
     ctx.validate(ctx.rule.boxDataBodyReq, body);
-    const requestBaseUrl = app.config.dataForwardBaseUrl;
-    let data = body || {};
-    const apiUrl = url.slice(17, url.indexOf('?'));
+    const requestBaseUrl = app.config.dataForwardBaseUrl; let data = body || {};
+    const apiUrl = url.indexOf('?') !== -1 ? url.slice(17, url.indexOf('?')) : url.slice(17);
     const params = { ...ctx.query, ...body };
     data.tags = await this.solveParams(params.param_type, params.param_arr);
     // console.log('data========================', data.tags);
-    let res = data.tags.map(t => {
-      if (Object.keys(t).length) {
-        t.value = (Math.round(Math.random() * 10000)) / 100;
-      }
-      return t;
-    });
-    this.SUCCESS(res);
-    return false;
+    // let res = data.tags.map(t => {
+    //   if (Object.keys(t).length) {
+    //     t.value = (Math.round(Math.random() * 10000)) / 100;
+    //   }
+    //   return t;
+    // });
+    // this.SUCCESS(res);
     // 处理参数
     console.log('apiUrl', apiUrl);
+    console.log('data', data);
     try {
-      const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.slice(url.indexOf('?'))}`, {
+      const res = await ctx.curl(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method,
         rejectUnauthorized: false,
         timeout: 30000,
@@ -56,7 +56,7 @@ class BoxDataController extends BaseController {
         console.log(err);
         return false;
       });
-      // console.log('res==================', res);
+      console.log('res==================', res);
       if (!res) {
         this.SERVER_ERROR();
         return false;
@@ -76,7 +76,7 @@ class BoxDataController extends BaseController {
     if (type === 1) {
       tags = tags.map(t => Number(t));
       console.log('tags===========', tags);
-      return attr_tags.filter(a => tags.includes(a.id));
+      return attr_tags.filter(a => tags.includes(a.id)).map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname }; });
     } else if (type === 2) {
       let tagArr = tags.map(t => {
         const long_attr_arr = t.toLowerCase().split('/');
@@ -85,7 +85,7 @@ class BoxDataController extends BaseController {
         let tag = attr_tags.filter(a => a.id === tagId);
         return tag && tag.length ? tag[0] : {};
       });
-      return tagArr;
+      return tagArr.map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname }; });
     }
 
 

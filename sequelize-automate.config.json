@@ -2,10 +2,10 @@
   "dbOptions": {
     "database": "lkys_new",
     "username": "root",
-    "password": "lkys@401A",
+    "password": "mySQL13test14",
     "dialect": "mysql",
-    "host": "192.168.1.118",
-    "port": 3306,
+    "host": "42.192.189.220",
+    "port": 30306,
     "logging": false
   },
   "options": {

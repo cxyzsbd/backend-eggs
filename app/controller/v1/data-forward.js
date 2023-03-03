@@ -23,11 +23,11 @@ class DataForwardController extends BaseController {
     const requestBaseUrl = app.config.dataForwardBaseUrl;
     const { method, url, header, body } = ctx.request;
     const data = body || {};
-    const apiUrl = url.slice(21, url.indexOf('?'));
+    const apiUrl = url.indexOf('?') !== -1 ? url.slice(21, url.indexOf('?')) : url.slice(21);
     const params = { ...ctx.query, ...body };
     console.log('apiUrl', apiUrl);
     try {
-      const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.slice(url.indexOf('?'))}`, {
+      const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method,
         rejectUnauthorized: false,
         timeout: 30000,
@@ -65,7 +65,7 @@ class DataForwardController extends BaseController {
     const data = body || {};
     let params = { ...ctx.query, ...body };
     console.log('params', params);
-    const apiUrl = url.slice(20, url.indexOf('?'));
+    const apiUrl = url.indexOf('?') !== -1 ? url.slice(20, url.indexOf('?')) : url.slice(20);
     console.log('apiUrl', apiUrl);
     let newParams = app.utils.tools.lodash.cloneDeep(params);
     delete newParams.sign;
@@ -75,7 +75,7 @@ class DataForwardController extends BaseController {
       return false;
     }
     try {
-      const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.slice(url.indexOf('?'))}`, {
+      const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method,
         rejectUnauthorized: false,
         timeout: 30000,
