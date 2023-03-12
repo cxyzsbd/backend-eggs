@@ -6,6 +6,8 @@ const md5 = require('md5');
 const { v4: uuidv4 } = require('uuid');
 const FlakeId = require('flake-idgen');
 const intformat = require('biguint-format');
+const quarterOfYear = require('dayjs/plugin/quarterOfYear');
+dayjs.extend(quarterOfYear);
 module.exports = class Tools {
   constructor(app) {
     this.app = app;
@@ -101,7 +103,7 @@ module.exports = class Tools {
    */
   async getRedisCachePublic(key) {
     const { ctx } = this;
-    if (![ 'permissions', 'departments' ].includes(key)) {
+    if (![ 'permissions', 'departments', 'companys' ].includes(key)) {
       return false;
     }
     let data = await ctx.service.cache.get(key, key);

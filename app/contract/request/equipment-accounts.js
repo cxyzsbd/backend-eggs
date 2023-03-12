@@ -63,6 +63,11 @@ const body = {
       max: 300,
       description: '描述',
     },
+    device_id: {
+      type: 'number',
+      required: false,
+      description: '设备id，当台账是由设备生成是必有',
+    },
   },
 };
 

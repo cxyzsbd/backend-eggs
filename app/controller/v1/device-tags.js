@@ -36,7 +36,7 @@ class DeviceTagsController extends BaseController {
   * @request body deviceTagsBodyReq
   */
   async create() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.deviceTagsBodyReq, params);
     // 忽略大小写查询
@@ -46,6 +46,7 @@ class DeviceTagsController extends BaseController {
       return false;
     }
     await service.deviceTags.create(params);
+    await app.utils.tools.setAttrsRedisCache();
     this.CREATED();
   }
 
@@ -58,7 +59,7 @@ class DeviceTagsController extends BaseController {
   * @request body deviceTagsPutBodyReq
   */
   async update() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.deviceTagsPutBodyReq, params);
@@ -69,6 +70,7 @@ class DeviceTagsController extends BaseController {
       return false;
     }
     const res = await service.deviceTags.update(params);
+    await app.utils.tools.setAttrsRedisCache();
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -80,11 +82,12 @@ class DeviceTagsController extends BaseController {
   * @request path number *id eg:1
   */
   async destroy() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = ctx.params;
     params.id = Number(params.id);
     ctx.validate(ctx.rule.deviceTagsId, params);
     const res = await service.deviceTags.destroy(params);
+    await app.utils.tools.setAttrsRedisCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 }

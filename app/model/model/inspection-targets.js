@@ -22,13 +22,13 @@ module.exports = app => {
       comment: '巡检编号',
       field: 'inspection_id',
     },
-    patrol_point_id: {
+    equipment_account_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '巡点编号',
+      comment: '台账编号',
       field: 'patrol_point_id',
     },
     items: {

@@ -49,6 +49,15 @@ module.exports = app => {
       comment: '结束时间',
       field: 'end_time',
     },
+    next_time: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '下次任务时间',
+      field: 'next_time',
+    },
     duration: {
       type: DataTypes.INTEGER(11),
       allowNull: true,

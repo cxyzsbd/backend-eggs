@@ -32,6 +32,11 @@ const body = {
       required: true,
       description: '结束时间',
     },
+    next_time: {
+      type: 'string',
+      required: false,
+      description: '下一次任务时间',
+    },
     duration: {
       type: 'number',
       required: false,
@@ -72,11 +77,11 @@ const body = {
       required: true,
       example: [
         {
-          patrol_point_sn: 'aaa',
+          equipment_account_id: 1,
           items: [ '外观', '通电状态' ],
         },
         {
-          patrol_point_sn: 'bbb',
+          equipment_account_id: 2,
           items: [ '外观', '通电状态' ],
         },
       ],
@@ -90,5 +95,13 @@ module.exports = {
   inspectionsPutBodyReq: {
     ...body.inspectionsId,
     ...body.inspectionsBodyReq,
+  },
+  inspectionStartBodyReq: {
+    ...body.inspectionsId,
+    next_time: {
+      type: 'string',
+      required: true,
+      description: '下一次任务时间',
+    },
   },
 };

@@ -119,7 +119,7 @@ class SparePartsController extends BaseController {
     }
     if (params.type === 4) {
       // 如果是归还，判断归还的是哪一条领用记录，归还数不能大于该次领用数
-      const inventoryRecord = await service.toolInventoryRecords.findOne({ id: params.receiving_record_id });
+      const inventoryRecord = await service.sparePartsInventoryRecords.findOne({ id: params.receiving_record_id });
       if (!inventoryRecord) {
         this.NOT_FOUND({ message: '领用记录不存在' });
         return false;

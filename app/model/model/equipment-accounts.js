@@ -139,6 +139,15 @@ module.exports = app => {
       comment: '公司id',
       field: 'company_id',
     },
+    device_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '如果是由设备生成而来，则必有，设备id',
+      field: 'device_id',
+    },
   };
   const options = {
     tableName: 'equipment_accounts',

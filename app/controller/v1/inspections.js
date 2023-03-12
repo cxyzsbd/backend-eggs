@@ -62,6 +62,7 @@ class InspectionsController extends BaseController {
     const { ctx, app } = this;
     const { dayjs } = app.utils.tools;
     const params = ctx.request.body;
+    const { company_id } = ctx.request.header;
     ctx.validate(ctx.rule.inspectionsBodyReq, params);
     // 特殊参数单独校验
     if (params.cycle !== 1) {
@@ -86,7 +87,19 @@ class InspectionsController extends BaseController {
       this.BAD_REQUEST({ message: '提前提醒时间要小于1天' });
       return false;
     }
-    await ctx.service.inspections.create(params);
+    const res = await ctx.service.inspections.create(params);
+    // 判断是否要立即执行推送，如果是则调用推送方法，不是则生成一个倒计时任务
+    // 提醒时间
+    const remindTime = dayjs(params.start_time).subtract(Number(params.remind_time), 'second');
+    if (dayjs(remindTime).isAfter(dayjs())) {
+      const diff = dayjs(remindTime).diff(dayjs(), 'second');
+      let key = `INSPECTION__${res.id}__${company_id}`;
+      const redisPub = app.redis.clients.get('iom');
+      redisPub.set(key, 1);
+      redisPub.expire(key, diff);
+    } else {
+      app.utils.iom.inspectionPush(res.id, company_id);
+    }
     this.CREATED();
   }
 
@@ -102,6 +115,12 @@ class InspectionsController extends BaseController {
     const { ctx, service } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.inspectionsPutBodyReq, params);
+    // 判断巡检是否有暂停,暂停状态才能编辑
+    const inspection = await service.inspections.findOne({ id: params.id });
+    if (inspection && inspection.state != 0) {
+      this.BAD_REQUEST({ message: '停用状态下才可编辑' });
+      return false;
+    }
     const res = await service.inspections.update(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
@@ -119,6 +138,71 @@ class InspectionsController extends BaseController {
     ctx.validate(ctx.rule.inspectionsId, params);
     const res = await service.inspections.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
+  }
+
+  /**
+  * @apikey
+  * @summary 暂停 巡检计划
+  * @description 暂停 巡检计划
+  * @router patch inspections/:id/stop
+  * @request path string *id eg:1
+  */
+  async stop() {
+    const { ctx, service, app } = this;
+    const { company_id } = ctx.request.header;
+    let params = ctx.params;
+    ctx.validate(ctx.rule.inspectionsId, params);
+    // 修改状态
+    const res = await service.inspections.update({
+      state: 0,
+      id: params.id,
+    });
+    // 清除倒计时任务
+    let key = `INSPECTION__${params.id}__${company_id}`;
+    const redisPub = app.redis.clients.get('iom');
+    redisPub.del(key);
+    res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
+  }
+
+  /**
+  * @apikey
+  * @summary 启动 巡检计划
+  * @description 启动 巡检计划
+  * @router patch inspections/:id/start
+  * @request path string *id eg:1
+  */
+  async start() {
+    const { ctx, service, app } = this;
+    const { dayjs } = app.utils.tools;
+    const { company_id } = ctx.request.header;
+    let params = { ...ctx.params, ...ctx.request.body };
+    ctx.validate(ctx.rule.inspectionStartBodyReq, params);
+    const inspection = await service.inspections.findOne({ id: params.id });
+    if (!inspection) {
+      this.NOT_FOUND({ message: '计划不存在' });
+      return false;
+    }
+    // 修改状态
+    const res = await service.inspections.update({
+      next_time: params.next_time,
+      state: 1,
+      id: params.id,
+    });
+    if (res && res[0] !== 0) {
+      // 判断是否要立即执行推送，如果是则调用推送方法，不是则生成一个倒计时任务
+      // 提醒时间
+      const remindTime = dayjs(params.next_time).subtract(Number(inspection.remind_time), 'second');
+      if (dayjs(remindTime).isAfter(dayjs())) {
+        const diff = dayjs(remindTime).diff(dayjs(), 'second');
+        let key = `INSPECTION__${inspection.id}__${company_id}`;
+        const redisPub = app.redis.clients.get('iom');
+        redisPub.set(key, 1);
+        redisPub.expire(key, diff);
+      } else {
+        app.utils.iom.inspectionPush(inspection.id, company_id);
+      }
+    }
+    res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 }
 

@@ -49,9 +49,10 @@ class CompanysController extends BaseController {
   * @request body companysBodyReq
   */
   async create() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     ctx.validate(ctx.rule.companysBodyReq, ctx.request.body);
     await ctx.service.companys.create(ctx.request.body);
+    app.utils.tools.redisCachePublic('companys', 0, 'companys', 'Companys');
     this.CREATED();
   }
 
@@ -64,11 +65,12 @@ class CompanysController extends BaseController {
   * @request body companysPutBodyReq
   */
   async update() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.companysPutBodyReq, params);
     const res = await service.companys.update(params);
+    app.utils.tools.redisCachePublic('companys', 0, 'companys', 'Companys');
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -79,7 +81,7 @@ class CompanysController extends BaseController {
     * @request body userCreateBodyReq
     */
   async addAdmin() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     let params = ctx.request.body;
     const rule = {
       ...ctx.rule.userCreateBodyReq,
@@ -97,6 +99,7 @@ class CompanysController extends BaseController {
     if (res.id) {
       await ctx.service.companys.update({ id: params.company_id, admin: res.id });
     }
+    app.utils.tools.redisCachePublic('companys', 0, 'companys', 'Companys');
     this.CREATED();
   }
 }

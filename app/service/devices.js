@@ -94,15 +94,18 @@ class DevicesService extends Service {
           delete t.id;
           delete t.model_id;
           t.device_id = device.id;
+          t.company_id = company_id;
           return t;
         });
         await ctx.model.DeviceTags.bulkCreate(tags, { transaction });
+
+        // 生成台账
+        const equipmentAccountId = await app.utils.tools.SnowFlake();
+        await ctx.model.EquipmentAccounts.create({
+          id: equipmentAccountId, name, type, brand, model, desc, networking: 1, creator: request_user, company_id,
+          device_id: device.id,
+        }, { transaction });
       }
-      // 生成台账
-      const equipmentAccountId = await app.utils.tools.SnowFlake();
-      await ctx.model.EquipmentAccounts.create({
-        id: equipmentAccountId, name, type, brand, model, desc, networking: 1, creator: request_user, company_id,
-      }, { transaction });
       await transaction.commit();
     } catch (e) {
       // 异常情况回滚数据库

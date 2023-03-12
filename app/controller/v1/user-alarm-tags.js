@@ -35,7 +35,6 @@ class UserAlarmTagsController extends BaseController {
     const { ctx, service } = this;
     const { type } = ctx.request.body;
     ctx.validate(ctx.rule.userAlarmTagsBodyReq, ctx.request.body);
-    await ctx.service.userAlarmTags.create(ctx.request.body);
     if (type === 1) {
       await service.userAlarmTags.bulkCreate(ctx.request.body);
     } else {

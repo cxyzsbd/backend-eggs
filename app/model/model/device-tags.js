@@ -94,6 +94,14 @@ module.exports = app => {
       comment: '关联实际点位长点名',
       field: 'tagname',
     },
+    company_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'company_id',
+    },
   };
   const options = {
     tableName: 'device_tags',

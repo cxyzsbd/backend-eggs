@@ -37,9 +37,10 @@ class FlowsService extends Service {
     if (!res) {
       return res;
     }
-    const filename = `${res.id}.json`;
+    const filename = 'config.json';
     const pathfix = company_id ? `/${company_id}` : '';
-    let target = path.join(this.config.baseDir, `../files${pathfix}/flows/${filename}`);
+    const floder = `/files${pathfix}/flows/${res.id}`;
+    let target = path.join(this.config.baseDir, `..${floder}/${filename}`);
     const hasPath = await app.utils.tools.checkHasDir(target);
     res.configs = hasPath ? JSON.parse(fs.readFileSync(target, 'utf-8')) : null;
     return res;
@@ -52,12 +53,13 @@ class FlowsService extends Service {
     const res = await ctx.model.Flows.create(payload);
     if ((res && res.id) && payload.configs) {
       // 写配置文件
-      const filename = `${res.id}.json`;
+      const filename = 'config.json';
       const pathfix = company_id ? `/${company_id}` : '';
-      const targetPath = path.join(this.config.baseDir, `../files${pathfix}/flows`);
+      const floder = `/files${pathfix}/flows/${res.id}`;
+      const targetPath = path.join(this.config.baseDir, `..${floder}`);
       // 判断路径是否存在
       await app.utils.tools.dirExists(targetPath);
-      const target = path.join(this.config.baseDir, `../files${pathfix}/flows`, filename);
+      const target = path.join(this.config.baseDir, `..${floder}`, filename);
       fs.writeFileSync(target, JSON.stringify(payload.configs));
     }
     return res;
@@ -71,12 +73,13 @@ class FlowsService extends Service {
       // 传了配置，就认为是修改，手动触发更新时间
       payload.update_at = new Date();
       // 修改配置
-      const filename = `${id}.json`;
+      const filename = 'config.json';
       const pathfix = company_id ? `/${company_id}` : '';
-      const targetPath = path.join(this.config.baseDir, `../files${pathfix}/flows`);
+      const floder = `/files${pathfix}/flows/${id}`;
+      const targetPath = path.join(this.config.baseDir, `..${floder}`);
       // 判断路径是否存在
       await app.utils.tools.dirExists(targetPath);
-      const target = path.join(this.config.baseDir, `../files${pathfix}/flows`, filename);
+      const target = path.join(this.config.baseDir, `..${floder}`, filename);
       fs.writeFileSync(target, JSON.stringify(payload.configs));
     }
     return await ctx.model.Flows.update(payload, { where: { id } });
@@ -117,10 +120,11 @@ class FlowsService extends Service {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const res = await ctx.model.Flows.destroy({ where: { id: payload.id, company_id }, force: true });
-    const filename = `${payload.id}.json`;
     const pathfix = company_id ? `/${company_id}` : '';
-    const targetPath = path.join(this.config.baseDir, `../files${pathfix}/flows/${filename}`);
-    fs.unlinkSync(targetPath);
+    const targetPath = path.join(this.config.baseDir, `../files${pathfix}/flows/${payload.id}`);
+    fs.rm(targetPath, { force: true, recursive: true }, err => {
+      console.log(err);
+    });
     return res;
   }
   async recoveryFlows(payload) {

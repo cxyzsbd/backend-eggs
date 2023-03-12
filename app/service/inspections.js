@@ -21,8 +21,10 @@ class InspectionsService extends Service {
   }
   async findAll(payload) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    let where = payload.where;
+    where.company_id = company_id;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Inspections.count({ where });
@@ -83,7 +85,7 @@ class InspectionsService extends Service {
       const targetArr = payload.targets.map(t => {
         return {
           inspection_id: res.id,
-          patrol_point_id: t.patrol_point_id,
+          equipment_account_id: t.patrol_point_id,
           items: t.items,
         };
       });

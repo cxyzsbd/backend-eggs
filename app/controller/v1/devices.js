@@ -50,10 +50,11 @@ class devicesController extends BaseController {
   * @request body devicesBodyReq
   */
   async create() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.devicesBodyReq, params);
     await ctx.service.devices.create(params);
+    await app.utils.tools.setAttrsRedisCache();
     this.CREATED();
   }
 
@@ -66,7 +67,7 @@ class devicesController extends BaseController {
   * @request body devicesPutBodyReq
   */
   async update() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.devicesPutBodyReq, params);
@@ -77,6 +78,7 @@ class devicesController extends BaseController {
       return false;
     }
     const res = await service.devices.update(params);
+    await app.utils.tools.setAttrsRedisCache();
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -88,11 +90,12 @@ class devicesController extends BaseController {
   * @request path number *id eg:1
   */
   async destroy() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = ctx.params;
     params.id = Number(params.id);
     ctx.validate(ctx.rule.devicesId, params);
     const res = await service.devices.destroy(params);
+    await app.utils.tools.setAttrsRedisCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
@@ -104,7 +107,7 @@ class devicesController extends BaseController {
   * @request body modelToDeviceBodyReq
   */
   async modelToDevice() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.modelToDeviceBodyReq, params);
     const model = await service.deviceModels.findOne({ id: params.model_id });
@@ -119,6 +122,7 @@ class devicesController extends BaseController {
       return false;
     }
     await service.devices.modelToDevice(params);
+    await app.utils.tools.setAttrsRedisCache();
     this.CREATED();
   }
 }

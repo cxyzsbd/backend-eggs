@@ -24,6 +24,9 @@ module.exports = options => {
               };
               return false;
             }
+            await ctx.app.redis.clients.get('io').set(`ONLINE_USER__${id}`, 1);
+            await ctx.app.redis.clients.get('io').expire(`ONLINE_USER__${id}`, 5 * 60);
+            await ctx.app.redis.clients.get('io').sadd('onlineUsers', id);
             // 将公共参数放到请求头
             ctx.request.header = { ...ctx.request.header, request_user: id, department_id, company_id };
             await next();
@@ -34,6 +37,7 @@ module.exports = options => {
             };
           }
         } catch (error) {
+          console.log('error=============', error);
           // 解析失败情况
           ctx.status = 401;
           ctx.body = {

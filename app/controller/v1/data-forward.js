@@ -15,6 +15,7 @@ class DataForwardController extends BaseController {
   * @request path string *url eg:getboxlist
   */
   async dataForward() {
+    console.log(12321321312312);
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     // if (params.code) {
@@ -40,7 +41,7 @@ class DataForwardController extends BaseController {
         console.log(err);
         return false;
       });
-      // console.log('res==================', res);
+      console.log('res==================', res);
       if (!res) {
         this.SERVER_ERROR();
         return false;

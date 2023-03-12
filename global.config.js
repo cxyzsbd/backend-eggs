@@ -17,58 +17,32 @@ const WX_GZH_CONFIG = {
 
 // 数据库配置
 const DB_CONFIG = {
-  DATABASE: 'lkys_new',
+  DATABASE1: 'lkys_new',
+  DATABASE2: 'cloudnative',
   HOST: '42.192.189.220',
   PORT: '30306',
   USERNAME: 'root',
   PASSWORD: 'mySQL13test14',
 };
-// REDIS
-const REDIS_DEFAULT = {
-  default: { // 默认库
-    port: 31379, // Redis port
-    host: '42.192.189.220', // Redis host
-    password: 'mySQL13test14',
-    db: 0,
-  },
-  io: { // websocket相关
-    port: 31379, // Redis port
-    host: '42.192.189.220', // Redis host
-    password: 'mySQL13test14',
-    db: 1,
-  },
-  iom: { // 运维相关
-    port: 31379, // Redis port
-    host: '42.192.189.220', // Redis host
-    password: 'mySQL13test14',
-    db: 2,
-  },
-  permissions: { // 所有权限
-    port: 31379, // Redis port
-    host: '42.192.189.220', // Redis host
-    password: 'mySQL13test14',
-    db: 3,
-  },
-  departments: { // 所有部门
-    port: 31379, // Redis port
-    host: '42.192.189.220', // Redis host
-    password: 'mySQL13test14',
-    db: 4,
-  },
-  attrs: {
-    port: 31379, // Redis port
-    host: '42.192.189.220', // Redis host
-    password: 'mySQL13test14',
-    db: 5,
-  },
+const REDIS_CONFIG = {
+  PORT: 31379,
+  HOST: '42.192.189.220',
+  PASSWORD: 'mySQL13test14',
 };
 
-const DATA_FORWARD_URL = 'http://42.192.189.220:30530';
+const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
+
+// 萤石云账号和秘钥
+const YS_APP_KEY = {
+  appKey: '4eba082f0eaa4ca4b64409526bb3f51b',
+  appSecret: 'dd2caf4f132c6d985b62f8711a633b16',
+};
 
 module.exports = {
   WX_GZH_CONFIG,
   WX_XCX_CONFIG,
   DB_CONFIG,
-  REDIS_DEFAULT,
+  REDIS_CONFIG,
   DATA_FORWARD_URL,
+  YS_APP_KEY,
 };

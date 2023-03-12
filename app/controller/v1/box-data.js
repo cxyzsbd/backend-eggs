@@ -16,35 +16,39 @@ class BoxDataController extends BaseController {
   */
   async dataAndAlarm() {
     const { ctx, app } = this;
-    let { method, url, header: { paramarr, paramtype }, body } = ctx.request;
-    console.log('url================', url);
-    console.log('header', ctx.request.header);
-    if (paramarr && paramtype) {
+    const forwardUrls = [ 'data' ];
+    let { method, url, header, body } = ctx.request;
+    const apiUrl = url.indexOf('?') !== -1 ? url.slice(17, url.indexOf('?')) : url.slice(17);
+    if (!forwardUrls.includes(apiUrl)) {
+      this.NOT_FOUND({ message: '请检查请求路径是否正确' });
+      return false;
+    }
+    if (header.hasOwnProperty('paramarr') && header.hasOwnProperty('paramtype')) {
+      let { paramarr, paramtype } = header;
       paramarr = decodeURIComponent(paramarr).split('&');
       paramtype = Number(paramtype);
       body = { ...body, param_arr: paramarr, param_type: paramtype };
     }
     console.log('body1===============', body);
+    if (!body.param_arr || !body.param_arr.length) {
+      this.BAD_REQUEST({ message: 'param_arr不能为空' });
+      return false;
+    }
     body.param_arr = body.param_arr.map(item => String(item));
     ctx.validate(ctx.rule.boxDataBodyReq, body);
-    const requestBaseUrl = app.config.dataForwardBaseUrl; let data = body || {};
-    const apiUrl = url.indexOf('?') !== -1 ? url.slice(17, url.indexOf('?')) : url.slice(17);
+    const requestBaseUrl = app.config.dataForwardBaseUrl;
+    let data = [];
     const params = { ...ctx.query, ...body };
-    data.tags = await this.solveParams(params.param_type, params.param_arr);
-    // console.log('data========================', data.tags);
-    // let res = data.tags.map(t => {
-    //   if (Object.keys(t).length) {
-    //     t.value = (Math.round(Math.random() * 10000)) / 100;
-    //   }
-    //   return t;
-    // });
-    // this.SUCCESS(res);
+    data = await this.solveParams(params.param_type, params.param_arr);
+    data = data.filter(item => item.boxcode && item.tagname);
+    if (!data || !data.length) {
+      this.BAD_REQUEST({ message: '无效参数' });
+      return false;
+    }
     // 处理参数
-    console.log('apiUrl', apiUrl);
-    console.log('data', data);
     try {
       const res = await ctx.curl(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
-        method,
+        method: 'POST',
         rejectUnauthorized: false,
         timeout: 30000,
         headers: {
@@ -56,7 +60,8 @@ class BoxDataController extends BaseController {
         console.log(err);
         return false;
       });
-      console.log('res==================', res);
+      // console.log('参数====================', data);
+      // console.log('res==================', res.data);
       if (!res) {
         this.SERVER_ERROR();
         return false;

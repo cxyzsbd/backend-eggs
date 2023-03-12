@@ -2,7 +2,7 @@
 
 const body = {
   flowsId: {
-    id: { type: 'string', max: 60, required: true, description: 'id' },
+    id: { type: 'string', max: 100, required: true, description: 'id' },
   },
   flowsBodyReq: {
     name: {
@@ -39,6 +39,17 @@ const body = {
       type: 'number',
       required: false,
       description: '图纸类型:0：工程；1：组件',
+    },
+    is_publish: {
+      type: 'number',
+      enum: [ 0, 1 ],
+      required: true,
+      description: '是否发布:0：不发布；1：发布',
+    },
+    station_id: {
+      type: 'number',
+      required: false,
+      description: '站点id',
     },
   },
 };

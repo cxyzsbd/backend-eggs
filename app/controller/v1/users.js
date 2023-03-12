@@ -216,6 +216,9 @@ class UsersController extends BaseController {
     // 更新登录时间
     await service.users.update({ id, last_login });
     await app.utils.tools.redisCacheUserinfo(id);
+    await app.redis.clients.get('io').set(`ONLINE_USER__${id}`, 1);
+    await app.redis.clients.get('io').expire(`ONLINE_USER__${id}`, 5 * 60);
+    await app.redis.clients.get('io').sadd('onlineUsers', id);
     this.SUCCESS({
       access_token,
       refresh_token,
@@ -232,14 +235,14 @@ class UsersController extends BaseController {
   async refreshToken() {
     const { ctx, app } = this;
     const { header } = ctx.request;
-    if (!header || !header.refresh_token) {
-      this.UNAUTHORIZED({ message: '无效的refresh_token' });
+    if (!header || !header['refresh-token']) {
+      this.UNAUTHORIZED({ message: '无refresh_token' });
       return false;
     }
     // 校验refresh_token
     const { secret, expire, refresh_expire } = app.config.jwt;
     try {
-      const decoded = ctx.app.jwt.verify(header.refresh_token, secret) || 'false';
+      const decoded = ctx.app.jwt.verify(header['refresh-token'], secret) || 'false';
       if (decoded !== 'false' && decoded.type === 'refresh_token') {
         // 校验通过,下发新token
         const access_token = app.jwt.sign({ user_id: decoded.user_id, type: 'access_token', is_super_user: decoded.is_super_user }, secret, { expiresIn: expire });

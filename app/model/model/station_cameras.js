@@ -5,7 +5,7 @@ module.exports = app => {
   const sequelize = app.model;
   const attributes = {
     id: {
-      type: DataTypes.BIGINT.UNSIGNED,
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
@@ -13,58 +13,49 @@ module.exports = app => {
       comment: null,
       field: 'id',
     },
-    type: {
-      type: DataTypes.STRING(10),
+    name: {
+      type: DataTypes.STRING(60),
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '操作类型，例如create、update、delete等',
-      field: 'type',
+      comment: '摄像头名称',
+      field: 'name',
     },
-    target: {
+    station_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '站点id',
+      field: 'station_id',
+    },
+    deviceSerial: {
       type: DataTypes.STRING(30),
-      allowNull: true,
+      allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '操作目标，例如users、departments等',
-      field: 'target',
+      comment: '设备序列号',
+      field: 'deviceSerial',
     },
-    target_key: {
-      type: DataTypes.BIGINT,
+    photo_interval: {
+      type: DataTypes.INTEGER(11),
       allowNull: true,
-      defaultValue: null,
+      defaultValue: '0',
       primaryKey: false,
       autoIncrement: false,
-      comment: '操作目标id',
-      field: 'target_key',
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '操作内容',
-      field: 'content',
-    },
-    desc: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '描述日志内容',
-      field: 'desc',
+      comment: '抓拍间隔',
+      field: 'photo_interval',
     },
     creator: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: null,
+      comment: '创建人',
       field: 'creator',
     },
     create_at: {
@@ -87,10 +78,10 @@ module.exports = app => {
     },
   };
   const options = {
-    tableName: 'operation_logs',
+    tableName: 'station_cameras',
     comment: '',
     indexes: [],
   };
-  const OperationLogsModel = sequelize.define('operation_logs_model', attributes, options);
-  return OperationLogsModel;
+  const StationCamerasModel = sequelize.define('station_cameras_model', attributes, options);
+  return StationCamerasModel;
 };

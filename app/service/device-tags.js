@@ -43,6 +43,8 @@ class DeviceTagsService extends Service {
 
   async create(payload) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
+    payload.company_id = company_id;
     return await ctx.model.DeviceTags.create(payload);
   }
 

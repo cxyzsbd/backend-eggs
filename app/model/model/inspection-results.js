@@ -74,7 +74,7 @@ module.exports = app => {
       comment: '备注',
       field: 'remarks',
     },
-    creator: {
+    submitter: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: true,
       defaultValue: null,

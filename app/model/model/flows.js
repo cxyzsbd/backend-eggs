@@ -78,7 +78,7 @@ module.exports = app => {
     },
     department_id: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
@@ -120,6 +120,24 @@ module.exports = app => {
       autoIncrement: false,
       comment: '删除时间',
       field: 'delete_at',
+    },
+    is_publish: {
+      type: DataTypes.INTEGER(1),
+      allowNull: true,
+      defaultValue: '0',
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '是否发布,发布1；不发布0',
+      field: 'is_publish',
+    },
+    station_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'station_id',
     },
   };
   const options = {

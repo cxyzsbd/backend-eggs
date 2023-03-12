@@ -49,14 +49,14 @@ module.exports = app => {
       comment: '结束时间',
       field: 'end_time',
     },
-    department_id: {
+    company_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '部门id',
-      field: 'department_id',
+      comment: '公司id',
+      field: 'company_id',
     },
     status: {
       type: DataTypes.INTEGER(1),

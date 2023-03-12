@@ -4,7 +4,9 @@
 const { v4: uuidv4 } = require('uuid');
 const I18n = require('i18n');
 const {
-  REDIS_DEFAULT,
+  REDIS_CONFIG,
+  DB_CONFIG,
+  DATA_FORWARD_URL,
 } = require('../global.config');
 
 /**
@@ -21,12 +23,15 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'jwtVerify', 'validateSuperUser', 'errorHandler' ];
+  config.middleware = [ 'jwtVerify', 'auth', 'validateSuperUser', 'operationRecords', 'errorHandler' ];
   // 只对 /api/v1 前缀的 url 路径生效
   config.errorHandler = {
     match: '/api/v1',
   };
   config.jwtVerify = {
+    match: '/api/v1',
+  };
+  config.auth = {
     match: '/api/v1',
   };
   config.validateSuperUser = {
@@ -105,6 +110,60 @@ module.exports = appInfo => {
   };
   config.signSecret = 'FDD693602F380E24';
 
+  config.redis = {
+    clients: {
+      default: { // 默认库
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 0,
+      },
+      io: { // websocket相关
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 1,
+      },
+      iom: { // 运维相关
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 2,
+      },
+      permissions: { // 所有权限
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 3,
+      },
+      departments: { // 所有部门
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 4,
+      },
+      attrs: {
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 5,
+      },
+      camera_photos: {
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 6,
+      },
+      companys: {
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 7,
+      },
+    },
+    agent: true,
+  };
+
   // socket.io
   exports.io = {
     init: {}, // passed to engine.io
@@ -114,8 +173,59 @@ module.exports = appInfo => {
         packetMiddleware: [ 'packet' ],
       },
     },
-    redis: REDIS_DEFAULT.io,
+    redis: { // websocket相关
+      port: REDIS_CONFIG.PORT, // Redis port
+      host: REDIS_CONFIG.HOST, // Redis host
+      password: REDIS_CONFIG.PASSWORD,
+      db: 1,
+    },
   };
+
+  config.sequelize = {
+    datasources: [
+      {
+        delegate: 'model',
+        baseDir: 'model/model',
+        dialect: 'mysql',
+        timezone: '+08:00',
+        database: DB_CONFIG.DATABASE1,
+        host: DB_CONFIG.HOST,
+        port: DB_CONFIG.PORT,
+        username: DB_CONFIG.USERNAME,
+        password: DB_CONFIG.PASSWORD,
+        app: true,
+        define: {
+          underscored: false, // 注意需要加上这个， egg-sequelize只是简单的使用Object.assign对配置和默认配置做了merge, 如果不加这个 update_at会被转变成 updateAt故报错
+          // 禁止修改表名，默认情况下，sequelize将自动将所有传递的模型名称（define的第一个参数）转换为复数
+          // 但是为了安全着想，复数的转换可能会发生变化，所以禁止该行为
+          freezeTableName: true,
+          timestamps: false,
+        },
+      },
+      {
+        delegate: 'models',
+        baseDir: 'model/models',
+        dialect: 'mysql',
+        timezone: '+08:00',
+        database: DB_CONFIG.DATABASE2,
+        host: DB_CONFIG.HOST,
+        port: DB_CONFIG.PORT,
+        username: DB_CONFIG.USERNAME,
+        password: DB_CONFIG.PASSWORD,
+        app: true,
+        define: {
+          underscored: false, // 注意需要加上这个， egg-sequelize只是简单的使用Object.assign对配置和默认配置做了merge, 如果不加这个 update_at会被转变成 updateAt故报错
+          // 禁止修改表名，默认情况下，sequelize将自动将所有传递的模型名称（define的第一个参数）转换为复数
+          // 但是为了安全着想，复数的转换可能会发生变化，所以禁止该行为
+          freezeTableName: true,
+          timestamps: false,
+        },
+      },
+    ],
+  };
+
+  // 数据转发基础路径
+  config.dataForwardBaseUrl = DATA_FORWARD_URL;
 
   config.multipart = {
     fileSize: '50mb', // 文件大小限制

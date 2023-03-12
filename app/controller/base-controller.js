@@ -27,6 +27,12 @@ class BaseController extends Controller {
     ctx.body = body;
     ctx.status = 400;
   }
+  // 400 Bad Request：无效请求。
+  INVALID_REQUEST(body = { message: '无效的请求' }) {
+    const ctx = this.ctx;
+    ctx.body = body;
+    ctx.status = 400;
+  }
   // 401 Unauthorized：用户未提供身份验证凭据，或者没有通过身份验证。
   UNAUTHORIZED(body = { message: '身份校验失败' }) {
     const ctx = this.ctx;
