@@ -27,7 +27,7 @@ module.exports = app => {
       }
       // 1.获取用户信息
       userinfo = await ctx.service.cache.get(`userinfo_${user_id}`, 'default');
-      // console.log('userinfo', userinfo);
+      console.log('userinfo', userinfo);
       // 2.加入在线用户room
       await socket.join(socketOnlineUserRoomName);
       // 同一个用户加入一个room

@@ -95,6 +95,16 @@ class WorkOrdersService extends Service {
           attributes: [],
           as: 'approver_info',
         },
+        {
+          model: ctx.model.WorkOrderOperationRecords,
+          as: 'operation_records',
+          include: [
+            {
+              model: ctx.model.Users,
+              as: 'operator_info',
+            },
+          ],
+        },
       ],
     });
   }

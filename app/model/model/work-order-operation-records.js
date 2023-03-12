@@ -74,5 +74,8 @@ module.exports = app => {
     indexes: [],
   };
   const WorkOrderOperationRecordsModel = sequelize.define('work_order_operation_records_model', attributes, options);
+  WorkOrderOperationRecordsModel.associate = () => {
+    WorkOrderOperationRecordsModel.hasOne(app.model.Users, { foreignKey: 'id', sourceKey: 'operator', as: 'operator_info' });
+  };
   return WorkOrderOperationRecordsModel;
 };

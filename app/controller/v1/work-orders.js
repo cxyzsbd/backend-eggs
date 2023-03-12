@@ -18,8 +18,31 @@ class WorkOrdersController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
+    const rule = {
+      ...ctx.rule.workOrdersPutBodyReq,
+      status: {
+        type: 'number',
+        required: false,
+        description: '状态（0:新建，待分配；1:已分配；2:已认领；3:已完成;4:已逾期）',
+      },
+      handler: {
+        type: 'number',
+        required: false,
+        description: '处理人',
+      },
+      creator: {
+        type: 'number',
+        required: false,
+        description: '创建人',
+      },
+      approver: {
+        type: 'number',
+        required: false,
+        description: '审核人',
+      },
+    };
     const { allRule, query } = this.findAllParamsDeal({
-      rule: ctx.rule.workOrdersPutBodyReq,
+      rule,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
