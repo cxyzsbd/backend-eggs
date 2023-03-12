@@ -23,7 +23,15 @@ class UserScreensService extends Service {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     payload.user_id = request_user;
-    return await ctx.model.UserScreens.upsert(payload);
+    const data = await ctx.model.UserScreens.findOne({
+      where: { user_id: request_user },
+    });
+    if (data) {
+      return await ctx.model.UserScreens.update(payload, {
+        where: { user_id: request_user },
+      });
+    }
+    return await ctx.model.UserScreens.create(payload);
   }
 
   async destroy(payload) {

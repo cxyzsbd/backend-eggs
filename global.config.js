@@ -24,10 +24,15 @@ const DB_CONFIG = {
   USERNAME: 'root',
   PASSWORD: 'mySQL13test14',
 };
+// const REDIS_CONFIG = {
+//   PORT: 31379,
+//   HOST: '42.192.189.220',
+//   PASSWORD: 'mySQL13test14',
+// };
 const REDIS_CONFIG = {
-  PORT: 31379,
-  HOST: '42.192.189.220',
-  PASSWORD: 'mySQL13test14',
+  PORT: 6379,
+  HOST: '127.0.0.1',
+  PASSWORD: '',
 };
 
 const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';

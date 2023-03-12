@@ -50,6 +50,11 @@ module.exports = app => {
       foreignKey: 'role_id',
       otherKey: 'menu_id',
     });
+    app.model.Roles.belongsToMany(app.model.Users, {
+      through: app.model.UserRoles,
+      foreignKey: 'role_id',
+      otherKey: 'user_id',
+    });
   };
 
   return Model;

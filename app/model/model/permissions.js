@@ -70,7 +70,11 @@ module.exports = app => {
   });
 
   Model.associate = function() {
-
+    app.model.Permissions.belongsToMany(app.model.Roles, {
+      through: app.model.RolePermissions,
+      foreignKey: 'permission_id',
+      otherKey: 'role_id',
+    });
   };
 
   return Model;

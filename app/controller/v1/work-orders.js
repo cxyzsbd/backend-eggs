@@ -88,10 +88,10 @@ class WorkOrdersController extends BaseController {
 
   /**
   * @apikey
-  * @summary 审核工单
-  * @description 审核工单
-  * @router  patch work-orders/:sn/approval
-  * @request path string *sn eg:1
+  * @summary 审核 工单
+  * @description 审核 工单
+  * @router patch work-orders/:id/approval
+  * @request path string *id eg:1
   * @request body workOrdersApprovalBodyReq
   */
   async approval() {

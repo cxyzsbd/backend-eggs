@@ -30,20 +30,23 @@ class MiniProgramController extends BaseController {
       this.UNAUTHORIZED({ message: '没有绑定用户', isbind_user });
       return false;
     }
+    const access_token = app.jwt.sign({ user_id: wx_user.user_id, type: 'access_token' }, app.config.jwt.secret, { expiresIn: app.config.jwt.expire });
+    const refresh_token = app.jwt.sign({ user_id: wx_user.user_id, type: 'refresh_token' }, app.config.jwt.secret, { expiresIn: app.config.jwt.refresh_expire });
     // 生成token并返回
     const { username, email, phone, avatar } = await service.users.findOne({ id: wx_user.user_id }, []);
-    const token = app.jwt.sign({ user_id: wx_user.user_id }, app.config.jwt.secret);
     const last_login = app.utils.tools.dayjs().format('YYYY-MM-DD HH:mm:ss');
     // 更新登录时间
     await service.users.update({ id: wx_user.user_id, last_login });
     this.SUCCESS({
-      token,
+      access_token,
+      refresh_token,
       userinfo: {
         username,
         email,
         phone,
         avatar,
         last_login,
+        user_id: wx_user.user_id,
       },
       isbind_user,
     });

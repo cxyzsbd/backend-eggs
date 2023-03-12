@@ -300,5 +300,51 @@ class UserService extends Service {
     });
     return permissions;
   }
+
+  async getUsersByPermission(payload) {
+    const { ctx } = this;
+    const { company_id } = ctx.request.header;
+    // 权限获取角色
+    const permissions = await ctx.model.Permissions.findOne({
+      where: {
+        id: payload.id,
+      },
+      include: [
+        {
+          model: ctx.model.Roles,
+        },
+      ],
+    });
+    // console.log('permissions', permissions);
+    const roles = permissions.roles;
+    const roleIds = roles.map(item => item.id);
+    // 角色获取用户
+    const users = await ctx.model.Roles.findAll({
+      where: {
+        id: {
+          [Op.in]: roleIds,
+        },
+      },
+      include: [
+        {
+          model: ctx.model.Users,
+        },
+      ],
+    });
+    // console.log('users', users);
+    let tempArr = [];
+    users.forEach(item => {
+      tempArr = [ ...tempArr, ...item.users ];
+    });
+    tempArr = tempArr.filter(item => item.company_id === company_id || !item.company_id);
+    tempArr = tempArr.map(item => {
+      return {
+        username: item.username,
+        id: item.id,
+        company_id: item.company_id,
+      };
+    });
+    return tempArr;
+  }
 }
 module.exports = UserService;

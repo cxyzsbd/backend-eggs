@@ -68,7 +68,19 @@ class FlowsService extends Service {
   async update(payload) {
     const { ctx, app } = this;
     const { company_id } = ctx.request.header;
-    const { id } = payload;
+    const { id, station_id } = payload;
+    if (station_id) {
+      let where = {
+        station_id,
+        id: {
+          [Op.not]: id,
+        },
+      };
+      const data = await ctx.model.Flows.findAll({ where });
+      if (data && data.length) {
+        await await ctx.model.Flows.update({ station_id: null }, { where });
+      }
+    }
     if (payload.configs) {
       // 传了配置，就认为是修改，手动触发更新时间
       payload.update_at = new Date();

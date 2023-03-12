@@ -1,6 +1,7 @@
 module.exports = agent => {
   // redis订阅运维过期时间
   const iomRedis = agent.redis.clients.get('iom');
+  iomRedis.send_command('config', [ 'set', 'notify-keyspace-events', 'Ex' ]);
   const iomRedisEventKey = `__keyevent@${iomRedis.options.db}__:expired`;
   iomRedis.subscribe(iomRedisEventKey, (err, result) => {
     if (err) {
@@ -23,6 +24,7 @@ module.exports = agent => {
 
   // redis订阅摄像头定时抓拍事件
   const cameraPhotosRedis = agent.redis.clients.get('camera_photos');
+  cameraPhotosRedis.send_command('config', [ 'set', 'notify-keyspace-events', 'Ex' ]);
   const cameraPhotosRedisEventKey = `__keyevent@${cameraPhotosRedis.options.db}__:expired`;
   cameraPhotosRedis.subscribe(cameraPhotosRedisEventKey, (err, result) => {
     if (err) {
@@ -45,13 +47,13 @@ module.exports = agent => {
 
   // redis订阅在线活跃用户事件
   const IORedis = agent.redis.clients.get('io');
+  IORedis.send_command('config', [ 'set', 'notify-keyspace-events', 'Ex' ]);
   const IORedisEventKey = `__keyevent@${IORedis.options.db}__:expired`;
   IORedis.subscribe(IORedisEventKey, (err, result) => {
     if (err) {
       throw err;
     }
     console.log(result, 'redis订阅在线活跃用户事件');
-    console.log('key', IORedisEventKey);
   });
   IORedis.on('message', (channel, message) => {
     console.log(channel, message);

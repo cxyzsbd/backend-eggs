@@ -21,6 +21,7 @@ module.exports = app => {
   router.get(`${apiV1}/users`, controller.v1.users.findAll);
   router.get(`${apiV1}/user-info`, controller.v1.users.getInfo);
   router.get(`${apiV1}/user-menus`, controller.v1.users.getMenus);
+  router.get(`${apiV1}/permissions/:id/users`, controller.v1.users.getUsersByPermission);
 
   // 角色
   router.post(`${apiV1}/roles`, controller.v1.roles.create);
@@ -79,13 +80,6 @@ module.exports = app => {
   router.get(`${apiV1}/work-orders/:id`, controller.v1.workOrders.findOne);
   router.delete(`${apiV1}/work-orders/:id`, controller.v1.workOrders.destroy);
 
-  // 巡点
-  router.post(`${apiV1}/patrol-points`, controller.v1.patrolPoints.create);
-  router.put(`${apiV1}/patrol-points/:sn`, controller.v1.patrolPoints.update);
-  router.get(`${apiV1}/patrol-points`, controller.v1.patrolPoints.findAll);
-  router.get(`${apiV1}/patrol-points/:sn`, controller.v1.patrolPoints.findOne);
-  router.delete(`${apiV1}/patrol-points/:sn`, controller.v1.patrolPoints.destroy);
-
   // 巡检
   router.post(`${apiV1}/inspections`, controller.v1.inspections.create);
   router.put(`${apiV1}/inspections/:id`, controller.v1.inspections.update);
@@ -106,10 +100,10 @@ module.exports = app => {
 
   // 设备台账
   router.post(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.create);
-  router.put(`${apiV1}/equipment-accounts/:sn`, controller.v1.equipmentAccounts.update);
+  router.put(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.update);
   router.get(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.findAll);
-  router.get(`${apiV1}/equipment-accounts/:sn`, controller.v1.equipmentAccounts.findOne);
-  router.delete(`${apiV1}/equipment-accounts/:sn`, controller.v1.equipmentAccounts.destroy);
+  router.get(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.findOne);
+  router.delete(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.destroy);
 
   // 工具
   router.post(`${apiV1}/tools`, controller.v1.tools.create);

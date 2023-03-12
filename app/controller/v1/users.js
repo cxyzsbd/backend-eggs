@@ -216,9 +216,10 @@ class UsersController extends BaseController {
     // 更新登录时间
     await service.users.update({ id, last_login });
     await app.utils.tools.redisCacheUserinfo(id);
-    await app.redis.clients.get('io').set(`ONLINE_USER__${id}`, 1);
-    await app.redis.clients.get('io').expire(`ONLINE_USER__${id}`, 5 * 60);
-    await app.redis.clients.get('io').sadd('onlineUsers', id);
+    const redisPub = app.redis.get('io');
+    redisPub.set(`ONLINE_USER__${id}`, 1);
+    redisPub.expire(`ONLINE_USER__${id}`, 5 * 60);
+    redisPub.sadd('onlineUsers', id);
     this.SUCCESS({
       access_token,
       refresh_token,
@@ -348,6 +349,21 @@ class UsersController extends BaseController {
       },
     });
     this.SUCCESS({ message: '修改成功' });
+  }
+
+  /**
+  * @apikey
+  * @summary 按权限获取用户列表
+  * @description 按权限获取用户列表
+  * @router get permissions/:id/users
+  * @request path number *id eg:1 permissionID
+  */
+  async getUsersByPermission() {
+    const { ctx, service, app } = this;
+    const params = ctx.params;
+    ctx.validate(ctx.rule.permissionDelBodyReq, params);
+    const res = await service.users.getUsersByPermission(params);
+    this.SUCCESS(res);
   }
 }
 module.exports = UsersController;

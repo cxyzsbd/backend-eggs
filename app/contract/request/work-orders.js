@@ -49,7 +49,16 @@ const body = {
       required: false,
       description: '提交图片地址',
     },
-
+    status: {
+      type: 'number',
+      required: false,
+      description: '状态（0:新建，待分配；1:已分配；2:已认领；3:已完成;4:已逾期）',
+    },
+    handler: {
+      type: 'number',
+      required: false,
+      description: '处理人',
+    },
   },
   workOrdersApprovalBodyReq: {
     approval_result: {

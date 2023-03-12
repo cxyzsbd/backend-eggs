@@ -1,7 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 class WorkOrdersService extends Service {
   /**
@@ -22,12 +22,28 @@ class WorkOrdersService extends Service {
     return sn;
   }
   async findAll(payload) {
-    const { ctx } = this;
-    const { pageSize, pageNumber, prop_order, order } = payload;
+    const { ctx, app } = this;
+    const { pageSize, pageNumber, prop_order, order, status } = payload;
     const { company_id } = ctx.request.header;
     let where = payload.where;
     where.company_id = company_id;
     const Order = [];
+    if (status || status == 0) {
+      if (status == 4) {
+        where[Op.and] = [
+          { status: {
+            [Op.lte]: 2,
+          } },
+          { end_time: {
+            [Op.gt]: new Date().getTime(),
+          } },
+        ];
+      } else if (status != 3) {
+        where.end_time = {
+          [Op.gt]: new Date().getTime(),
+        };
+      }
+    }
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.WorkOrders.count({ where });
     const data = await ctx.model.WorkOrders.findAll({
