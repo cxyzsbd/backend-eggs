@@ -8,6 +8,7 @@ const FlakeId = require('flake-idgen');
 const intformat = require('biguint-format');
 const quarterOfYear = require('dayjs/plugin/quarterOfYear');
 dayjs.extend(quarterOfYear);
+const globalConfig = require('../../global.config');
 module.exports = class Tools {
   constructor(app) {
     this.app = app;
@@ -18,6 +19,7 @@ module.exports = class Tools {
     this.lodash = lodash;
     this.md5 = md5;
     this.uuidv4 = uuidv4;
+    this.globalConfig = globalConfig;
   }
   /**
    * 雪花算法生成id

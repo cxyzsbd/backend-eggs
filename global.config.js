@@ -43,6 +43,12 @@ const YS_APP_KEY = {
   appSecret: 'dd2caf4f132c6d985b62f8711a633b16',
 };
 
+// 金蝶用户系统校验参数
+const KINGDEE_PARAMS = {
+  client_id: '', // 应用id
+  client_secret: '', // 应用安全码
+};
+
 module.exports = {
   WX_GZH_CONFIG,
   WX_XCX_CONFIG,
@@ -50,4 +56,5 @@ module.exports = {
   REDIS_CONFIG,
   DATA_FORWARD_URL,
   YS_APP_KEY,
+  KINGDEE_PARAMS,
 };
