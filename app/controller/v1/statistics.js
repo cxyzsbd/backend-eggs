@@ -12,7 +12,6 @@ class statisticsController extends BaseController {
   * @summary 获取某个 对象
   * @description 获取某个 对象
   * @router get statistics/user-count
-  * @request path number *id eg:1
   */
   async userCount() {
     const { service } = this;
@@ -25,7 +24,6 @@ class statisticsController extends BaseController {
   * @summary 获取平台连接的数据源设备数（比如网关数）及其排名
   * @description 获取平台连接的数据源设备数（比如网关数）及其排名
   * @router get statistics/box-count
-  * @request path number *id eg:1
   */
   async boxCount() {
     const { service } = this;
@@ -38,7 +36,6 @@ class statisticsController extends BaseController {
   * @summary 获取平台连接的数据量（比如mqtt点位）总数及其排名
   * @description 获取平台连接的数据量（比如mqtt点位）总数及其排名
   * @router get statistics/data-source-count
-  * @request path number *id eg:1
   */
   async dataSourceCount() {
     const { service } = this;

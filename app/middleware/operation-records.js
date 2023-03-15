@@ -15,6 +15,14 @@ module.exports = options => {
       return false;
     }
     const path = url.slice(0, (url.indexOf('?') > 0 ? url.indexOf('?') : url.length));
+    // 转发接口不用记录
+    const reg1 = /^\/api\/v1\/box-data\/([\w-.\/]+)$/;
+    const reg2 = /^\/api\/v1\/data-forward\/([\w-.\/]+)$/;
+    const reg3 = /^\/api\/v1\/api-forward\/([\w-.\/]+)$/;
+    if (reg1.test(path) || reg2.test(path) || reg3.test(path)) {
+      await next();
+      return false;
+    }
     const request_body = { ...request.body, ...params };
     if (request_body.configs) {
       delete request_body.configs;

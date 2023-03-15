@@ -9,6 +9,44 @@ module.exports = options => {
     if (!isInWhiteList) {
       // 拿到前端传过来的 token
       const token = authorization;
+      // 实时数据、历史数据、实时报警、历史报警、数据下置等接口如果无token情况下，传递签名，签名校验通过也可放行
+      if ([ '/api/v1/box-data/data', '/api/v1/box-data/his-data', '/api/v1/box-data/alarm', '/api/v1/box-data/his-alarm', '/api/v1/box-data/down-data' ].includes(regUrl)) {
+        const { sign, user_id } = ctx.query;
+        if (sign) {
+          if (user_id) {
+            const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(user_id);
+            // console.log('userInfo', userInfo);
+            if (!userInfo) {
+              ctx.status = 401;
+              ctx.body = {
+                message: '用户不存在',
+              };
+              return false;
+            }
+            const { state, id, department_id, company_id } = userInfo;
+            if (state !== 1) {
+              ctx.status = 401;
+              ctx.body = {
+                message: '账号被停用',
+              };
+              return false;
+            }
+            // 将公共参数放到请求头
+            ctx.request.header = { ...ctx.request.header, request_user: id, department_id, company_id };
+          }
+          let params = { ...ctx.query, ...ctx.request.body };
+          console.log('params', params);
+          let newParams = ctx.app.utils.tools.lodash.cloneDeep(params);
+          delete newParams.sign;
+          const verifySign = await ctx.app.utils.tools.getSign(newParams);
+          console.log('verifySign', verifySign);
+          if (verifySign === sign) {
+            console.log('通过', ctx.request.header);
+            await next();
+            return false;
+          }
+        }
+      }
       if (token) {
         // 解密token
         const secret = ctx.app.config.jwt.secret;
@@ -16,7 +54,15 @@ module.exports = options => {
           const decoded = ctx.app.jwt.verify(token, secret) || 'false';
           if (decoded !== 'false' && decoded.type === 'access_token') {
             // 根据用户id获取公司id
-            const { state, id, department_id, company_id } = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);
+            const user = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);
+            if (!user) {
+              ctx.status = 401;
+              ctx.body = {
+                message: '用户不存在',
+              };
+              return false;
+            }
+            const { state, id, department_id, company_id } = user;
             if (state !== 1) {
               ctx.status = 401;
               ctx.body = {

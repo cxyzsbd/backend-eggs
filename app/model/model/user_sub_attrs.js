@@ -42,10 +42,10 @@ module.exports = app => {
     },
   };
   const options = {
-    tableName: 'user_sub_tags',
+    tableName: 'user_sub_attrs',
     comment: '',
     indexes: [],
   };
-  const UserSubTagsModel = sequelize.define('user_sub_tags_model', attributes, options);
-  return UserSubTagsModel;
+  const UserSubAttrsModel = sequelize.define('user_sub_attrs_model', attributes, options);
+  return UserSubAttrsModel;
 };

@@ -96,6 +96,7 @@ module.exports = class Tools {
       ],
     });
     await ctx.service.cache.set(`userinfo_${id}`, userinfo, app.config.jwt.expire, 'default');
+    return userinfo;
   }
   /**
    * 获取redis中公共数据，不存在及执行存储
@@ -129,7 +130,10 @@ module.exports = class Tools {
     const { ctx } = this;
     const data = await ctx.service.cache.get(`userinfo_${id}`, 'default');
     if (!data) {
-      await this.redisCacheUserinfo(id);
+      const userinfo = await this.redisCacheUserinfo(id);
+      if (!userinfo) {
+        return null;
+      }
       return await this.getRedisCacheUserinfo(id);
     }
     return data;
@@ -239,5 +243,59 @@ module.exports = class Tools {
 
   async isParam(param) {
     return !param && param !== 0;
+  }
+
+  // 签名规则：
+  // 1.先将参数按照`key=value`的形式加入到数组，
+  // 2.再将数组按照正序1-9|a-z排序，
+  // 3.再用&连接成新的字符串str，
+  // 4.最后str拼接秘钥，`str+&secret=sss`的形式再通过md5加密字符串得到签名
+  async getSign(params) {
+    const secret = this.config.signSecret;
+    if (typeof params === 'string') {
+      return this.paramsStrSort(params, secret);
+    } else if (typeof params === 'object') {
+      let arr = [];
+      for (let i in params) {
+        arr.push((i + '=' + params[i]));
+      }
+      // console.log('arr', arr);
+      return this.paramsStrSort(arr.join(('&')), secret);
+    }
+  }
+
+  async paramsStrSort(paramsStr, secret) {
+    let urlStr = paramsStr.split('&').sort().join('&');
+    let newUrl = `${urlStr}&secret=${secret}`;
+    return this.md5(newUrl);
+  }
+
+  // 处理属性转成长点名统一方法
+  async solveParams(type, tags = [], company_id) {
+    const { ctx, app } = this;
+    // console.log('company_id', company_id);
+    const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
+    const long_attrs = await ctx.service.cache.get(`attrs_${company_id}`, 'attrs');
+    // console.log('long_attrs', long_attrs);
+    if (type === 1) {
+      tags = tags.map(t => Number(t));
+      // console.log('tags===========', tags);
+      return attr_tags.filter(a => tags.includes(a.id)).map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname }; });
+    } else if (type === 2) {
+      let tagArr = tags.map(t => {
+        // console.log('t==================', t);
+        const long_attr_arr = t.toLowerCase().split('/');
+        // console.log('long_attr_arr', long_attr_arr);
+        let tagId = long_attrs[long_attr_arr[0]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] ? long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] : null;
+        // console.log(tagId);
+        let tag = attr_tags.filter(a => a.id === tagId);
+        let res = {};
+        if (tag && tag.length) {
+          res = { ...tag[0], t };
+        }
+        return res;
+      });
+      return tagArr.map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname, long_attr: item.t ? item.t : null }; });
+    }
   }
 };

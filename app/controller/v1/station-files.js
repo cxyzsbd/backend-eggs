@@ -83,7 +83,7 @@ class StationFilesController extends BaseController {
     const { ctx, service } = this;
     let params = ctx.params;
     params.id = Number(params.id);
-    ctx.validate(ctx.rule.stationFilesDelBodyReq, params);
+    ctx.validate(ctx.rule.stationFilesId, params);
     const res = await service.stationFiles.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }

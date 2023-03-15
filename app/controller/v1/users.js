@@ -224,6 +224,7 @@ class UsersController extends BaseController {
       access_token,
       refresh_token,
       is_super_user,
+      expire_time: app.config.jwt.expire,
     });
   }
 
@@ -252,6 +253,7 @@ class UsersController extends BaseController {
           access_token,
           refresh_token,
           is_super_user: decoded.is_super_user,
+          expire_time: app.config.jwt.expire,
         });
       } else {
         this.UNAUTHORIZED({ message: 'refresh_token无效' });

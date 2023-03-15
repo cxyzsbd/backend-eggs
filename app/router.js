@@ -76,6 +76,13 @@ module.exports = app => {
   // 工单
   router.post(`${apiV1}/work-orders`, controller.v1.workOrders.create);
   router.put(`${apiV1}/work-orders/:id`, controller.v1.workOrders.update);
+  router.patch(`${apiV1}/work-orders/:id/approval`, controller.v1.workOrders.approval);
+  router.patch(`${apiV1}/work-orders/:id/confirm`, controller.v1.workOrders.confirm);
+  router.patch(`${apiV1}/work-orders/:id/complete`, controller.v1.workOrders.complete);
+  // 小程序不支持patch，增加put方式
+  router.put(`${apiV1}/work-orders/:id/approval`, controller.v1.workOrders.approval);
+  router.put(`${apiV1}/work-orders/:id/confirm`, controller.v1.workOrders.confirm);
+  router.put(`${apiV1}/work-orders/:id/complete`, controller.v1.workOrders.complete);
   router.get(`${apiV1}/work-orders`, controller.v1.workOrders.findAll);
   router.get(`${apiV1}/work-orders/:id`, controller.v1.workOrders.findOne);
   router.delete(`${apiV1}/work-orders/:id`, controller.v1.workOrders.destroy);
@@ -254,4 +261,7 @@ module.exports = app => {
   router.get(`${apiV1}/statistics/box-count`, controller.v1.statistics.boxCount);
   router.get(`${apiV1}/statistics/data-source-count`, controller.v1.statistics.dataSourceCount);
   router.get(`${apiV1}/statistics/user-count`, controller.v1.statistics.userCount);
+
+  // 报警
+  router.post(`${apiV1}/alarms`, controller.v1.alarms.create);
 };
