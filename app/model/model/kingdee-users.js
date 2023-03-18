@@ -4,14 +4,14 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    kindee_uid: {
+    kingdee_uid: {
       type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
       autoIncrement: false,
       comment: '金蝶用户uid',
-      field: 'kindee_uid',
+      field: 'kingdee_uid',
     },
     user_id: {
       type: DataTypes.INTEGER(11).UNSIGNED,
@@ -29,5 +29,8 @@ module.exports = app => {
     indexes: [],
   };
   const KingdeeUsersModel = sequelize.define('kingdee_users', attributes, options);
+  KingdeeUsersModel.associate = () => {
+    KingdeeUsersModel.hasOne(app.model.Users, { foreignKey: 'id', sourceKey: 'user_id', as: 'userinfo' });
+  };
   return KingdeeUsersModel;
 };

@@ -24,6 +24,14 @@ const DB_CONFIG = {
   USERNAME: 'root',
   PASSWORD: 'mySQL13test14',
 };
+// const DB_CONFIG = {
+//   DATABASE1: 'jingdee_test',
+//   DATABASE2: 'cloudnative',
+//   HOST: '192.168.1.118',
+//   PORT: '3306',
+//   USERNAME: 'root',
+//   PASSWORD: 'lkys@401A',
+// };
 const REDIS_CONFIG = {
   PORT: 31379,
   HOST: '42.192.189.220',
@@ -36,6 +44,7 @@ const REDIS_CONFIG = {
 // };
 
 const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
+// const DATA_FORWARD_URL = 'http://192.168.20.158/';
 
 // 萤石云账号和秘钥
 const YS_APP_KEY = {
@@ -45,8 +54,8 @@ const YS_APP_KEY = {
 
 // 金蝶用户系统校验参数
 const KINGDEE_PARAMS = {
-  client_id: '', // 应用id
-  client_secret: '', // 应用安全码
+  client_id: '243571', // 应用id
+  client_secret: '60caf37ff275445a6fc68e441da316b2', // 应用安全码
 };
 
 module.exports = {

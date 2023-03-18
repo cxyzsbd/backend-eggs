@@ -73,9 +73,11 @@ class flowsController extends BaseController {
   * @summary 上传流程图文件
   * @description 上传流程图文件
   * @router post flows/:id/files
+  * @request query number is_save "是否保存到数据库，1：保存到数据库；不传不保存"
   */
   async uploadFile() {
-    const { ctx, app } = this;
+    const { ctx, app, service } = this;
+    const query = ctx.query;
     const { company_id } = ctx.request.header;
     const { id } = ctx.params;
     const size = ctx.request.header['content-length'];
@@ -87,7 +89,10 @@ class flowsController extends BaseController {
     }
     const filename = `${app.utils.tools.uuidv4()}${path.extname(stream.filename)}`;
     const pathfix = company_id ? `/${company_id}` : '';
-    const floder = `/files${pathfix}/flows/${id}`;
+    let floder = `/files${pathfix}/flows/${id}`;
+    if (query.is_save == 1) {
+      floder = `/files${pathfix}/flows/common`;
+    }
     const targetPath = path.join(this.config.baseDir, `..${floder}`);
     // 判断路径是否存在
     await app.utils.tools.dirExists(targetPath);
@@ -97,6 +102,13 @@ class flowsController extends BaseController {
     try {
       // 异步把文件流 写入
       await awaitWriteStream(stream.pipe(writeStream));
+      if (query.is_save == 1) {
+        await service.visualImages.create({
+          type: 2,
+          url: `${floder}/${filename}`,
+          company_id,
+        });
+      }
       this.SUCCESS({ res: `${floder}/${filename}` });
     } catch (err) {
       // 如果出现错误，关闭管道

@@ -264,4 +264,12 @@ module.exports = app => {
 
   // 报警
   router.post(`${apiV1}/alarms`, controller.v1.alarms.create);
+
+  // 校验金蝶用户
+  router.get(`${apiV1}/kingdee/validate-user`, controller.v1.kingdee.validateUser);
+  router.post(`${apiV1}/kingdee/synchronize-user`, controller.v1.kingdee.synchronizeUser);
+
+  // 可视化图片
+  router.get(`${apiV1}/visual-images`, controller.v1.visualImages.findAll);
+  router.delete(`${apiV1}/visual-images/:id`, controller.v1.visualImages.destroy);
 };

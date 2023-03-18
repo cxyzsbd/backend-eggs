@@ -50,7 +50,7 @@ class StationsController extends BaseController {
   * @request body stationsBodyReq
   */
   async create() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     const { company_id } = ctx.request.header;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.stationsBodyReq, params);
@@ -61,6 +61,7 @@ class StationsController extends BaseController {
       return false;
     }
     await service.stations.create(params);
+    await app.utils.tools.setStationsCache();
     this.CREATED();
   }
 
@@ -73,7 +74,7 @@ class StationsController extends BaseController {
   * @request body stationsPutBodyReq
   */
   async update() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     const { company_id } = ctx.request.header;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
@@ -85,6 +86,9 @@ class StationsController extends BaseController {
       return false;
     }
     const res = await service.stations.update(params);
+    if (res && res[0] !== 0) {
+      await app.utils.tools.setStationsCache();
+    }
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -96,11 +100,12 @@ class StationsController extends BaseController {
   * @request path number *id eg:1
   */
   async destroy() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = ctx.params;
     params.id = Number(params.id);
     ctx.validate(ctx.rule.stationsId, params);
     const res = await service.stations.destroy(params);
+    await app.utils.tools.setStationsCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 }

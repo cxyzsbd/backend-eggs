@@ -229,7 +229,7 @@ module.exports = appInfo => {
 
   config.multipart = {
     fileSize: '50mb', // 文件大小限制
-    fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.dwg' ], // 上传文件类型扩展
+    fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.gif' ], // 上传文件类型扩展
   };
 
   // add your user config here

@@ -12,6 +12,8 @@ class UpdateCache extends Subscription {
   async subscribe() {
     const { ctx, app } = this;
     app.utils.tools.setAttrsRedisCache();
+    app.utils.tools.setStationsCache();
+    app.utils.tools.setDevicesCache();
   }
 }
 

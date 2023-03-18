@@ -180,6 +180,20 @@ module.exports = class Tools {
     // console.log('companys========', newCompanysObj);
   }
 
+  // 设置站点缓存
+  async setStationsCache() {
+    const { ctx } = this;
+    const stations = await ctx.model.Stations.findAll({ raw: true });
+    await ctx.service.cache.set('stations', stations, 2 * 60 * 60, 'attrs');
+  }
+
+  // 设置设备缓存
+  async setDevicesCache() {
+    const { ctx } = this;
+    const devices = await ctx.model.Devices.findAll({ raw: true });
+    await ctx.service.cache.set('devices', devices, 2 * 60 * 60, 'attrs');
+  }
+
   /**
    * 读取路径信息
    * @param {string} path 路径
@@ -269,6 +283,7 @@ module.exports = class Tools {
   async paramsStrSort(paramsStr, secret) {
     let urlStr = paramsStr.split('&').sort().join('&');
     let newUrl = `${urlStr}&secret=${secret}`;
+    console.log('newUrl===================', newUrl);
     return this.md5(newUrl);
   }
 

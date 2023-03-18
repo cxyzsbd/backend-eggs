@@ -55,6 +55,7 @@ class devicesController extends BaseController {
     ctx.validate(ctx.rule.devicesBodyReq, params);
     await ctx.service.devices.create(params);
     await app.utils.tools.setAttrsRedisCache();
+    await app.utils.tools.setDevicesCache();
     this.CREATED();
   }
 
@@ -79,6 +80,7 @@ class devicesController extends BaseController {
     }
     const res = await service.devices.update(params);
     await app.utils.tools.setAttrsRedisCache();
+    await app.utils.tools.setDevicesCache();
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -96,6 +98,7 @@ class devicesController extends BaseController {
     ctx.validate(ctx.rule.devicesId, params);
     const res = await service.devices.destroy(params);
     await app.utils.tools.setAttrsRedisCache();
+    await app.utils.tools.setDevicesCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
@@ -123,6 +126,7 @@ class devicesController extends BaseController {
     }
     await service.devices.modelToDevice(params);
     await app.utils.tools.setAttrsRedisCache();
+    await app.utils.tools.setDevicesCache();
     this.CREATED();
   }
 }

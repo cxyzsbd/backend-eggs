@@ -23,7 +23,7 @@ const body = {
       min: 2,
       max: 60,
       trim: true,
-      example: 'Imfdj',
+      example: 'username',
       description: '用户名',
     },
     email: {
@@ -58,7 +58,7 @@ const body = {
       min: 2,
       max: 60,
       trim: true,
-      example: 'Imfdj',
+      example: 'username',
       description: '用户名',
     },
     password: {
@@ -119,7 +119,7 @@ const body = {
       min: 2,
       max: 60,
       trim: true,
-      example: 'Imfdj',
+      example: 'username',
       description: '用户名',
     },
     password: {
