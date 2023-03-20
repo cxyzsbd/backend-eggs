@@ -241,6 +241,7 @@ module.exports = appInfo => {
     socketCompanyAdminPrefix: 'SOCKET_COMPANY_ADMIN_ROOM_', // 公司管理员房间前缀
     socketUserPrefix: 'SOCKET_USER_ROOM_', // 单个用户房间
     IORedisUserKeyPrefix: 'SOCKET_USER_', // redis存用户socketId前缀
+    ALARM_PUSH_EVENT_NAME: 'alarms', // 报警推送事件名
   };
 
   return {

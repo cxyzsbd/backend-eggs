@@ -26,8 +26,8 @@ class BoxDataController extends BaseController {
     const { ctx, app } = this;
     const forwardUrls = [ 'data', 'his-data', 'alarm', 'his-alarm', 'down-data' ];
     let { method, url, header, body } = ctx.request;
-    // console.log('query==============', ctx.query);
-    // console.log('body==============', body);
+    console.log('query==============', ctx.query);
+    console.log('body==============', body);
     const { company_id } = ctx.request.header;
     const apiUrl = url.indexOf('?') !== -1 ? url.slice(17, url.indexOf('?')) : url.slice(17);
     if (!forwardUrls.includes(apiUrl)) {

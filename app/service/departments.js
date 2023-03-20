@@ -105,20 +105,24 @@ class _objectName_Service extends Service {
   }
 
   // 递归获取上级部门
-  // async recursionDepartments(departmentArr = []) {
-  //   const { ctx, app } = this;
-  //   let arr = [];
-  //   const departments = await app.utils.tools.getRedisCachePublic('departments');
-  //   departmentArr.forEach(d => {
-  //     let children = departments.filter(item => item.parent_id === d.id);
-  //     arr = [ ...arr, ...children ];
-  //   });
-  //   if (arr.length) {
-  //     let arrChildren = await this.recursionDepartments(arr);
-  //     arr = [ ...arr, ...arrChildren ];
-  //   }
-  //   return arr;
-  // }
+  async recursionFatherDepartments(departmentArr = []) {
+    const { ctx, app } = this;
+    let arr = [ ...departmentArr ];
+    const departments = await app.utils.tools.getRedisCachePublic('departments');
+    let fatherIds = departmentArr.map(item => item.parent_id);
+    fatherIds = new Set(fatherIds);
+    fatherIds = Array.from(fatherIds);
+    if (fatherIds.length) {
+      const fathers = departments.filter(item => fatherIds.includes(item.id));
+      arr = [ ...arr, ... fathers ];
+      if (fathers.length) {
+        // 判断是否有非顶级的父级组织
+        let fatherArr = await this.recursionFatherDepartments(fathers);
+        arr = [ ...arr, ...fatherArr ];
+      }
+    }
+    return arr;
+  }
 }
 
 module.exports = _objectName_Service;

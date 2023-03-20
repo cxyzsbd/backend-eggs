@@ -194,6 +194,15 @@ module.exports = class Tools {
     await ctx.service.cache.set('devices', devices, 2 * 60 * 60, 'attrs');
   }
 
+  // 数组去重
+  async array_uniq(arr) {
+    if (!Array.isArray(arr)) {
+      return arr;
+    }
+    arr = new Set(arr);
+    return Array.from(arr);
+  }
+
   /**
    * 读取路径信息
    * @param {string} path 路径
