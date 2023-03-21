@@ -35,7 +35,7 @@ const body = {
       description: '描述',
     },
     time_limit: {
-      type: 'dateTime',
+      type: 'string',
       required: false,
       description: '使用期限',
     },

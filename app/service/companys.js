@@ -49,11 +49,13 @@ class CompanysService extends Service {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     payload.creator = request_user;
+    !payload.time_limit && delete payload.time_limit;
     return await ctx.model.Companys.create(payload);
   }
 
   async update(payload) {
     const { ctx } = this;
+    !payload.time_limit && delete payload.time_limit;
     return await ctx.model.Companys.update(payload, { where: { id: payload.id } });
   }
 }

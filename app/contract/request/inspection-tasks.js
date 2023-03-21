@@ -18,12 +18,12 @@ const body = {
       description: '任务名称',
     },
     start_time: {
-      type: 'dateTime',
+      type: 'string',
       required: false,
       description: '开始时间',
     },
     end_time: {
-      type: 'dateTime',
+      type: 'string',
       required: false,
       description: '结束时间',
     },
