@@ -44,7 +44,7 @@ const REDIS_CONFIG = {
 // };
 
 const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
-// const DATA_FORWARD_URL = 'http://192.168.20.158/';
+// const DATA_FORWARD_URL = 'http://192.168.20.222/';
 
 // 萤石云账号和秘钥
 const YS_APP_KEY = {

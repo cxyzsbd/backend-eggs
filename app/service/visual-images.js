@@ -6,24 +6,36 @@ class VisualImagesService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
-    const { pageSize, pageNumber, prop_order, order } = payload;
+    const { pageSize = 20, pageNumber = 1, prop_order, order, type } = payload;
     let where = payload.where;
-    where = { ...where, company_id };
+    where = { ...where, company_id, type };
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const total = await ctx.model.VisualImages.count({ where });
-    const data = await ctx.model.VisualImages.findAll({
-      limit: pageSize,
-      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+    const count = await ctx.model.VisualImages.count({ where });
+    let tempObj = {
       where,
       order: Order,
-    });
-    return {
-      data,
-      pageNumber,
-      pageSize,
-      total,
     };
+    if (pageSize > 0) {
+      tempObj = {
+        ...tempObj,
+        limit: pageSize,
+        offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+      };
+    }
+    const data = await ctx.model.VisualImages.findAll(tempObj);
+    let resObj = {
+      data,
+      total: count,
+    };
+    if (pageSize > 0) {
+      resObj = {
+        ...resObj,
+        pageNumber,
+        pageSize,
+      };
+    }
+    return resObj;
   }
 
   async create(payload) {

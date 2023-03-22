@@ -40,7 +40,7 @@ class BoxDataController extends BaseController {
       paramtype = Number(paramtype);
       body = { ...body, param_arr: paramarr, param_type: paramtype };
     }
-    // console.log('body1===============', body);
+    console.log('body1===============', body);
     if (!body.param_arr || !body.param_arr.length) {
       this.BAD_REQUEST({ message: 'param_arr不能为空' });
       return false;
@@ -57,6 +57,7 @@ class BoxDataController extends BaseController {
       return false;
     }
     // console.timeEnd('dataAndAlarm');
+    console.log('参数====================', data);
     // 处理参数
     try {
       // console.time('中转数据');
@@ -73,7 +74,7 @@ class BoxDataController extends BaseController {
         console.log(err);
         return false;
       });
-      // console.log('参数====================', data);
+      console.log('参数====================', data);
       // console.log('res==================', res.data);
       if (!res) {
         this.SERVER_ERROR();

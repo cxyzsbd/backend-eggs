@@ -15,7 +15,7 @@ module.exports = options => {
         if (sign) {
           if (user_id) {
             const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(user_id);
-            // console.log('userInfo', userInfo);
+            console.log('userInfo', userInfo);
             if (!userInfo) {
               ctx.status = 401;
               ctx.body = {
@@ -45,6 +45,8 @@ module.exports = options => {
             await next();
             return false;
           }
+          await next();
+          return false;
         }
       }
       if (token) {

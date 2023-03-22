@@ -31,6 +31,15 @@ module.exports = app => {
       comment: '公司id',
       field: 'company_id',
     },
+    type: {
+      type: DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: '1',
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '类型：1：大屏；2：流程图',
+      field: 'type',
+    },
   };
   const options = {
     tableName: 'visual_images',
