@@ -6,7 +6,7 @@ class KingdeeService extends Service {
 
   async create(payload) {
     const { ctx } = this;
-    const { uid, username, avatar = '', phone = '', email = '', state = 1 } = payload;
+    const { uid, username, avatar = '', phone = '', email = '', state = 1, company_id = 1, role } = payload;
     const defaultPassword = 'e10adc3949ba59abbe56e057f20f883e';
     const transaction = await ctx.model.transaction();
     try {
@@ -17,7 +17,7 @@ class KingdeeService extends Service {
         phone,
         email,
         state,
-        company_id: 1,
+        company_id,
       }, { transaction });
       await ctx.model.KingdeeUsers.findOrCreate({
         where: {
@@ -26,6 +26,16 @@ class KingdeeService extends Service {
         },
         transaction,
       });
+      if (role) {
+        // 设置角色
+        await ctx.model.UserRoles.findOrCreate({
+          where: {
+            user_id: user.id,
+            role_id: role,
+          },
+          transaction,
+        });
+      }
       await transaction.commit();
       return user;
     } catch (e) {

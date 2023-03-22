@@ -9,18 +9,14 @@ const BaseController = require('../base-controller');
 class DataForwardController extends BaseController {
   /**
   * @apikey
-  * @summary 转发cpp接口
-  * @description 转发cpp接口
+  * @summary 通用转发接口
+  * @description 通用转发接口
   * @router get data-forward/:url
   * @request path string *url eg:getboxlist
   */
   async dataForward() {
-    console.log(12321321312312);
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
-    // if (params.code) {
-    //   // 判断是否有盒子权限
-    // }
     const requestBaseUrl = app.config.dataForwardBaseUrl;
     const { method, url, header, body } = ctx.request;
     const data = body || {};
@@ -47,6 +43,43 @@ class DataForwardController extends BaseController {
         return false;
       }
       this.SUCCESS(res.data.error ? { ...res.data } : res.data);
+    } catch (error) {
+      throw error;
+    }
+  }
+  /**
+  * @apikey
+  * @summary CPP服务转发接口
+  * @description CPP服务转发接口
+  * @router get cpp-forward/:url
+  * @request path string *url eg:getboxlist
+  */
+  async cppForward() {
+    const { ctx, app } = this;
+    const requestBaseUrl = app.config.cppForwardBaseUrl;
+    const { method, url, header, body } = ctx.request;
+    const data = body || {};
+    const apiUrl = url.indexOf('?') !== -1 ? url.slice(20, url.indexOf('?')) : url.slice(20);
+    try {
+      const res = await ctx.curl(`${requestBaseUrl}api/v1/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
+        method,
+        rejectUnauthorized: false,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        dataType: 'json',
+        data,
+      }).catch(err => {
+        console.log(err);
+        return false;
+      });
+      // console.log('res==================', res);
+      if (!res) {
+        this.SERVER_ERROR();
+        return false;
+      }
+      this.SUCCESS(res.data);
     } catch (error) {
       throw error;
     }

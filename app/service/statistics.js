@@ -16,6 +16,7 @@ class StatisticsService extends Service {
       group: 'company_id',
       attributes: [ 'company_id' ],
     });
+    // 在线用户数统计
     const onlineUsers = await app.redis.clients.get('io').smembers('onlineUsers') || [];
     // console.log('onlineUsers', onlineUsers);
     const companys = await app.utils.tools.getRedisCachePublic('companys');

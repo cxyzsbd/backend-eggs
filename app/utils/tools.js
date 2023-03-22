@@ -292,7 +292,7 @@ module.exports = class Tools {
   async paramsStrSort(paramsStr, secret) {
     let urlStr = paramsStr.split('&').sort().join('&');
     let newUrl = `${urlStr}&secret=${secret}`;
-    console.log('newUrl===================', newUrl);
+    // console.log('newUrl===================', newUrl);
     return this.md5(newUrl);
   }
 
@@ -323,5 +323,33 @@ module.exports = class Tools {
       });
       return tagArr.map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname, long_attr: item.t ? item.t : null }; });
     }
+  }
+
+  // 处理属性转成长点名统一方法
+  async solveDownloadDataParams(type, tags = [], company_id = null) {
+    const { ctx } = this;
+    const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
+    if (type === 1) {
+      tags = tags.map(item => {
+        let attrs = attr_tags.filter(attr => Number(attr.id) === Number(item.id));
+        if (attrs && attrs.length) {
+          item = { ...item, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
+        }
+        return item;
+      });
+      return tags;
+    } else if (type === 2 && company_id) {
+      const long_attrs = await ctx.service.cache.get(`attrs_${company_id}`, 'attrs');
+      tags = tags.map(item => {
+        const long_attr_arr = item.long_attr.toLowerCase().split('/');
+        let tagId = long_attrs[long_attr_arr[0]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] ? long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] : null;
+        let attrs = attr_tags.filter(a => a.id === tagId);
+        if (attrs && attrs.length) {
+          item = { ...item, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
+        }
+        return item;
+      });
+    }
+    return tags;
   }
 };

@@ -46,6 +46,8 @@ const REDIS_CONFIG = {
 const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
 // const DATA_FORWARD_URL = 'http://192.168.20.222/';
 
+const CPP_FORWARD_URL = 'http://192.168.1.235:9999/';
+
 // 萤石云账号和秘钥
 const YS_APP_KEY = {
   appKey: '4eba082f0eaa4ca4b64409526bb3f51b',
@@ -66,4 +68,5 @@ module.exports = {
   DATA_FORWARD_URL,
   YS_APP_KEY,
   KINGDEE_PARAMS,
+  CPP_FORWARD_URL,
 };

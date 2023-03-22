@@ -7,6 +7,7 @@ const {
   REDIS_CONFIG,
   DB_CONFIG,
   DATA_FORWARD_URL,
+  CPP_FORWARD_URL,
 } = require('../global.config');
 
 /**
@@ -226,6 +227,7 @@ module.exports = appInfo => {
 
   // 数据转发基础路径
   config.dataForwardBaseUrl = DATA_FORWARD_URL;
+  config.cppForwardBaseUrl = CPP_FORWARD_URL;
 
   config.multipart = {
     fileSize: '50mb', // 文件大小限制

@@ -9,6 +9,7 @@ class StationsService extends Service {
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where.company_id = company_id;
+    // 获取当前用户下所有的部门
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.Stations.count({ where });

@@ -33,7 +33,7 @@ module.exports = app => {
     },
     connection_limit: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
@@ -102,6 +102,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: '管理员',
       field: 'admin',
+    },
+    kingdee_company: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '金蝶同步用户公司id',
+      field: 'kingdee_company',
     },
   };
   const options = {

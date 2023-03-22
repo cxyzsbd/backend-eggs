@@ -28,10 +28,11 @@ module.exports = app => {
       // 1.获取用户信息
       userinfo = await ctx.service.cache.get(`userinfo_${user_id}`, 'default');
       // console.log('userinfo', userinfo);
+      const companyPrefix = userinfo.company_id ? userinfo.company_id : '';
       // 2.加入在线用户room
       await socket.join(socketOnlineUserRoomName);
       // 同一个用户加入一个room
-      await socket.join(`${socketUserPrefix}${user_id}`);
+      await socket.join(`${socketUserPrefix}_${companyPrefix}_${user_id}`);
       if (userinfo && userinfo.company_id) {
         // 3.加入公司统一room
         await socket.join(`${socketCompanyRoomNamePrefix}${userinfo.company_id}`);
@@ -44,21 +45,31 @@ module.exports = app => {
           await socket.join(`${socketCompanyAdminPrefix}${userinfo.company_id}`);
         }
       }
-      setTimeout(() => {
-        nsp.to(socketOnlineUserRoomName).emit('message', { aaa: 222 });
-      }, 3000);
+      // setTimeout(() => {
+      //   nsp.to(socketOnlineUserRoomName).emit('message', { aaa: 222 });
+      // }, 3000);
     } catch (error) {
       console.log('error', error);
       socket.disconnect();
     }
     await next();
-    // 离线之后更新用户在redis中存储的socketID list
-    // console.log('退出');
-    // if (userinfo) {
-    //   console.log('删除socketID');
-    //   await IORedis.srem(`${IORedisUserKeyPrefix}${userinfo.id}`, socket.id);
-    //   const newList = await IORedis.smembers(`${IORedisUserKeyPrefix}${userinfo.id}`);
-    //   console.log('newList==================', newList);
-    // }
+    // 离线之后踢出房间
+    // 离开在线用户room
+    socket.leave(socketOnlineUserRoomName);
+    // 退出个人room
+    const companyPrefix = userinfo.company_id ? userinfo.company_id : '';
+    socket.leave(`${socketUserPrefix}_${companyPrefix}_${userinfo.id}`);
+    if (userinfo && userinfo.company_id) {
+      // 3.离开公司统一room
+      socket.leave(`${socketCompanyRoomNamePrefix}${userinfo.company_id}`);
+      // 4.离开部门room（无部门则认为是管理员，加入管理员room）
+      if (userinfo.department_id) {
+        // 有部门,离开部门room
+        socket.leave(`${socketDepartmentRoomNamePrefix}${userinfo.department_id}`);
+      } else {
+        // 无部门，认为是管理员,离开公司管理员room
+        socket.leave(`${socketCompanyAdminPrefix}${userinfo.company_id}`);
+      }
+    }
   };
 };

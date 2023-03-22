@@ -23,10 +23,20 @@ class KingdeeController extends BaseController {
         type: 'string',
         required: true,
       },
+      a: {
+        type: 'string',
+        required: true,
+      },
+      b: {
+        type: 'string',
+        required: true,
+      },
     };
     ctx.validate(rule, params);
+    const { auth_code, a, b } = params;
+    console.log('params=================', params);
     try {
-      const res = await ctx.curl(`https://api.kingdee.com/auth/user/auth_code/validation?client_id=${client_id}&client_secret=${client_secret}&auth_code=${params.auth_code}`, {
+      const res = await ctx.curl(`https://api.kingdee.com/auth/user/auth_code/validation?client_id=${client_id}&client_secret=${client_secret}&auth_code=${auth_code}`, {
         method: 'GET',
         rejectUnauthorized: false,
         timeout: 30000,
@@ -49,9 +59,9 @@ class KingdeeController extends BaseController {
         if (asyncUser && asyncUser.userinfo) {
           // 生成token并返回
           let is_super_user = false;
-          if (!asyncUser.userinfo.company_id) {
-            is_super_user = true;
-          }
+          // if (!asyncUser.userinfo.company_id) {
+          //   is_super_user = true;
+          // }
           const { user_id } = asyncUser;
           const accessToken = app.jwt.sign({ user_id, type: 'access_token', is_super_user }, app.config.jwt.secret, { expiresIn: expires_in });
           const refresh_token = app.jwt.sign({ user_id, type: 'refresh_token', is_super_user }, app.config.jwt.secret, { expiresIn: app.config.jwt.refresh_expire });
@@ -67,8 +77,21 @@ class KingdeeController extends BaseController {
           });
           return false;
         }
+        // 同步公司
+        const [ company, created ] = await ctx.model.Companys.findOrCreate({
+          where: {
+            kingdee_company: b,
+          },
+          defaults: {
+            name: '默认公司',
+            platform_name: '默认公司',
+            creator: 1,
+          },
+        });
+        console.log('company====================', company);
+        const role = a ? 1 : 20;
         // 同步用户
-        const createRes = await service.kingdee.create({ uid, username: `${nickname}_${uid}`, avatar });
+        const createRes = await service.kingdee.create({ uid, username: `${nickname}_${uid}`, avatar, company_id: company.id, role });
         if (createRes) {
           const { id } = createRes;
           // 生成token并返回

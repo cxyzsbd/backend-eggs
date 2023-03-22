@@ -134,13 +134,17 @@ module.exports = app => {
   router.post(/^\/api\/v1\/box-data\/([\w-.\/]+)$/, controller.v1.boxData.dataAndAlarm);
   router.get(/^\/api\/v1\/box-data\/([\w-.\/]+)$/, controller.v1.boxData.dataAndAlarm);
 
-  // 数据转发接口路由
+  // 通用转发接口路由
   router.post(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
   router.get(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
 
   // 无token转发接口路由
   router.post(/^\/api\/v1\/api-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
   router.get(/^\/api\/v1\/api-forward\/([\w-.\/]+)$/, controller.v1.dataForward.apiForward);
+
+  // 无token转发接口路由
+  router.post(/^\/api\/v1\/cpp-forward\/([\w-.\/]+)$/, controller.v1.dataForward.cppForward);
+  router.get(/^\/api\/v1\/cpp-forward\/([\w-.\/]+)$/, controller.v1.dataForward.cppForward);
 
   // 设备模型
   router.post(`${apiV1}/device-models`, controller.v1.deviceModels.create);

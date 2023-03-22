@@ -47,7 +47,8 @@ class alarmsController extends BaseController {
     //   return false;
     // }
     // 推送逻辑
-    const { tn, boxCode } = params;
+    let { tn, boxCode } = params;
+    tn = `${tn}.PV`;
     const redisAttr = app.redis.clients.get('attrs');
     const allAttrs = JSON.parse(await redisAttr.get('attr_tags'));
     const allStations = JSON.parse(await redisAttr.get('stations'));
