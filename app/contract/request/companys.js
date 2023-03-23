@@ -13,18 +13,18 @@ const body = {
     },
     platform_name: {
       type: 'string',
-      required: true,
+      required: false,
       max: 60,
       description: '平台名称',
     },
     connection_limit: {
       type: 'number',
-      required: true,
+      required: false,
       description: '连接数限制',
     },
     logo: {
       type: 'string',
-      required: true,
+      required: false,
       max: 255,
       description: 'logo',
     },

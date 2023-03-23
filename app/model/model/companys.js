@@ -24,7 +24,7 @@ module.exports = app => {
     },
     platform_name: {
       type: DataTypes.STRING(60),
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
@@ -69,7 +69,7 @@ module.exports = app => {
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
@@ -78,7 +78,7 @@ module.exports = app => {
     },
     create_at: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,

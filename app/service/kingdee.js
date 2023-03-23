@@ -6,6 +6,7 @@ class KingdeeService extends Service {
 
   async create(payload) {
     const { ctx } = this;
+    // console.log('用户参数', payload);
     const { uid, username, avatar = '', phone = '', email = '', state = 1, company_id = 1, role } = payload;
     const defaultPassword = 'e10adc3949ba59abbe56e057f20f883e';
     const transaction = await ctx.model.transaction();

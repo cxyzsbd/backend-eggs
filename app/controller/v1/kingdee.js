@@ -84,8 +84,6 @@ class KingdeeController extends BaseController {
           },
           defaults: {
             name: '默认公司',
-            platform_name: '默认公司',
-            creator: 1,
           },
         });
         // console.log('company====================', company);
