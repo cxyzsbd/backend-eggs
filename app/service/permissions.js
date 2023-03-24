@@ -35,10 +35,7 @@ class _objectName_Service extends Service {
     const { url, action } = payload;
     const one = await ctx.model.Permissions.findOne({ where: { url, action } });
     if (one) {
-      const err = new Error('已存在');
-      err.parent = {};
-      err.parent.errno = 1062;
-      throw err;
+      return { message: '资源已存在，不能重复添加' };
     }
     return await ctx.model.Permissions.create(payload);
   }

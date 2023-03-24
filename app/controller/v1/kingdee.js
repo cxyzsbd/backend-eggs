@@ -87,7 +87,7 @@ class KingdeeController extends BaseController {
           },
         });
         // console.log('company====================', company);
-        const role = a == 'true' ? 1 : 20;
+        const role = a == 'true' ? 1 : '';
         // console.log('role=================', role);
         // 同步用户
         const createRes = await service.kingdee.create({ uid, username: `${nickname}_${uid}`, avatar, company_id: company.id, role });

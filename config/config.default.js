@@ -229,6 +229,9 @@ module.exports = appInfo => {
   config.dataForwardBaseUrl = DATA_FORWARD_URL;
   config.cppForwardBaseUrl = CPP_FORWARD_URL;
 
+  // 是否金蝶平台
+  config.isKingdee = true;
+
   config.multipart = {
     fileSize: '50mb', // 文件大小限制
     fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.gif' ], // 上传文件类型扩展

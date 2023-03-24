@@ -56,7 +56,11 @@ class PermissionsController extends BaseController {
   async create() {
     const { ctx, app } = this;
     ctx.validate(ctx.rule.permissionBodyReq, ctx.request.body);
-    await ctx.service.permissions.create(ctx.request.body);
+    const res = await ctx.service.permissions.create(ctx.request.body);
+    if (res && res.message) {
+      this.BAD_REQUEST(res);
+      return false;
+    }
     await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
     this.CREATED();
   }

@@ -12,7 +12,7 @@ class devicesController extends BaseController {
   * @apikey
   * @summary 设备列表
   * @description 获取所有设备
-  * @request query string name
+  * @request query *number station_id
   * @request query number pageSize
   * @request query number pageNumber
   * @router get devices
