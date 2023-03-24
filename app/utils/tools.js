@@ -297,17 +297,16 @@ module.exports = class Tools {
   }
 
   // 处理属性转成长点名统一方法
-  async solveParams(type, tags = [], company_id) {
-    const { ctx, app } = this;
+  async solveParams(type, tags = [], company_id = null) {
+    const { ctx } = this;
     // console.log('company_id', company_id);
     const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
-    const long_attrs = await ctx.service.cache.get(`attrs_${company_id}`, 'attrs');
-    // console.log('long_attrs', long_attrs);
     if (type === 1) {
       tags = tags.map(t => Number(t));
       // console.log('tags===========', tags);
       return attr_tags.filter(a => tags.includes(a.id)).map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname }; });
-    } else if (type === 2) {
+    } else if (type === 2 && company_id) {
+      const long_attrs = await ctx.service.cache.get(`attrs_${company_id}`, 'attrs');
       let tagArr = tags.map(t => {
         // console.log('t==================', t);
         const long_attr_arr = t.toLowerCase().split('/');
@@ -345,7 +344,7 @@ module.exports = class Tools {
         let tagId = long_attrs[long_attr_arr[0]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] ? long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] : null;
         let attrs = attr_tags.filter(a => a.id === tagId);
         if (attrs && attrs.length) {
-          item = { ...item, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
+          item = { ...item, id: tagId, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
         }
         return item;
       });

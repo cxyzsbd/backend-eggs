@@ -42,6 +42,30 @@ class statisticsController extends BaseController {
     const res = await service.statistics.dataSourceCount();
     this.SUCCESS(res);
   }
+
+  /**
+  * @apikey
+  * @summary 获取公司用户统计信息
+  * @description 在线数、总数
+  * @router get company-user-count
+  */
+  async companyUserCount() {
+    const { service } = this;
+    const res = await service.statistics.companyUserCount();
+    this.SUCCESS(res);
+  }
+
+  /**
+  * @apikey
+  * @summary 获取公司数据源统计信息
+  * @description 总数、连接实际数据源数
+  * @router get company-data-source-count
+  */
+  async companyDataSourceCount() {
+    const { service } = this;
+    const res = await service.statistics.companyDataSourceCount();
+    this.SUCCESS(res);
+  }
 }
 
 module.exports = statisticsController;

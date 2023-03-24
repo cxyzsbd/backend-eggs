@@ -216,10 +216,10 @@ class UsersController extends BaseController {
     // 更新登录时间
     await service.users.update({ id, last_login });
     await app.utils.tools.redisCacheUserinfo(id);
-    const redisPub = app.redis.get('io');
-    redisPub.set(`ONLINE_USER__${id}`, 1);
-    redisPub.expire(`ONLINE_USER__${id}`, 5 * 60);
-    redisPub.sadd('onlineUsers', id);
+    // const redisPub = app.redis.get('io');
+    // redisPub.set(`ONLINE_USER__${id}`, 1);
+    // redisPub.expire(`ONLINE_USER__${id}`, 5 * 60);
+    // redisPub.sadd('onlineUsers', id);
     this.SUCCESS({
       access_token,
       refresh_token,

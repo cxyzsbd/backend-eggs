@@ -17,7 +17,19 @@ class StatisticsService extends Service {
       attributes: [ 'company_id' ],
     });
     // 在线用户数统计
-    const onlineUsers = await app.redis.clients.get('io').smembers('onlineUsers') || [];
+    const {
+      socketUserPrefix,
+    } = app.config;
+    const nsp = app.io.of('/');
+    const rooms = nsp.adapter.rooms;
+    // console.log('rooms========', rooms);
+    let count = 0;
+    for (let room in rooms) {
+      if (room.startsWith(`${socketUserPrefix}_`)) {
+        count++;
+      }
+    }
+    // const onlineUsers = await app.redis.clients.get('io').smembers('onlineUsers') || [];
     // console.log('onlineUsers', onlineUsers);
     const companys = await app.utils.tools.getRedisCachePublic('companys');
     // console.log('companys', companys);
@@ -32,7 +44,7 @@ class StatisticsService extends Service {
     return {
       total,
       company_counts: company_counts_data,
-      online_count: onlineUsers.length,
+      online_count: count,
     };
   }
 
@@ -78,7 +90,7 @@ class StatisticsService extends Service {
       attributes: [ 'company_id' ],
       group: 'company_id',
     });
-    console.log('company_counts', company_counts);
+    // console.log('company_counts', company_counts);
     const companys = await app.utils.tools.getRedisCachePublic('companys');
     // console.log('companys', companys);
     const company_counts_data = company_counts.map(item => {
@@ -92,6 +104,59 @@ class StatisticsService extends Service {
     return {
       total,
       company_counts: company_counts_data,
+    };
+  }
+
+  async companyUserCount() {
+    const { ctx, app } = this;
+    const {
+      socketUserPrefix,
+    } = app.config;
+    const { company_id } = ctx.request.header;
+    const nsp = app.io.of('/');
+    const rooms = nsp.adapter.rooms;
+    // console.log('rooms========', rooms);
+    let count = 0;
+    for (let room in rooms) {
+      if (room.startsWith(`${socketUserPrefix}_${company_id}_`)) {
+        count++;
+      }
+    }
+    const total = await ctx.model.Users.count({
+      where: {
+        company_id,
+      },
+    });
+    return {
+      online: count,
+      total,
+    };
+  }
+
+  async companyDataSourceCount() {
+    const { ctx, app } = this;
+    const { company_id } = ctx.request.header;
+    const total = await ctx.model.DeviceTags.count({
+      where: {
+        company_id,
+      },
+    });
+    const bindTags = await ctx.model.DeviceTags.count({
+      where: {
+        company_id,
+        [Op.and]: [
+          { boxcode: {
+            [Op.not]: null,
+          } },
+          { boxcode: {
+            [Op.not]: null,
+          } },
+        ],
+      },
+    });
+    return {
+      total,
+      bindTags,
     };
   }
 }

@@ -60,7 +60,7 @@ class AppBootHook {
       if (messageType === 'ONLINE_USER') {
         const user_id = messageArr[1];
         console.log('user_id', user_id);
-        await app.redis.clients.get('io').srem('onlineUsers', user_id);
+        // await app.redis.clients.get('io').srem('onlineUsers', user_id);
       }
     });
 

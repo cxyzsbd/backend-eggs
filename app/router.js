@@ -265,6 +265,8 @@ module.exports = app => {
   router.get(`${apiV1}/statistics/box-count`, controller.v1.statistics.boxCount);
   router.get(`${apiV1}/statistics/data-source-count`, controller.v1.statistics.dataSourceCount);
   router.get(`${apiV1}/statistics/user-count`, controller.v1.statistics.userCount);
+  router.get(`${apiV1}/statistics/company-user-count`, controller.v1.statistics.companyUserCount);
+  router.get(`${apiV1}/statistics/company-data-source-count`, controller.v1.statistics.companyDataSourceCount);
 
   // 报警
   router.post(`${apiV1}/alarms`, controller.v1.alarms.create);

@@ -68,24 +68,52 @@ class BoxDataController extends BaseController {
       ctx.validate(downloadDataBodyReq, body);
     }
     const requestBaseUrl = app.config.dataForwardBaseUrl;
-    let data = [];
+    let dataO = [],
+      data = [];
     const params = { ...ctx.query, ...body };
     // console.log('params==========================', params);
     if ([ 'data', 'his-data', 'alarm', 'his-alarm' ].includes(apiUrl)) {
-      data = await app.utils.tools.solveParams(params.param_type, params.param_arr, company_id);
+      dataO = await app.utils.tools.solveParams(params.param_type, params.param_arr, company_id);
     } else {
-      data = await app.utils.tools.solveDownloadDataParams(params.param_type, params.param_arr, company_id);
+      dataO = await app.utils.tools.solveDownloadDataParams(params.param_type, params.param_arr, company_id);
     }
-    console.log('data', JSON.stringify(data));
-    data = data.filter(item => item.boxcode && item.tagname);
-    if (!data || !data.length) {
+    console.log('data', JSON.stringify(dataO));
+    data = dataO.filter(item => item.boxcode && item.tagname);
+    if (![ 'data', 'down-data' ].includes(apiUrl) && (!data || !data.length)) {
       this.BAD_REQUEST({ message: '无效参数' });
       return false;
     }
+    let noTagAttrs = dataO.filter(item => !item.boxcode || !item.tagname);
+    console.log('noTagAttrs', noTagAttrs);
     // console.timeEnd('dataAndAlarm');
     console.log('参数====================', data);
     // 处理参数
     try {
+      let resData = [];
+      if (apiUrl === 'data') {
+        // 实时数据，如果没有点位，则从内存拿数据,若没有数据则
+        const attr_values = await ctx.service.cache.get('attr_values', 'attrs') || {};
+        noTagAttrs = noTagAttrs.map(item => {
+          item.value = attr_values[item.id] || null;
+          return item;
+        });
+        resData = [ ...resData, ...noTagAttrs ];
+        // console.log(1111111111111, resData);
+      }
+      // console.log(22222222222222222222222, resData);
+      if (apiUrl === 'down-data') {
+        // 下置数据,如果没有绑定点位，则直接将值写到内存中
+        let attr_values = await ctx.service.cache.get('attr_values', 'attrs') || {};
+        noTagAttrs.forEach(item => {
+          attr_values[item.id] = item.value;
+        });
+        await ctx.service.cache.set('attr_values', attr_values, 0, 'attrs');
+      }
+      // 如果data为空数组，直接返回
+      if ((!data || !data.length) && (noTagAttrs && noTagAttrs.length)) {
+        apiUrl === 'down-data' ? this.SUCCESS() : this.SUCCESS(resData);
+        return false;
+      }
       // console.time('中转数据');
       const res = await ctx.curl(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method: 'POST',
@@ -101,14 +129,27 @@ class BoxDataController extends BaseController {
         return false;
       });
       console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
-      console.log('参数====================', data);
-      // console.log('res==================', res.data);
+      console.log('res==================', res.data);
       if (!res) {
         this.SERVER_ERROR();
         return false;
       }
+      if (res && res.data) {
+        // console.log(11111111);
+        if (apiUrl === 'data') {
+          // console.log(222222222);
+          if (res.data.length) {
+            // console.log(333333333);
+            resData = [ ...resData, ...res.data ];
+          }
+        } else {
+          // console.log(444444444);
+          resData = res.data;
+        }
+      }
       // console.timeEnd('中转数据');
-      this.SUCCESS(res.data.error ? { ...res.data } : res.data);
+      console.log('resData111111111', resData);
+      apiUrl === 'down-data' ? this.SUCCESS() : this.SUCCESS(resData);
     } catch (error) {
       throw error;
     }
