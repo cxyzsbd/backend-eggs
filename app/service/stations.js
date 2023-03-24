@@ -1,7 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
-const { Op } = require('Sequelize');
+const { Op } = require('sequelize');
 
 class StationsService extends Service {
   async findAll(payload) {
