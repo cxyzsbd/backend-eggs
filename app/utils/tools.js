@@ -304,7 +304,7 @@ module.exports = class Tools {
     if (type === 1) {
       tags = tags.map(t => Number(t));
       // console.log('tags===========', tags);
-      return attr_tags.filter(a => tags.includes(a.id)).map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname }; });
+      return attr_tags.filter(a => tags.includes(a.id)).map(item => { return { id: item.id, name: item.name, desc: item.desc, boxcode: item.boxcode, tagname: item.tagname }; });
     } else if (type === 2 && company_id) {
       const long_attrs = await ctx.service.cache.get(`attrs_${company_id}`, 'attrs');
       let tagArr = tags.map(t => {
@@ -320,7 +320,7 @@ module.exports = class Tools {
         }
         return res;
       });
-      return tagArr.map(item => { return { id: item.id, boxcode: item.boxcode, tagname: item.tagname, long_attr: item.t ? item.t : null }; });
+      return tagArr.map(item => { return { id: item.id, name: item.name, desc: item.desc, boxcode: item.boxcode, tagname: item.tagname, long_attr: item.t ? item.t : null }; });
     }
   }
 
@@ -332,7 +332,7 @@ module.exports = class Tools {
       tags = tags.map(item => {
         let attrs = attr_tags.filter(attr => Number(attr.id) === Number(item.id));
         if (attrs && attrs.length) {
-          item = { ...item, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
+          item = { ...item, name: attrs[0].name, desc: attrs[0].desc, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
         }
         return item;
       });
@@ -344,7 +344,7 @@ module.exports = class Tools {
         let tagId = long_attrs[long_attr_arr[0]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]] && long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] ? long_attrs[long_attr_arr[0]][long_attr_arr[1]][long_attr_arr[2]] : null;
         let attrs = attr_tags.filter(a => a.id === tagId);
         if (attrs && attrs.length) {
-          item = { ...item, id: tagId, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
+          item = { ...item, id: tagId, name: attrs[0].name, desc: attrs[0].desc, boxcode: attrs[0].boxcode, tagname: attrs[0].tagname };
         }
         return item;
       });

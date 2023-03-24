@@ -13,14 +13,6 @@ module.exports = appInfo => {
    **/
   const config = (exports = {});
 
-  config.security = {
-    csrf: {
-      enable: false,
-      ignore: ctx => ctx.app.config.security.domainWhiteList.includes(ctx.ip),
-    },
-    domainWhiteList: [ '127.0.0.1' ],
-  };
-
   return {
     ...config,
   };

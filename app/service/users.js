@@ -186,6 +186,12 @@ class UserService extends Service {
         },
         transaction,
       });
+      await ctx.model.KingdeeUsers.destroy({
+        where: {
+          user_id: payload.id,
+        },
+        transaction,
+      });
       await transaction.commit();
       return res_user && rolesRes;
     } catch (e) {

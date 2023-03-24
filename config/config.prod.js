@@ -19,13 +19,13 @@ module.exports = appInfo => {
   };
 
 
-  config.security = {
-    csrf: {
-      enable: false,
-      ignore: ctx => ctx.app.config.security.domainWhiteList.includes(ctx.ip),
-    },
-    domainWhiteList: [ '127.0.0.1' ],
-  };
+  // config.security = {
+  //   csrf: {
+  //     enable: false,
+  //     ignore: ctx => ctx.app.config.security.domainWhiteList.includes(ctx.ip),
+  //   },
+  //   domainWhiteList: [ '127.0.0.1' ],
+  // };
 
   return {
     ...config,

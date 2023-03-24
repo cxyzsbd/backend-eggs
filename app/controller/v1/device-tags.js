@@ -19,6 +19,13 @@ class DeviceTagsController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
+    const rule = {
+      device_id: {
+        required: true,
+        type: 'number',
+      },
+    };
+    ctx.validate(rule, ctx.query);
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.deviceTagsPutBodyReq,
       queryOrigin: ctx.query,

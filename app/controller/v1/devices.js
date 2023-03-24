@@ -19,6 +19,13 @@ class devicesController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
+    const rule = {
+      station_id: {
+        required: true,
+        type: 'number',
+      },
+    };
+    ctx.validate(rule, ctx.query);
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.devicesPutBodyReq,
       queryOrigin: ctx.query,
