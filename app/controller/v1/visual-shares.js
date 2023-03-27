@@ -48,10 +48,11 @@ class VisualSharesController extends BaseController {
   * @request body visualSharesBodyReq
   */
   async create() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     ctx.validate(ctx.rule.visualSharesBodyReq, ctx.request.body);
-    await ctx.service.visualShares.create(ctx.request.body);
-    this.CREATED();
+    const res = await ctx.service.visualShares.create(ctx.request.body);
+    app.utils.tools.setVisualSharesCache();
+    this.CREATED({ message: '创建成功', data: res.id });
   }
 
   /**
@@ -63,10 +64,11 @@ class VisualSharesController extends BaseController {
   * @request body visualSharesPutBodyReq
   */
   async update() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.visualSharesPutBodyReq, params);
     const res = await service.visualShares.update(params);
+    app.utils.tools.setVisualSharesCache();
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -78,10 +80,11 @@ class VisualSharesController extends BaseController {
   * @request path number *id eg:1
   */
   async destroy() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     let params = ctx.params;
     ctx.validate(ctx.rule.visualSharesId, params);
     const res = await service.visualShares.destroy(params);
+    app.utils.tools.setVisualSharesCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
@@ -91,9 +94,29 @@ class VisualSharesController extends BaseController {
   * @description 获取分享可视化工程配置文件
   * @router get visual-shares/:id/configs
   */
-  // async getConfigs() {
+  async getConfigs() {
 
-  // }
+  }
+
+  /**
+  * @apikey
+  * @summary 分享可视化工程实时数据接口
+  * @description 分享可视化工程实时数据接口
+  * @router get visual-shares/:id/data
+  */
+  async data() {
+
+  }
+
+  /**
+  * @apikey
+  * @summary 分享可视化工程数据下置
+  * @description 分享可视化工程数据下置
+  * @router get visual-shares/:id/down-data
+  */
+  async downData() {
+
+  }
 }
 
 module.exports = VisualSharesController;

@@ -3,10 +3,60 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller 数据 box-data
+* @controller 数据和报警 box-data
 */
 
 class BoxDataController extends BaseController {
+  /**
+  * @apikey
+  * @summary 实时数据
+  * @description 实时数据
+  * @router post box-data/data
+  * @request body boxDataBodyReq
+  */
+  /**
+  * @apikey
+  * @summary 历史数据
+  * @description 历史数据
+  * @router post box-data/his-data
+  * @request body boxDataBodyReq
+  */
+  /**
+  * @apikey
+  * @summary 原始历史数据
+  * @description 原始历史数据
+  * @router post box-data/original-his-data
+  * @request body boxDataBodyReq
+  */
+  /**
+  * @apikey
+  * @summary 实时报警
+  * @description 实时报警
+  * @router post box-data/alarm
+  * @request body boxDataBodyReq
+  */
+  /**
+  * @apikey
+  * @summary 历史报警
+  * @description 历史报警
+  * @router post box-data/his-alarm
+  * @request body boxDataBodyReq
+  */
+  /**
+  * @apikey
+  * @summary 数据下置
+  * @description 数据下置
+  * @router post box-data/down-data
+  * @request body boxDataBodyReq
+  */
+  /**
+  * @apikey
+  * @summary 报警确认
+  * @description 报警确认
+  * @router post box-data/alarm-ack
+  * @request body boxDataBodyReq
+  */
+
   /**
   * @apikey
   * @summary 数据和报警转发
@@ -44,7 +94,7 @@ class BoxDataController extends BaseController {
     let { method, url, header, body } = ctx.request;
     console.log('query==============', ctx.query);
     console.log('body==============', body);
-    const { company_id } = ctx.request.header;
+    const { company_id, request_user } = ctx.request.header;
     const apiUrl = url.indexOf('?') !== -1 ? url.slice(17, url.indexOf('?')) : url.slice(17);
     console.log('apiUrl==================', apiUrl);
     if (!forwardUrls.includes(apiUrl)) {
@@ -83,6 +133,13 @@ class BoxDataController extends BaseController {
     if (![ 'data', 'down-data' ].includes(apiUrl) && (!data || !data.length)) {
       this.BAD_REQUEST({ message: '无效参数' });
       return false;
+    }
+    if (apiUrl === 'alarm-ack') {
+      const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(request_user);
+      data = data.map(item => {
+        item.username = userInfo.username;
+        return item;
+      });
     }
     let noTagAttrs = dataO.filter(item => !item.boxcode || !item.tagname);
     console.log('noTagAttrs', noTagAttrs);

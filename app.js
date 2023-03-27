@@ -32,6 +32,8 @@ class AppBootHook {
     app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
     // 2.将所有权限数据缓存到redis
     app.utils.tools.redisCachePublic('companys', 0, 'companys', 'Companys');
+    // 同步可视化分享到缓存
+    app.utils.tools.setVisualSharesCache();
   }
 
   async didReady() {

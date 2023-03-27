@@ -34,19 +34,48 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'jwtVerify', 'auth', 'validateSuperUser', 'operationRecords', 'errorHandler' ];
+  config.middleware = [ 'jwtVerify', 'visualSharesVerify', 'auth', 'validateSuperUser', 'operationRecords', 'errorHandler' ];
   // 只对 /api/v1 前缀的 url 路径生效
   config.errorHandler = {
     match: '/api/v1',
   };
   config.jwtVerify = {
-    match: '/api/v1',
+    ignore: [
+      '/api/v1/users/login',
+      '/api/v1/users/refresh-token',
+      '/doc',
+      '/api/v1/wx-mini/login',
+      '/api/v1/wx-mini/bind',
+      '/api/v1/alarms',
+      '/api/v1/kingdee/validate-user',
+      '/api/v1/visual-shares/*/configs',
+      '/api/v1/visual-shares/*/data',
+      '/api/v1/visual-shares/*/down-data',
+    ],
   };
   config.auth = {
-    match: '/api/v1',
+    ignore: [
+      '/api/v1/visual-shares/*/configs',
+      '/api/v1/visual-shares/*/data',
+      '/api/v1/visual-shares/*/down-data',
+    ],
   };
   config.validateSuperUser = {
     match: '/api/v1/super-user',
+  };
+  config.operationRecords = {
+    ignore: [
+      '/api/v1/visual-shares/*/configs',
+      '/api/v1/visual-shares/*/data',
+      '/api/v1/visual-shares/*/down-data',
+    ],
+  };
+  config.visualSharesVerify = {
+    match: [
+      '/api/v1/visual-shares/*/configs',
+      '/api/v1/visual-shares/*/data',
+      '/api/v1/visual-shares/*/down-data',
+    ],
   };
 
   // 项目启动端口号
@@ -170,6 +199,12 @@ module.exports = appInfo => {
         host: REDIS_CONFIG.HOST, // Redis host
         password: REDIS_CONFIG.PASSWORD,
         db: 7,
+      },
+      common: {
+        port: REDIS_CONFIG.PORT, // Redis port
+        host: REDIS_CONFIG.HOST, // Redis host
+        password: REDIS_CONFIG.PASSWORD,
+        db: 8,
       },
     },
     agent: true,

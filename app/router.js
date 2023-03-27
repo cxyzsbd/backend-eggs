@@ -278,4 +278,16 @@ module.exports = app => {
   // 可视化图片
   router.get(`${apiV1}/visual-images`, controller.v1.visualImages.findAll);
   router.delete(`${apiV1}/visual-images/:id`, controller.v1.visualImages.destroy);
+
+  // 可视化分享
+  router.post(`${apiV1}/visual-shares`, controller.v1.visualShares.create);
+  router.put(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.update);
+  router.get(`${apiV1}/visual-shares`, controller.v1.visualShares.findAll);
+  router.get(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.findOne);
+  router.delete(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.destroy);
+  router.get(`${apiV1}/visual-shares/:id/configs`, controller.v1.visualShares.getConfigs);
+  router.get(`${apiV1}/visual-shares/:id/data`, controller.v1.visualShares.data);
+  router.post(`${apiV1}/visual-shares/:id/data`, controller.v1.visualShares.data);
+  router.post(`${apiV1}/visual-shares/:id/down-data`, controller.v1.visualShares.downData);
+
 };

@@ -194,6 +194,14 @@ module.exports = class Tools {
     await ctx.service.cache.set('devices', devices, 2 * 60 * 60, 'attrs');
   }
 
+  // 设置可视化分享缓存
+  async setVisualSharesCache() {
+    const { ctx } = this;
+    const visualShares = await ctx.model.VisualShares.findAll({ raw: true });
+    console.log('visualShares', visualShares);
+    await ctx.service.cache.set('visualShares', visualShares, 0, 'common');
+  }
+
   // 数组去重
   async array_uniq(arr) {
     if (!Array.isArray(arr)) {

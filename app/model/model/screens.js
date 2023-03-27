@@ -133,6 +133,11 @@ module.exports = app => {
   };
   const options = {
     tableName: 'screens',
+    paranoid: true,
+    timestamps: true,
+    createdAt: false,
+    updatedAt: false,
+    deletedAt: 'delete_at',
     comment: '',
     indexes: [],
   };

@@ -5,8 +5,10 @@ const Service = require('egg').Service;
 class VisualSharesService extends Service {
   async findAll(payload) {
     const { ctx } = this;
+    const { request_user } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
+    where.creator = request_user;
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.VisualShares.count({ where });
@@ -38,6 +40,8 @@ class VisualSharesService extends Service {
 
   async findOne(payload) {
     const { ctx } = this;
+    const { request_user } = ctx.request.header;
+    payload.creator = request_user;
     return await ctx.model.VisualShares.findOne({ where: payload });
   }
 
