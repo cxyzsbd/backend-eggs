@@ -46,6 +46,10 @@ const body = {
       required: true,
       description: '产品型号',
     },
+    online_status: {
+      type: 'number',
+      required: false,
+    },
   },
 };
 

@@ -2,14 +2,14 @@
 
 const Service = require('egg').Service;
 
-class DeviceTagsService extends Service {
+class VisualSharesService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    let where = payload.where;
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const count = await ctx.model.DeviceTags.count({ where });
+    const count = await ctx.model.VisualShares.count({ where });
     let tempObj = {
       where,
       order: Order,
@@ -21,7 +21,7 @@ class DeviceTagsService extends Service {
         offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       };
     }
-    const data = await ctx.model.DeviceTags.findAll(tempObj);
+    const data = await ctx.model.VisualShares.findAll(tempObj);
     let resObj = {
       data,
       total: count,
@@ -38,25 +38,27 @@ class DeviceTagsService extends Service {
 
   async findOne(payload) {
     const { ctx } = this;
-    return await ctx.model.DeviceTags.findOne({ where: payload });
+    return await ctx.model.VisualShares.findOne({ where: payload });
   }
 
   async create(payload) {
-    const { ctx } = this;
-    const { company_id } = ctx.request.header;
+    const { ctx, app } = this;
+    const { request_user, company_id } = ctx.request.header;
+    payload.id = await app.utils.tools.SnowFlake();
+    payload.creator = request_user;
     payload.company_id = company_id;
-    return await ctx.model.DeviceTags.create(payload);
+    return await ctx.model.VisualShares.create(payload);
   }
 
   async update(payload) {
     const { ctx } = this;
-    return await ctx.model.DeviceTags.update(payload, { where: { id: payload.id } });
+    return await ctx.model.VisualShares.update(payload, { where: { id: payload.id } });
   }
 
   async destroy(payload) {
     const { ctx } = this;
-    return await ctx.model.DeviceTags.destroy({ where: { id: payload.id } });
+    return await ctx.model.VisualShares.destroy({ where: { id: payload.id } });
   }
 }
 
-module.exports = DeviceTagsService;
+module.exports = VisualSharesService;

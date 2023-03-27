@@ -10,7 +10,7 @@ class BoxDataController extends BaseController {
   /**
   * @apikey
   * @summary 数据和报警转发
-  * @description 本接口支持实时数据(box-data/data)、历史数据(box-data/his-data)、实时报警(box-data/alarm)、历史报警(box-data/his-alarm)、数据下置(box-data/down-data)、原始历史(box-data/original-his-data)
+  * @description 本接口支持实时数据(box-data/data)、历史数据(box-data/his-data)、实时报警(box-data/alarm)、历史报警(box-data/his-alarm)、数据下置(box-data/down-data)、原始历史(box-data/original-his-data)、报警确认(box-data/alarm-ack)
   * ,数据服务接收到的数据格式为一个数组对象
   * 无token情况下传签名sign也可以，以下是签名规则，其中秘钥secret，为前后台约定好的字符串
   * 1.先将参数按照`key=value`的形式加入到数组，
@@ -18,6 +18,7 @@ class BoxDataController extends BaseController {
   * 3.再用&连接成新的字符串str，
   * 4.最后str拼接秘钥，`str+&secret=sss`的形式再通过md5加密字符串得到签名
   * 5.down-data和original-his-data(原始历史)两个接口，param_arr参数格式为'[{"id": 1,"value": 100},{"id": 2,"value": 101 }],或者type=2时,[{"long_attr": "焦化厂/柴油发电机组/温度","value": 100},{"long_attr": "焦化厂/柴油发电机组/湿度","value": 101 }]'
+  * 6.alarm-ack接口，param_arr参数格式为'[{"id": 1,"op": "报警确认备注"},{"id": 2,"op": "报警确认操作备注" }],或者type=2时,[{"long_attr": "焦化厂/柴油发电机组/温度","op": "报警确认操作备注"},{"long_attr": "焦化厂/柴油发电机组/湿度","op": "报警确认备注" }]'
   * @router post box-data/:url
   * @request query number user_id "用户id，如果无token方式下必传"
   * @request body boxDataBodyReq
@@ -39,7 +40,7 @@ class BoxDataController extends BaseController {
         example: '[{"id": 1,"value": 100},{"id": 2,"value": 101 }],或者type=2时,[{"long_attr": "焦化厂/柴油发电机组/温度","value": 100},{"long_attr": "焦化厂/柴油发电机组/湿度","value": 101 }]',
       },
     };
-    const forwardUrls = [ 'data', 'his-data', 'alarm', 'his-alarm', 'down-data', 'original-his-data' ];
+    const forwardUrls = [ 'data', 'his-data', 'alarm', 'his-alarm', 'down-data', 'original-his-data', 'alarm-ack' ];
     let { method, url, header, body } = ctx.request;
     console.log('query==============', ctx.query);
     console.log('body==============', body);
@@ -149,7 +150,7 @@ class BoxDataController extends BaseController {
       }
       // console.timeEnd('中转数据');
       console.log('resData111111111', resData);
-      apiUrl === 'down-data' ? this.SUCCESS() : this.SUCCESS(resData);
+      [ 'down-data', 'alarm-ack' ].includes(apiUrl) ? this.SUCCESS() : this.SUCCESS(resData);
     } catch (error) {
       throw error;
     }

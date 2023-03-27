@@ -247,6 +247,24 @@ module.exports = appInfo => {
     fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.gif' ], // 上传文件类型扩展
   };
 
+  config.bodyParser = {
+    formLimit: '30mb',
+    jsonLimit: '30mb',
+    textLimit: '30mb',
+    enable: true,
+    encoding: 'utf8',
+    strict: true,
+    queryString: {
+      arrayLimit: 100,
+      depth: 5,
+      parameterLimit: 1000,
+    },
+    enableTypes: [ 'json', 'form', 'text' ],
+    extendTypes: {
+      text: [ 'text/xml', 'application/xml' ],
+    },
+  };
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',

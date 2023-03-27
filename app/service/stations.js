@@ -17,7 +17,7 @@ class StationsService extends Service {
       [Op.in]: departmentIds,
     };
     // console.log('departmentIds===============', departmentIds);
-    const Order = [];
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.Stations.count({ where });
     console.log('pageSize', pageSize);

@@ -9,7 +9,7 @@ class VisualImagesService extends Service {
     const { pageSize = 20, pageNumber = 1, prop_order, order, type } = payload;
     let where = payload.where;
     where = { ...where, company_id, type };
-    const Order = [];
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.VisualImages.count({ where });
     let tempObj = {

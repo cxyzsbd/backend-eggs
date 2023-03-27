@@ -9,7 +9,7 @@ class DevicesService extends Service {
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where.company_id = company_id;
-    const Order = [];
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Devices.count({ where });
     let tempObj = {
