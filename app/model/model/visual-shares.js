@@ -58,6 +58,15 @@ module.exports = app => {
       comment: '分享密码，明文',
       field: 'share_pass',
     },
+    config_path: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '配置文件路径',
+      field: 'config_path',
+    },
     creator: {
       type: DataTypes.INTEGER(11),
       allowNull: true,

@@ -289,5 +289,4 @@ module.exports = app => {
   router.get(`${apiV1}/visual-shares/:id/data`, controller.v1.visualShares.data);
   router.post(`${apiV1}/visual-shares/:id/data`, controller.v1.visualShares.data);
   router.post(`${apiV1}/visual-shares/:id/down-data`, controller.v1.visualShares.downData);
-
 };

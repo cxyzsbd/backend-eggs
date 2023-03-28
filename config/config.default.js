@@ -41,9 +41,11 @@ module.exports = appInfo => {
   };
   config.jwtVerify = {
     ignore: [
+      '/',
       '/api/v1/users/login',
       '/api/v1/users/refresh-token',
       '/doc',
+      '/swagger*',
       '/api/v1/wx-mini/login',
       '/api/v1/wx-mini/bind',
       '/api/v1/alarms',
@@ -55,6 +57,9 @@ module.exports = appInfo => {
   };
   config.auth = {
     ignore: [
+      '/',
+      '/doc',
+      '/swagger*',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
       '/api/v1/visual-shares/*/down-data',
@@ -65,6 +70,9 @@ module.exports = appInfo => {
   };
   config.operationRecords = {
     ignore: [
+      '/',
+      '/doc',
+      '/swagger*',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
       '/api/v1/visual-shares/*/down-data',
@@ -87,12 +95,12 @@ module.exports = appInfo => {
   };
 
   config.swaggerdoc = {
-    basePath: '/',
+    basePath: '/api/v1/',
     dirScanner: './app/controller',
     apiInfo: {
       title: 'lkys doc',
       description: '每个列表接口都支持prop_order和order参数方便自定义字段排序，例如按时间倒序排序可以传prop_order=create_at;order=DESC即可',
-      version: '1.9.0',
+      version: '2.0.0',
     },
     schemes: [ 'http' ],
     enable: true,

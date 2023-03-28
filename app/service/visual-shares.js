@@ -51,6 +51,10 @@ class VisualSharesService extends Service {
     payload.id = await app.utils.tools.SnowFlake();
     payload.creator = request_user;
     payload.company_id = company_id;
+    // 文件路径
+    const pathfix = company_id ? `/${company_id}` : '';
+    const typeUrl = payload.type === 1 ? 'screens' : 'flows';
+    payload.config_path = `/files${pathfix}/${typeUrl}/${payload.visual_id}`;
     return await ctx.model.VisualShares.create(payload);
   }
 

@@ -93,9 +93,11 @@ class VisualSharesController extends BaseController {
   * @summary 获取分享可视化工程配置文件
   * @description 获取分享可视化工程配置文件
   * @router get visual-shares/:id/configs
+  * @request header string sharePass '123456'
   */
   async getConfigs() {
-
+    const { ctx } = this;
+    // 校验可视化工程存不存在
   }
 
   /**
@@ -103,6 +105,7 @@ class VisualSharesController extends BaseController {
   * @summary 分享可视化工程实时数据接口
   * @description 分享可视化工程实时数据接口
   * @router get visual-shares/:id/data
+  * @request body boxDataBodyReq
   */
   async data() {
 
@@ -113,6 +116,7 @@ class VisualSharesController extends BaseController {
   * @summary 分享可视化工程数据下置
   * @description 分享可视化工程数据下置
   * @router get visual-shares/:id/down-data
+  * @request body boxDataBodyReq
   */
   async downData() {
 

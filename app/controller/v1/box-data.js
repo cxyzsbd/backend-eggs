@@ -49,13 +49,6 @@ class BoxDataController extends BaseController {
   * @router post box-data/down-data
   * @request body boxDataBodyReq
   */
-  /**
-  * @apikey
-  * @summary 报警确认
-  * @description 报警确认
-  * @router post box-data/alarm-ack
-  * @request body boxDataBodyReq
-  */
 
   /**
   * @apikey
@@ -90,7 +83,7 @@ class BoxDataController extends BaseController {
         example: '[{"id": 1,"value": 100},{"id": 2,"value": 101 }],或者type=2时,[{"long_attr": "焦化厂/柴油发电机组/温度","value": 100},{"long_attr": "焦化厂/柴油发电机组/湿度","value": 101 }]',
       },
     };
-    const forwardUrls = [ 'data', 'his-data', 'alarm', 'his-alarm', 'down-data', 'original-his-data', 'alarm-ack' ];
+    const forwardUrls = [ 'data', 'his-data', 'alarm', 'his-alarm', 'down-data', 'original-his-data' ];
     let { method, url, header, body } = ctx.request;
     console.log('query==============', ctx.query);
     console.log('body==============', body);
@@ -134,13 +127,13 @@ class BoxDataController extends BaseController {
       this.BAD_REQUEST({ message: '无效参数' });
       return false;
     }
-    if (apiUrl === 'alarm-ack') {
-      const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(request_user);
-      data = data.map(item => {
-        item.username = userInfo.username;
-        return item;
-      });
-    }
+    // if (apiUrl === 'alarm-ack') {
+    //   const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(request_user);
+    //   data = data.map(item => {
+    //     item.username = userInfo.username;
+    //     return item;
+    //   });
+    // }
     let noTagAttrs = dataO.filter(item => !item.boxcode || !item.tagname);
     console.log('noTagAttrs', noTagAttrs);
     // console.timeEnd('dataAndAlarm');
@@ -207,7 +200,7 @@ class BoxDataController extends BaseController {
       }
       // console.timeEnd('中转数据');
       console.log('resData111111111', resData);
-      [ 'down-data', 'alarm-ack' ].includes(apiUrl) ? this.SUCCESS() : this.SUCCESS(resData);
+      [ 'down-data' ].includes(apiUrl) ? this.SUCCESS() : this.SUCCESS(resData);
     } catch (error) {
       throw error;
     }

@@ -26,6 +26,8 @@ module.exports = () => {
       BaseController.BAD_REQUEST({ message: '分享验证码错误' });
       return false;
     }
+    const { visual_id, config_path, type } = visualShares;
+    ctx.request.header = { ...ctx.request.header, visualId: visual_id, configPath: config_path, viaualType: type };
     await next();
   };
 };
