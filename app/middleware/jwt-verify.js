@@ -43,6 +43,7 @@ module.exports = options => {
       const secret = ctx.app.config.jwt.secret;
       try {
         const decoded = ctx.app.jwt.verify(token, secret) || 'false';
+        console.log('decoded', decoded);
         if (decoded !== 'false' && decoded.type === 'access_token') {
           // 根据用户id获取公司id
           const user = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);

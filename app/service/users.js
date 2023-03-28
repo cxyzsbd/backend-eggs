@@ -208,6 +208,7 @@ class UserService extends Service {
   async userInfo() {
     const { ctx, app } = this;
     const { request_user } = ctx.request.header;
+    console.log('request_user', request_user);
     const res = await ctx.model.Users.findOne({
       include: [
         {

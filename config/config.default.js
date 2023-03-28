@@ -41,7 +41,6 @@ module.exports = appInfo => {
   };
   config.jwtVerify = {
     ignore: [
-      '/',
       '/api/v1/users/login',
       '/api/v1/users/refresh-token',
       '/doc',
@@ -57,7 +56,6 @@ module.exports = appInfo => {
   };
   config.auth = {
     ignore: [
-      '/',
       '/doc',
       '/swagger*',
       '/api/v1/visual-shares/*/configs',
@@ -70,7 +68,6 @@ module.exports = appInfo => {
   };
   config.operationRecords = {
     ignore: [
-      '/',
       '/doc',
       '/swagger*',
       '/api/v1/visual-shares/*/configs',
