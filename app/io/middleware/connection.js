@@ -57,7 +57,7 @@ module.exports = app => {
     // 离开在线用户room
     socket.leave(socketOnlineUserRoomName);
     // 退出个人room
-    const companyPrefix = userinfo.company_id ? userinfo.company_id : '';
+    const companyPrefix = userinfo && userinfo.company_id ? userinfo.company_id : '';
     socket.leave(`${socketUserPrefix}_${companyPrefix}_${userinfo.id}`);
     if (userinfo && userinfo.company_id) {
       // 3.离开公司统一room
