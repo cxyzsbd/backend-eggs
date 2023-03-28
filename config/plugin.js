@@ -30,8 +30,4 @@ module.exports = {
     enable: true,
     package: 'egg-validate',
   },
-  // security: {
-  //   enable: true,
-  //   package: 'egg-security',
-  // },
 };

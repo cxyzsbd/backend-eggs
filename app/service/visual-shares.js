@@ -1,6 +1,8 @@
 'use strict';
 
 const Service = require('egg').Service;
+const path = require('path');
+const fs = require('fs');
 
 class VisualSharesService extends Service {
   async findAll(payload) {
@@ -54,7 +56,7 @@ class VisualSharesService extends Service {
     // 文件路径
     const pathfix = company_id ? `/${company_id}` : '';
     const typeUrl = payload.type === 1 ? 'screens' : 'flows';
-    payload.config_path = `/files${pathfix}/${typeUrl}/${payload.visual_id}`;
+    payload.config_path = `/files${pathfix}/${typeUrl}/${payload.visual_id}/config.json`;
     return await ctx.model.VisualShares.create(payload);
   }
 
@@ -66,6 +68,21 @@ class VisualSharesService extends Service {
   async destroy(payload) {
     const { ctx } = this;
     return await ctx.model.VisualShares.destroy({ where: { id: payload.id } });
+  }
+
+  async getConfig() {
+    const { ctx, app } = this;
+    const { visualId, configPath, viaualType } = ctx.request.header;
+    // 校验可视化工程存不存在
+    const MODEL = Number(viaualType) === 1 ? 'Screens' : 'Flows';
+    const res = await ctx.model[MODEL].count({ where: { id: visualId }, raw: true });
+    if (!res) {
+      return res;
+    }
+    let target = path.join(this.config.baseDir, `..${configPath}`);
+    const hasPath = await app.utils.tools.checkHasDir(target);
+    res.configs = hasPath ? JSON.parse(fs.readFileSync(target, 'utf-8')) : null;
+    return res;
   }
 }
 

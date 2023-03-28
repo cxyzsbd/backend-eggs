@@ -15,38 +15,41 @@ const WX_GZH_CONFIG = {
   NEW_TASK_TEMPLATE_ID: '', // 新任务提醒
 };
 
-// 数据库配置
+// mysql
 const DB_CONFIG = {
   DATABASE1: 'lkys_new',
   DATABASE2: 'cloudnative',
-  HOST: '42.192.189.220',
-  PORT: '30306',
+  HOST: 'mysql-svc.lkys-bms.svc',
+  PORT: '3306',
   USERNAME: 'root',
   PASSWORD: 'mySQL13test14',
 };
-// const DB_CONFIG = {
-//   DATABASE1: 'jingdee_test',
-//   DATABASE2: 'cloudnative',
-//   HOST: '192.168.1.118',
-//   PORT: '3306',
-//   USERNAME: 'root',
-//   PASSWORD: 'lkys@401A',
-// };
+// redis
 const REDIS_CONFIG = {
-  PORT: 31379,
-  HOST: '42.192.189.220',
+  PORT: 6379,
+  HOST: 'redis.lkys-bms.svc',
   PASSWORD: 'mySQL13test14',
 };
+const DATA_FORWARD_URL = 'http://java-web.lkys-bms.svc:555/';
+const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
+
+// const DB_CONFIG = {
+//   DATABASE1: 'lkys_new',
+//   DATABASE2: 'cloudnative',
+//   HOST: '42.192.189.220',
+//   PORT: '30306',
+//   USERNAME: 'root',
+//   PASSWORD: 'mySQL13test14',
+// };
 // const REDIS_CONFIG = {
 //   PORT: 6379,
 //   HOST: '127.0.0.1',
 //   PASSWORD: '',
 // };
 
-const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
+// // const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
 // const DATA_FORWARD_URL = 'http://192.168.20.222/';
-
-const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
+// const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
 
 // 萤石云账号和秘钥
 const YS_APP_KEY = {

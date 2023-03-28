@@ -89,14 +89,15 @@ module.exports = class Tools {
    */
   async redisCacheUserinfo(id) {
     const { ctx, app } = this;
-    const userinfo = await ctx.model.Users.findOne({
-      where: { id },
-      include: [
-        {
-          model: ctx.model.Roles,
-        },
-      ],
-    });
+    const userinfo = await ctx.service.users.userInfo(id);
+    // const userinfo = await ctx.model.Users.findOne({
+    //   where: { id },
+    //   include: [
+    //     {
+    //       model: ctx.model.Roles,
+    //     },
+    //   ],
+    // });
     await ctx.service.cache.set(`userinfo_${id}`, userinfo, app.config.jwt.expire, 'default');
     return userinfo;
   }

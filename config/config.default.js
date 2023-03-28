@@ -161,7 +161,7 @@ module.exports = appInfo => {
         port: REDIS_CONFIG.PORT, // Redis port
         host: REDIS_CONFIG.HOST, // Redis host
         password: REDIS_CONFIG.PASSWORD,
-        db: 0,
+        db: 9,
       },
       io: { // websocket相关
         port: REDIS_CONFIG.PORT, // Redis port

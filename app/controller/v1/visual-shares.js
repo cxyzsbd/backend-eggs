@@ -96,8 +96,10 @@ class VisualSharesController extends BaseController {
   * @request header string sharePass '123456'
   */
   async getConfigs() {
-    const { ctx } = this;
-    // 校验可视化工程存不存在
+    const { ctx, service } = this;
+    ctx.validate(ctx.rule.visualSharesId, ctx.params);
+    const res = await service.screens.findOne(ctx.params);
+    res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
 
   /**
@@ -108,7 +110,67 @@ class VisualSharesController extends BaseController {
   * @request body boxDataBodyReq
   */
   async data() {
+    const { ctx, app } = this;
+    let { url, header, body } = ctx.request;
+    const requestBaseUrl = app.config.dataForwardBaseUrl;
+    if (header.hasOwnProperty('paramarr') && header.hasOwnProperty('paramtype')) {
+      let { paramarr, paramtype } = header;
+      paramarr = decodeURIComponent(paramarr).split('&');
+      paramtype = Number(paramtype);
+      body = { ...body, param_arr: paramarr, param_type: paramtype };
+    }
+    // console.log('body1===============', body);
+    if (!body.param_arr || !body.param_arr.length) {
+      this.BAD_REQUEST({ message: 'param_arr不能为空' });
+      return false;
+    }
+    body.param_arr = body.param_arr.map(item => (typeof item === 'object' ? item : String(item)));
+    ctx.validate(ctx.rule.boxDataBodyReq, body);
+    const params = { ...ctx.query, ...body };
+    let dataO = await app.utils.tools.solveParams(params.param_type, params.param_arr);
+    let data = dataO.filter(item => item.boxcode && item.tagname);
+    let noTagAttrs = dataO.filter(item => !item.boxcode || !item.tagname);
 
+    try {
+      let resData = [];
+      // 实时数据，如果没有点位，则从内存拿数据,若没有数据则
+      const attr_values = await ctx.service.cache.get('attr_values', 'attrs') || {};
+      noTagAttrs = noTagAttrs.map(item => {
+        item.value = attr_values[item.id] || null;
+        return item;
+      });
+      resData = [ ...resData, ...noTagAttrs ];
+      // 如果data为空数组，直接返回
+      if ((!data || !data.length) && (noTagAttrs && noTagAttrs.length)) {
+        this.SUCCESS(resData);
+        return false;
+      }
+      // console.time('中转数据');
+      const res = await ctx.curl(`${requestBaseUrl}box-data/data`, {
+        method: 'POST',
+        rejectUnauthorized: false,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        dataType: 'json',
+        data,
+      }).catch(err => {
+        console.log(err);
+        return false;
+      });
+      console.log('res==================', res.data);
+      if (!res) {
+        this.SERVER_ERROR();
+        return false;
+      }
+      if (res && res.data && res.data.length) {
+        resData = [ ...resData, ...res.data ];
+      }
+      this.SUCCESS(resData);
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**

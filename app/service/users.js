@@ -203,12 +203,13 @@ class UserService extends Service {
 
   /**
    * 用户信息
+   * @param user_id
    * @return
    */
-  async userInfo() {
+  async userInfo(user_id = null) {
     const { ctx, app } = this;
     const { request_user } = ctx.request.header;
-    console.log('request_user', request_user);
+    user_id = user_id || request_user;
     const res = await ctx.model.Users.findOne({
       include: [
         {
@@ -229,7 +230,7 @@ class UserService extends Service {
           as: 'company',
         },
       ],
-      where: { id: Number(request_user) },
+      where: { id: Number(user_id) },
       attributes: { exclude: [ 'password', 'deleted_at' ] },
     });
     let arr = [];

@@ -43,7 +43,6 @@ module.exports = options => {
       const secret = ctx.app.config.jwt.secret;
       try {
         const decoded = ctx.app.jwt.verify(token, secret) || 'false';
-        console.log('decoded', decoded);
         if (decoded !== 'false' && decoded.type === 'access_token') {
           // 根据用户id获取公司id
           const user = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);
@@ -62,9 +61,6 @@ module.exports = options => {
             };
             return false;
           }
-          // await ctx.app.redis.clients.get('io').set(`ONLINE_USER__${id}`, 1);
-          // await ctx.app.redis.clients.get('io').expire(`ONLINE_USER__${id}`, 5 * 60);
-          // await ctx.app.redis.clients.get('io').sadd('onlineUsers', id);
           // 将公共参数放到请求头
           ctx.request.header = { ...ctx.request.header, request_user: id, department_id, company_id };
           await next();
