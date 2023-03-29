@@ -20,24 +20,19 @@ module.exports = appInfo => {
    **/
   const config = (exports = {});
 
-  // config.security = {
-  //   csrf: {
-  //     enable: false,
-  //   },
-  //   ipHeaders: 'X-Forwarded-For',
-  //   protocolHeaders: 'X-Forwarded-Proto',
-  //   domainWhiteList: [ '192.168.1.3' ],
-  //   ipWhiteList: [ '192.168.1.3' ],
-  // };
-
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'jwtVerify', 'visualSharesVerify', 'auth', 'validateSuperUser', 'operationRecords', 'errorHandler' ];
+  config.middleware = [ 'jwtVerify', 'auth', 'validateSuperUser', 'operationRecords', 'errorHandler' ];
   // 只对 /api/v1 前缀的 url 路径生效
   config.errorHandler = {
-    match: '/api/v1',
+    ignore: [
+      '/doc',
+      '/swagger*',
+      '/api/v1/visual-shares/*/configs',
+      '/api/v1/visual-shares/*/data',
+    ],
   };
   config.jwtVerify = {
     ignore: [
@@ -51,7 +46,6 @@ module.exports = appInfo => {
       '/api/v1/kingdee/validate-user',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
-      '/api/v1/visual-shares/*/down-data',
     ],
   };
   config.auth = {
@@ -60,7 +54,6 @@ module.exports = appInfo => {
       '/swagger*',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
-      '/api/v1/visual-shares/*/down-data',
     ],
   };
   config.validateSuperUser = {
@@ -72,14 +65,6 @@ module.exports = appInfo => {
       '/swagger*',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
-      '/api/v1/visual-shares/*/down-data',
-    ],
-  };
-  config.visualSharesVerify = {
-    match: [
-      '/api/v1/visual-shares/*/configs',
-      '/api/v1/visual-shares/*/data',
-      '/api/v1/visual-shares/*/down-data',
     ],
   };
 

@@ -199,7 +199,7 @@ module.exports = class Tools {
   async setVisualSharesCache() {
     const { ctx } = this;
     const visualShares = await ctx.model.VisualShares.findAll({ raw: true });
-    console.log('visualShares', visualShares);
+    // console.log('visualShares', visualShares);
     await ctx.service.cache.set('visualShares', visualShares, 0, 'common');
   }
 

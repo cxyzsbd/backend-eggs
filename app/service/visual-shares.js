@@ -44,7 +44,16 @@ class VisualSharesService extends Service {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     payload.creator = request_user;
-    return await ctx.model.VisualShares.findOne({ where: payload });
+    let res = await ctx.model.VisualShares.findOne({
+      where: payload,
+      raw: true,
+    });
+    res.has_pass = false;
+    if (res.share_pass) {
+      res.has_pass = true;
+    }
+    delete res.share_pass;
+    return res;
   }
 
   async create(payload) {
@@ -75,7 +84,7 @@ class VisualSharesService extends Service {
     const { visualId, configPath, viaualType } = ctx.request.header;
     // 校验可视化工程存不存在
     const MODEL = Number(viaualType) === 1 ? 'Screens' : 'Flows';
-    const res = await ctx.model[MODEL].count({ where: { id: visualId }, raw: true });
+    let res = await ctx.model[MODEL].findOne({ where: { id: visualId }, raw: true });
     if (!res) {
       return res;
     }

@@ -35,6 +35,21 @@ const body = {
       description: '分享密码，明文',
     },
   },
+  downloadDataBodyReq: {
+    param_type: {
+      type: 'number',
+      required: true,
+      enum: [ 1, 2 ],
+      description: '点属性参数类型，1：id;2:长属性名',
+    },
+    param_arr: {
+      type: 'array',
+      itemType: 'object',
+      required: true,
+      description: '',
+      example: '[{"id": 1,"value": 100},{"id": 2,"value": 101 }],或者type=2时,[{"long_attr": "焦化厂/柴油发电机组/温度","value": 100},{"long_attr": "焦化厂/柴油发电机组/湿度","value": 101 }]',
+    },
+  },
 };
 
 module.exports = {

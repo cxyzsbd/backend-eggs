@@ -21,14 +21,15 @@ module.exports = app => {
       // console.log('accessToken', accessToken);
       const { user_id, type, is_super_user } = await app.jwt.verify(accessToken, app.config.jwt.secret) || false;
       // console.log('user_id====================', user_id);
-      if (type !== 'access_token') {
+      if (type !== 'access_token' || !accessToken || !user_id) {
       // 用户token无效，断开连接
         socket.disconnect();
+        // return false;
       }
       // 1.获取用户信息
       userinfo = await ctx.service.cache.get(`userinfo_${user_id}`, 'default');
       // console.log('userinfo', userinfo);
-      const companyPrefix = userinfo.company_id ? userinfo.company_id : '';
+      const companyPrefix = userinfo && userinfo.company_id ? userinfo.company_id : '';
       // 2.加入在线用户room
       await socket.join(socketOnlineUserRoomName);
       // 同一个用户加入一个room

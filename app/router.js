@@ -5,6 +5,7 @@
  */
 module.exports = app => {
   const { router, controller } = app;
+  const visualSharesVerify = app.middleware.visualSharesVerify();
   const apiV1 = '/api/v1';
   router.get('/', controller.home.index);
   router.redirect('/doc', '/swagger-ui.html', 302);
@@ -285,8 +286,11 @@ module.exports = app => {
   router.get(`${apiV1}/visual-shares`, controller.v1.visualShares.findAll);
   router.get(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.findOne);
   router.delete(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.destroy);
-  router.get(`${apiV1}/visual-shares/:id/configs`, controller.v1.visualShares.getConfigs);
-  router.get(`${apiV1}/visual-shares/:id/data`, controller.v1.visualShares.data);
-  router.post(`${apiV1}/visual-shares/:id/data`, controller.v1.visualShares.data);
-  router.post(`${apiV1}/visual-shares/:id/down-data`, controller.v1.visualShares.downData);
+  router.get(`${apiV1}/visual-shares/:id/configs`, visualSharesVerify, controller.v1.visualShares.getConfigs);
+  router.get(`${apiV1}/visual-shares/:id/data`, visualSharesVerify, controller.v1.visualShares.data);
+  router.post(`${apiV1}/visual-shares/:id/data`, visualSharesVerify, controller.v1.visualShares.downData);
+
+  // 可视化实时数据和下置数据
+  router.get(`${apiV1}/visual/data`, controller.v1.visualShares.data);
+  router.post(`${apiV1}/visual/data`, controller.v1.visualShares.downData);
 };

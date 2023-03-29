@@ -16,6 +16,10 @@ class KingdeeController extends BaseController {
   */
   async validateUser() {
     const { ctx, app, service } = this;
+    ctx.logger.warn('金蝶校验用户', ctx.request);
+    ctx.logger.warn('金蝶校验用户body', ctx.request.body);
+    ctx.logger.warn('金蝶校验用户query', ctx.query);
+    ctx.logger.warn('金蝶校验用户params', ctx.params);
     const { KINGDEE_PARAMS: { client_id, client_secret } } = app.utils.tools.globalConfig;
     const params = ctx.query;
     const rule = {
@@ -52,8 +56,10 @@ class KingdeeController extends BaseController {
       // 1.先判断用户授权是否通过
       if (res.data && res.data.errcode == '0') {
         const { uid, nickname, avatar, access_token, expires_in, source } = res.data.data;
+        ctx.logger.warn('金蝶校验授权结果', res.data.data);
         // 2.在系统中查询用户关联表，看看金蝶用户是否在本系统有对用用户，如果没有则返回无权限
         const asyncUser = await service.kingdee.findOne(uid, true);
+        ctx.logger.warn('金蝶校验关联表查询结果', asyncUser);
         // console.log('asyncUser=========', asyncUser);
         // console.log('userinfo=========', asyncUser.userinfo);
         if (asyncUser && asyncUser.userinfo) {
@@ -86,11 +92,14 @@ class KingdeeController extends BaseController {
             name: '默认公司',
           },
         });
+        ctx.logger.warn('金蝶校验查找或创建用户', company, created);
         // console.log('company====================', company);
         const role = a == 'true' ? 1 : '';
+        ctx.logger.warn('金蝶校验用户角色', role);
         // console.log('role=================', role);
         // 同步用户
         const createRes = await service.kingdee.create({ uid, username: `${nickname}_${uid}`, avatar, company_id: company.id, role });
+        ctx.logger.warn('金蝶校验同步用户结果', createRes);
         if (createRes) {
           const { id } = createRes;
           // 生成token并返回
