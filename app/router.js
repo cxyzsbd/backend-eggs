@@ -286,6 +286,7 @@ module.exports = app => {
   router.get(`${apiV1}/visual-shares`, controller.v1.visualShares.findAll);
   router.get(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.findOne);
   router.delete(`${apiV1}/visual-shares/:id`, controller.v1.visualShares.destroy);
+  router.get(`${apiV1}/visual-shares/:id/details`, controller.v1.visualShares.findOne);
   router.get(`${apiV1}/visual-shares/:id/configs`, visualSharesVerify, controller.v1.visualShares.getConfigs);
   router.get(`${apiV1}/visual-shares/:id/data`, visualSharesVerify, controller.v1.visualShares.data);
   router.post(`${apiV1}/visual-shares/:id/data`, visualSharesVerify, controller.v1.visualShares.downData);

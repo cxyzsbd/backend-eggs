@@ -33,6 +33,13 @@ class VisualSharesController extends BaseController {
   * @router get visual-shares/:id
   * @request path number *id eg:1
   */
+  /**
+  * @apikey
+  * @summary 获取某个 可视化分享
+  * @description 获取某个 可视化分享
+  * @router get visual-shares/:id/details
+  * @request path number *id eg:1
+  */
   async findOne() {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.visualSharesId, ctx.params);

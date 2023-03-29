@@ -30,6 +30,7 @@ module.exports = appInfo => {
     ignore: [
       '/doc',
       '/swagger*',
+      '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
     ],
@@ -44,6 +45,7 @@ module.exports = appInfo => {
       '/api/v1/wx-mini/bind',
       '/api/v1/alarms',
       '/api/v1/kingdee/validate-user',
+      '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
     ],
@@ -52,6 +54,7 @@ module.exports = appInfo => {
     ignore: [
       '/doc',
       '/swagger*',
+      '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
     ],
@@ -63,6 +66,7 @@ module.exports = appInfo => {
     ignore: [
       '/doc',
       '/swagger*',
+      '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
     ],

@@ -43,7 +43,9 @@ class VisualSharesService extends Service {
   async findOne(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
-    payload.creator = request_user;
+    if (request_user) {
+      payload.creator = request_user;
+    }
     let res = await ctx.model.VisualShares.findOne({
       where: payload,
       raw: true,
