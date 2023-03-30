@@ -72,14 +72,14 @@ class KingdeeController extends BaseController {
           const accessToken = app.jwt.sign({ user_id, type: 'access_token', is_super_user }, app.config.jwt.secret, { expiresIn: expires_in });
           const refresh_token = app.jwt.sign({ user_id, type: 'refresh_token', is_super_user }, app.config.jwt.secret, { expiresIn: app.config.jwt.refresh_expire });
           const last_login = app.utils.tools.dayjs().format('YYYY-MM-DD HH:mm:ss');
-          if (a != 'true') {
-            ctx.logger.warn('金蝶校验用户不是管理员', a);
-            const userRole = await ctx.model.UserRoles.findOne({ where: { user_id }, raw: true });
-            if (userRole.role_id === 1) {
-              ctx.logger.warn('金蝶校验原角色是管理员,删除角色');
-              await userRole.destroy();
-            }
-          }
+          // if (a != 'true') {
+          //   ctx.logger.warn('金蝶校验用户不是管理员', a);
+          //   const userRole = await ctx.model.UserRoles.findOne({ where: { user_id }, raw: true });
+          //   if (userRole.role_id === 1) {
+          //     ctx.logger.warn('金蝶校验原角色是管理员,删除角色');
+          //     await userRole.destroy();
+          //   }
+          // }
           // 更新登录时间
           await service.users.update({ id: user_id, last_login });
           await app.utils.tools.redisCacheUserinfo(user_id);
