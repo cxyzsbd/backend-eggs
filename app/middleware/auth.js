@@ -1,6 +1,6 @@
-module.exports = options => {
+module.exports = () => {
   return async function(ctx, next) {
-    const { method, url, body, header: { request_user } } = ctx.request;
+    const { method, url, header: { request_user } } = ctx.request;
     // console.log('requestbody=====================', body);
     // console.log('requestbody=====================', url);
     // 将当前请求处理成资源标准格式
@@ -13,12 +13,13 @@ module.exports = options => {
       const url = `${item.action.toLowerCase()}:${item.url}`;
       const regexp = /\{.*\}/g;// 匹配占位符,匹配{*}
       // 将返回的权限替换成改成正则表达式
-      return new RegExp(url.replace(regexp, '\\\d+') + '$');
+      // return new RegExp(url.replace(regexp, '\\\d+') + '$');
+      return new RegExp(url.replace(regexp, '.*') + '$');
     });
     const isInPermissions = permissionsAll.filter(item => item.test(regUrl));
     // console.log('isInPermissions=============',isInPermissions);
     if (isInPermissions && isInPermissions.length) {
-      const params = { ...body, ...ctx.query };
+      // const params = { ...body, ...ctx.query };
       // 获取用户所有权限
       const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(request_user);
       let roles = userInfo.roles || [];
@@ -26,7 +27,7 @@ module.exports = options => {
       // console.log('roles====================',roles);
       let permissions = [];
       // 根据roles去拿权限列表
-      role_permissions.map(item => {
+      role_permissions.forEach(item => {
         if (roles.includes(item.id)) {
           // console.log('item========================',item);
           permissions = [ ...permissions, ...item.permissions ];
@@ -37,7 +38,8 @@ module.exports = options => {
         const regexp = /\{.*\}/g;// 匹配占位符,匹配{*}
         const p = `${item.action.toLowerCase()}:${item.url}`;
         // 将返回的权限替换成改成正则表达式
-        return new RegExp(p.replace(regexp, '\\\d+') + '$');
+        // return new RegExp(p.replace(regexp, '\\\d+') + '$');
+        return new RegExp(p.replace(regexp, '.*') + '$');
       });
       let hasAuth = permissions.filter(item => item.test(regUrl));
       // console.log('hasAuth===============',hasAuth);

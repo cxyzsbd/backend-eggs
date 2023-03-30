@@ -8,7 +8,7 @@ class VisualSharesService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
-    const { pageSize, pageNumber, prop_order, order } = payload;
+    const { pageSize, pageNumber, prop_order, order, type } = payload;
     let where = payload.where;
     where.creator = request_user;
     let Order = [];
@@ -18,11 +18,28 @@ class VisualSharesService extends Service {
       where,
       order: Order,
     };
+    let include = [];
+    if (Number(type) === 1) {
+      include = [
+        {
+          model: ctx.model.Screens,
+          as: 'screen_info',
+        },
+      ];
+    } else {
+      include = [
+        {
+          model: ctx.model.Flows,
+          as: 'flow_info',
+        },
+      ];
+    }
     if (pageSize > 0) {
       tempObj = {
         ...tempObj,
         limit: pageSize,
         offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+        include,
       };
     }
     const data = await ctx.model.VisualShares.findAll(tempObj);
@@ -50,6 +67,9 @@ class VisualSharesService extends Service {
       where: payload,
       raw: true,
     });
+    if (!res) {
+      return res;
+    }
     res.has_pass = false;
     if (res.share_pass) {
       res.has_pass = true;

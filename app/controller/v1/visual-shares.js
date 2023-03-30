@@ -13,10 +13,19 @@ class VisualSharesController extends BaseController {
   * @description 获取所有可视化分享
   * @request query number pageSize
   * @request query number pageNumber
+  * @request query number *type
   * @router get visual-shares
   */
   async findAll() {
     const { ctx, service } = this;
+    const rule = {
+      type: {
+        type: 'number',
+        required: true,
+        enum: [ 1, 2 ],
+      },
+    };
+    ctx.validate(rule, ctx.query);
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.visualSharesPutBodyReq,
       queryOrigin: ctx.query,
@@ -175,7 +184,7 @@ class VisualSharesController extends BaseController {
         console.log(err);
         return false;
       });
-      console.log('res==================', res.data);
+      // console.log('res==================', res.data);
       if (!res) {
         this.SERVER_ERROR();
         return false;

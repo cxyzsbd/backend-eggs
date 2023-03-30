@@ -85,11 +85,11 @@ class BoxDataController extends BaseController {
     };
     const forwardUrls = [ 'data', 'his-data', 'alarm', 'his-alarm', 'down-data', 'original-his-data' ];
     let { method, url, header, body } = ctx.request;
-    console.log('query==============', ctx.query);
-    console.log('body==============', body);
+    // console.log('query==============', ctx.query);
+    // console.log('body==============', body);
     const { company_id, request_user } = ctx.request.header;
     const apiUrl = url.indexOf('?') !== -1 ? url.slice(17, url.indexOf('?')) : url.slice(17);
-    console.log('apiUrl==================', apiUrl);
+    // console.log('apiUrl==================', apiUrl);
     if (!forwardUrls.includes(apiUrl)) {
       this.NOT_FOUND({ message: '请检查请求路径是否正确' });
       return false;
@@ -135,9 +135,9 @@ class BoxDataController extends BaseController {
     //   });
     // }
     let noTagAttrs = dataO.filter(item => !item.boxcode || !item.tagname);
-    console.log('noTagAttrs', noTagAttrs);
+    // console.log('noTagAttrs', noTagAttrs);
     // console.timeEnd('dataAndAlarm');
-    console.log('参数====================', data);
+    // console.log('参数====================', data);
     // 处理参数
     try {
       let resData = [];
@@ -179,8 +179,8 @@ class BoxDataController extends BaseController {
         console.log(err);
         return false;
       });
-      console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
-      console.log('res==================', res.data);
+      // console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
+      // console.log('res==================', res.data);
       if (!res) {
         this.SERVER_ERROR();
         return false;
@@ -199,7 +199,7 @@ class BoxDataController extends BaseController {
         }
       }
       // console.timeEnd('中转数据');
-      console.log('resData111111111', resData);
+      // console.log('resData111111111', resData);
       [ 'down-data' ].includes(apiUrl) ? this.SUCCESS() : this.SUCCESS(resData);
     } catch (error) {
       throw error;

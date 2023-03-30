@@ -66,6 +66,7 @@ module.exports = appInfo => {
     ignore: [
       '/doc',
       '/swagger*',
+      '/api/v1/cpp-forward/showtask',
       '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',

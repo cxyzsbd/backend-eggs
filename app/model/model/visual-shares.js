@@ -101,5 +101,9 @@ module.exports = app => {
     indexes: [],
   };
   const VisualSharesModel = sequelize.define('visual_shares_model', attributes, options);
+  VisualSharesModel.associate = () => {
+    VisualSharesModel.hasOne(app.model.Screens, { foreignKey: 'id', sourceKey: 'visual_id', as: 'screen_info' });
+    VisualSharesModel.hasOne(app.model.Flows, { foreignKey: 'id', sourceKey: 'visual_id', as: 'flow_info' });
+  };
   return VisualSharesModel;
 };
