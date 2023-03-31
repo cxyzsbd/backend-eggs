@@ -238,12 +238,19 @@ module.exports = app => {
   router.get(`${apiV1}/station-files/:id`, controller.v1.stationFiles.findOne);
   router.delete(`${apiV1}/station-files/:id`, controller.v1.stationFiles.destroy);
 
-  // 对象
+  // 站点订阅点位
   router.post(`${apiV1}/station-tags`, controller.v1.stationTags.create);
   router.put(`${apiV1}/station-tags/:id`, controller.v1.stationTags.update);
   router.get(`${apiV1}/station-tags`, controller.v1.stationTags.findAll);
   router.get(`${apiV1}/station-tags/:id`, controller.v1.stationTags.findOne);
   router.delete(`${apiV1}/station-tags/:id`, controller.v1.stationTags.destroy);
+
+  // 站点订阅属性
+  router.post(`${apiV1}/station-attrs`, controller.v1.stationAttrs.create);
+  router.put(`${apiV1}/station-attrs/:id`, controller.v1.stationAttrs.update);
+  router.get(`${apiV1}/station-attrs`, controller.v1.stationAttrs.findAll);
+  router.get(`${apiV1}/station-attrs/:id`, controller.v1.stationAttrs.findOne);
+  router.delete(`${apiV1}/station-attrs/:id`, controller.v1.stationAttrs.destroy);
 
   // 用户订阅属性
   router.post(`${apiV1}/user-sub-attrs`, controller.v1.userSubAttrs.bulkOperation);
