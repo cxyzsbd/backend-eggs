@@ -44,12 +44,12 @@ module.exports = options => {
       try {
         const decoded = ctx.app.jwt.verify(token, secret) || 'false';
         console.log('decoded=================', decoded);
-        if (Number(decoded.is_configer) === 1) {
-          const { CONFIGER_PREFIX, CONFIGER_CHECK_TIME } = ctx.app.config;
-          const defaultRedis = ctx.app.redis.clients.get('default');
-          defaultRedis.set(`${CONFIGER_PREFIX}${decoded.user_id}`, 1);
-          defaultRedis.expire(`${CONFIGER_PREFIX}${decoded.user_id}`, CONFIGER_CHECK_TIME);
-        }
+        // if (Number(decoded.is_configer) === 1) {
+        //   const { CONFIGER_PREFIX, CONFIGER_CHECK_TIME } = ctx.app.config;
+        //   const defaultRedis = ctx.app.redis.clients.get('default');
+        //   defaultRedis.set(`${CONFIGER_PREFIX}${decoded.user_id}`, 1);
+        //   defaultRedis.expire(`${CONFIGER_PREFIX}${decoded.user_id}`, CONFIGER_CHECK_TIME);
+        // }
         if (decoded !== 'false' && decoded.type === 'access_token') {
           // 根据用户id获取公司id
           const user = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);

@@ -207,14 +207,14 @@ class UsersController extends BaseController {
       this.BAD_REQUEST({ message: '密码错误' });
       return false;
     }
-    if (Number(is_configer) === 1) {
-      const check = await defaultRedis.get(`${CONFIGER_PREFIX}${id}`);
-      console.log('check', check);
-      if (check) {
-        this.BAD_REQUEST({ message: '系统检测到您的账号正在操作另一台配置工具' });
-        return false;
-      }
-    }
+    // if (Number(is_configer) === 1) {
+    //   const check = await defaultRedis.get(`${CONFIGER_PREFIX}${id}`);
+    //   console.log('check', check);
+    //   if (check) {
+    //     this.BAD_REQUEST({ message: '系统检测到您的账号正在操作另一台配置工具' });
+    //     return false;
+    //   }
+    // }
     // 生成token并返回
     let is_super_user = false;
     if (!user.company_id) {
@@ -226,10 +226,10 @@ class UsersController extends BaseController {
     // 更新登录时间
     await service.users.update({ id, last_login });
     await app.utils.tools.redisCacheUserinfo(id);
-    if (Number(is_configer) === 1) {
-      defaultRedis.set(`${CONFIGER_PREFIX}${user.id}`, 1);
-      defaultRedis.expire(`${CONFIGER_PREFIX}${user.id}`, CONFIGER_CHECK_TIME);
-    }
+    // if (Number(is_configer) === 1) {
+    //   defaultRedis.set(`${CONFIGER_PREFIX}${user.id}`, 1);
+    //   defaultRedis.expire(`${CONFIGER_PREFIX}${user.id}`, CONFIGER_CHECK_TIME);
+    // }
     this.SUCCESS({
       access_token,
       refresh_token,
@@ -258,10 +258,10 @@ class UsersController extends BaseController {
     try {
       const decoded = ctx.app.jwt.verify(header['refresh-token'], secret) || 'false';
       if (decoded !== 'false' && decoded.type === 'refresh_token') {
-        if (decoded.is_configer && Number(decoded.is_configer) === 1) {
-          defaultRedis.set(`${CONFIGER_PREFIX}${decoded.id}`, 1);
-          defaultRedis.expire(`${CONFIGER_PREFIX}${decoded.id}`, CONFIGER_CHECK_TIME);
-        }
+        // if (decoded.is_configer && Number(decoded.is_configer) === 1) {
+        //   defaultRedis.set(`${CONFIGER_PREFIX}${decoded.id}`, 1);
+        //   defaultRedis.expire(`${CONFIGER_PREFIX}${decoded.id}`, CONFIGER_CHECK_TIME);
+        // }
         // 校验通过,下发新token
         const access_token = app.jwt.sign({ user_id: decoded.user_id, type: 'access_token', is_super_user: decoded.is_super_user, is_configer: decoded.is_configer }, secret, { expiresIn: expire });
         const refresh_token = app.jwt.sign({ user_id: decoded.user_id, type: 'refresh_token', is_super_user: decoded.is_super_user, is_configer: decoded.is_configer }, secret, { expiresIn: refresh_expire });
