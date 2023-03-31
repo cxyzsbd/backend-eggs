@@ -1,8 +1,8 @@
 'use strict';
 
-module.exports = options => {
+module.exports = () => {
   return async function recordMiddleware(ctx, next) {
-    const { request, query, params } = ctx;
+    const { request, params } = ctx;
     const { method, url } = request;
     const action = method.toLowerCase();
     if (action === 'get') {

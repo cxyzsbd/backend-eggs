@@ -1,5 +1,6 @@
 const dayjs = require('dayjs');
 const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 const lodash = require('lodash');
 const md5 = require('md5');
@@ -21,6 +22,22 @@ module.exports = class Tools {
     this.uuidv4 = uuidv4;
     this.globalConfig = globalConfig;
   }
+
+  // AES加密
+  async aesEncrypt(data, secretKey, iv = null) {
+    const cipher = crypto.createCipheriv('aes-128-ecb', secretKey, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+  }
+  // AES解密
+  async aesDecrypt(data, secretKey, iv = null) {
+    const decipher = crypto.createDecipheriv('aes-128-ecb', secretKey, iv);
+    let decrypted = decipher.update(data, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
   /**
    * 雪花算法生成id
    */

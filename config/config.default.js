@@ -305,6 +305,8 @@ module.exports = appInfo => {
     socketUserPrefix: 'SOCKET_USER_ROOM_', // 单个用户房间
     IORedisUserKeyPrefix: 'SOCKET_USER_', // redis存用户socketId前缀
     ALARM_PUSH_EVENT_NAME: 'alarms', // 报警推送事件名
+    CONFIGER_PREFIX: 'configer_', // 配置端用户前缀
+    CONFIGER_CHECK_TIME: 90, // 配置端登录态校验存储时间
   };
 
   return {

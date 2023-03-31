@@ -62,6 +62,10 @@ const KINGDEE_PARAMS = {
   client_id: '243571', // 应用id
   client_secret: '60caf37ff275445a6fc68e441da316b2', // 应用安全码
 };
+// const KINGDEE_PARAMS = {
+//   client_id: '245121', // 应用id
+//   client_secret: 'bfb751b2cac304fabe70901baadf90ce', // 应用安全码
+// };
 
 module.exports = {
   WX_GZH_CONFIG,
