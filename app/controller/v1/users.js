@@ -157,6 +157,7 @@ class UsersController extends BaseController {
     };
     ctx.validate(params, ctx.query);
     const departments = await service.departments.getUserDepartments();
+    console.log('params======================', ctx.query);
     const res = await service.users.findAll(ctx.query, departments);
     this.SUCCESS(res);
   }

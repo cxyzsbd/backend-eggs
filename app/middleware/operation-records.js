@@ -49,9 +49,9 @@ module.exports = () => {
     });
     // console.log('permissionsAll', permissionsAll);
     const isInPermissions = permissionsAll.filter(item => item.reg.test(regUrl));
-    console.log('isInPermissions', isInPermissions);
+    // console.log('isInPermissions', isInPermissions);
     if (isInPermissions && isInPermissions.length) {
-      console.log('isInPermissions[0]', isInPermissions[0]);
+      // console.log('isInPermissions[0]', isInPermissions[0]);
       record.content = `${isInPermissions[0].name}-${isInPermissions[0].mark_name}`;
     }
     await next();

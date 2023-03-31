@@ -18,8 +18,9 @@ const body = {
       description: '属性名称',
     },
     type: {
-      type: 'string',
-      max: 20,
+      type: 'number',
+      min: 1,
+      max: 4,
       required: false,
       description: '类型',
     },

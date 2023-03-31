@@ -45,6 +45,9 @@ class DeviceTagsService extends Service {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     payload.company_id = company_id;
+    if (isNaN(Number(payload.type))) {
+      payload.type = null;
+    }
     return await ctx.model.DeviceTags.create(payload);
   }
 

@@ -60,11 +60,11 @@ class DevicesService extends Service {
     const { ctx } = this;
     const transaction = await ctx.model.transaction();
     try {
-      await transaction.commit();
       // 删除模型
       const res = await ctx.model.Devices.destroy({ where: { id: payload.id }, transaction });
       // 删除属性
       await ctx.model.DeviceTags.destroy({ where: { device_id: payload.id }, transaction });
+      await transaction.commit();
       return res;
     } catch (e) {
       // 异常情况回滚数据库

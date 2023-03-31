@@ -179,8 +179,9 @@ class BoxDataController extends BaseController {
         console.log(err);
         return false;
       });
-      // console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
+      console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
       // console.log('res==================', res.data);
+      // ctx.logger.warn('res==================', res.data.hisraw[0].dataList);
       if (!res) {
         this.SERVER_ERROR();
         return false;
@@ -200,6 +201,7 @@ class BoxDataController extends BaseController {
       }
       // console.timeEnd('中转数据');
       // console.log('resData111111111', resData);
+      // ctx.logger.warn('resData111111111', resData.hisraw[0].dataList);
       [ 'down-data' ].includes(apiUrl) ? this.SUCCESS() : this.SUCCESS(resData);
     } catch (error) {
       throw error;

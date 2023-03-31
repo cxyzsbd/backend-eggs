@@ -10,6 +10,13 @@ module.exports = app => {
     } = app.config;
     const nsp = app.io.of('/');
     let userinfo = null;
+    const { accessToken } = socket.handshake.query;
+    if (!accessToken) {
+      socket.disconnect();
+      console.log('socket无token');
+      return false;
+    }
+    console.log('socket有token=========', accessToken);
     // console.log('start connection!');
     // console.log(socket.rooms);
     // console.log(app.io.of('/').name);
@@ -17,7 +24,6 @@ module.exports = app => {
     // console.log(app.io.of('/').rooms);
     try {
       // console.log('socket', socket);
-      const { accessToken } = socket.handshake.query;
       // console.log('accessToken', accessToken);
       const { user_id, type, is_super_user } = await app.jwt.verify(accessToken, app.config.jwt.secret) || false;
       // console.log('user_id====================', user_id);

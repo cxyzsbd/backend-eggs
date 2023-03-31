@@ -22,7 +22,7 @@ class UserService extends Service {
       const res_user = await ctx.model.Users.create(payload, { transaction });
       const roles = await ctx.model.Roles.findAll({ where: { id: {
         [Op.in]: payload.roles,
-      } } });
+      } }, transaction });
       let userRoles = [];
       roles.forEach(role => {
         userRoles.push({
@@ -90,7 +90,7 @@ class UserService extends Service {
     date_after_created ? (where[Op.and] = [{ created_at: { [Op.gte]: date_after_created } }]) : null;
     const Order = [];
     username ? (where.username = { [Op.like]: `%${username}%` }) : null;
-    !app.utils.tools.isParam(state) ? (where.state = state) : null;
+    !isNaN(Number(state)) ? (where.state = state) : null;
     email ? (where.email = { [Op.like]: `%${email}%` }) : null;
     phone ? (where.phone = { [Op.like]: `%${phone}%` }) : null;
     // !app.utils.tools.isParam(department_id) ? (where.department_id = department_id === 0 ? null : department_id) : null;
@@ -140,7 +140,7 @@ class UserService extends Service {
       if (payload.roles) {
         const roles = await ctx.model.Roles.findAll({ where: { id: {
           [Op.in]: payload.roles,
-        } } });
+        } }, transaction });
         let userRoles = [];
         roles.forEach(role => {
           userRoles.push({
