@@ -159,6 +159,55 @@ class StatisticsService extends Service {
       bindTags,
     };
   }
+
+  async companyStationCount() {
+    const { ctx } = this;
+    const { company_id } = ctx.request.header;
+    const total = await ctx.model.Stations.count({
+      where: {
+        company_id,
+      },
+    });
+    return { total };
+  }
+
+  async companyDeviceCount() {
+    const { ctx, app } = this;
+    const redisAttr = app.redis.clients.get('attrs');
+    const allStations = JSON.parse(await redisAttr.get('stations'));
+    const { company_id } = ctx.request.header;
+    let where = {
+      company_id,
+    };
+    let total = await ctx.model.Devices.count({
+      where,
+    });
+    const station_counts = await ctx.model.Devices.count({
+      where,
+      attributes: [ 'station_id' ],
+      group: 'station_id',
+    });
+    let station_counts_data = station_counts.map(item => {
+      let info = allStations.filter(station => station.id === item.station_id);
+      // console.log('info', info);
+      return {
+        ...item,
+        station_info: info && info.length ? info[0] : null,
+      };
+    });
+    let tempArr = [];
+    station_counts_data.forEach(item => {
+      if (item.station_info) {
+        tempArr.push(item);
+      } else {
+        total -= item.count;
+      }
+    });
+    return {
+      total,
+      station_device_counts: tempArr,
+    };
+  }
 }
 
 module.exports = StatisticsService;

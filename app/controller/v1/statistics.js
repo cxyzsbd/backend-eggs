@@ -47,7 +47,7 @@ class statisticsController extends BaseController {
   * @apikey
   * @summary 获取公司用户统计信息
   * @description 在线数、总数
-  * @router get company-user-count
+  * @router get statistics/company-user-count
   */
   async companyUserCount() {
     const { service } = this;
@@ -59,11 +59,35 @@ class statisticsController extends BaseController {
   * @apikey
   * @summary 获取公司数据源统计信息
   * @description 总数、连接实际数据源数
-  * @router get company-data-source-count
+  * @router get statistics/company-data-source-count
   */
   async companyDataSourceCount() {
     const { service } = this;
     const res = await service.statistics.companyDataSourceCount();
+    this.SUCCESS(res);
+  }
+
+  /**
+  * @apikey
+  * @summary 获取公司下站点数量
+  * @description 获取公司下站点数量
+  * @router get statistics/company-station-count
+  */
+  async companyStationCount() {
+    const { service } = this;
+    const res = await service.statistics.companyStationCount();
+    this.SUCCESS(res);
+  }
+
+  /**
+  * @apikey
+  * @summary 公司设备数量统计
+  * @description 公司设备数量统计
+  * @router get statistics/company-device-count
+  */
+  async companyDeviceCount() {
+    const { service } = this;
+    const res = await service.statistics.companyDeviceCount();
     this.SUCCESS(res);
   }
 }

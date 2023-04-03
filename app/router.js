@@ -269,12 +269,14 @@ module.exports = app => {
   router.get(`${apiV1}/operation-records`, controller.v1.operationRecords.findAll);
   router.delete(`${apiV1}/operation-records/:id`, controller.v1.operationRecords.destroy);
 
-  // 超管统计
+  // 统计
   router.get(`${apiV1}/statistics/box-count`, controller.v1.statistics.boxCount);
   router.get(`${apiV1}/statistics/data-source-count`, controller.v1.statistics.dataSourceCount);
   router.get(`${apiV1}/statistics/user-count`, controller.v1.statistics.userCount);
   router.get(`${apiV1}/statistics/company-user-count`, controller.v1.statistics.companyUserCount);
   router.get(`${apiV1}/statistics/company-data-source-count`, controller.v1.statistics.companyDataSourceCount);
+  router.get(`${apiV1}/statistics/company-station-count`, controller.v1.statistics.companyStationCount);
+  router.get(`${apiV1}/statistics/company-device-count`, controller.v1.statistics.companyDeviceCount);
 
   // 报警
   router.post(`${apiV1}/alarms`, controller.v1.alarms.create);
@@ -301,4 +303,14 @@ module.exports = app => {
   // 可视化实时数据和下置数据
   router.get(`${apiV1}/visual/data`, controller.v1.visualShares.data);
   router.post(`${apiV1}/visual/data`, controller.v1.visualShares.downData);
+
+  // 流程图文件夹
+  router.post(`${apiV1}/flow-folders`, controller.v1.flowFolders.create);
+  router.put(`${apiV1}/flow-folders/:id`, controller.v1.flowFolders.update);
+  router.get(`${apiV1}/flow-folders`, controller.v1.flowFolders.findAll);
+  router.get(`${apiV1}/flow-folders/:id`, controller.v1.flowFolders.findOne);
+  router.delete(`${apiV1}/flow-folders/:id`, controller.v1.flowFolders.destroy);
+  router.post(`${apiV1}/flow-folders/:id/bind-flows`, controller.v1.flowFolders.bind);
+  router.post(`${apiV1}/flow-folders/:id/unbind-flows`, controller.v1.flowFolders.unbind);
+  router.post(`${apiV1}/flow-folders/:id/default-flow`, controller.v1.flowFolders.setDefaultFlow);
 };
