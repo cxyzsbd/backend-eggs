@@ -48,6 +48,7 @@ class _objectName_Service extends Service {
   // 获取用户可以管理的所有部门
   async getUserDepartments(prop_order = null, order = null) {
     const { ctx, app } = this;
+    const { ROOT_DEPARTMENT_NAME } = app.config;
     function sortBy(prop_order, rev) {
       return function(a, b) {
         a = a[prop_order];
@@ -64,13 +65,13 @@ class _objectName_Service extends Service {
       return [];
     }
     const departments = await app.utils.tools.getRedisCachePublic('departments');
-    if (isNaN(department_id)) {
+    if (!department_id && department_id != 0) {
       return [];
     }
     if (department_id === 0) {
       // 管理员
       const departmentChildren = (departments.filter(item => item.company_id === company_id)).sort(sortBy(prop_order, rev));
-      return [{ id: 0, name: '根组织', parent_id: '' }, ...departmentChildren ];
+      return [{ id: 0, name: ROOT_DEPARTMENT_NAME, parent_id: '' }, ...departmentChildren ];
     }
     // 普通用户
     // 获取当前用户的部门信息

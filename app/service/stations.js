@@ -13,7 +13,7 @@ class StationsService extends Service {
     // 获取当前用户下所有的部门
     const departments = await service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
-    if (!isNaN(department_id) && department_id) {
+    if (department_id || department_id == 0) {
       where.department_id = {
         [Op.in]: departmentIds,
       };

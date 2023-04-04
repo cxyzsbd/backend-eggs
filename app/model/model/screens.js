@@ -142,5 +142,8 @@ module.exports = app => {
     indexes: [],
   };
   const ScreensModel = sequelize.define('screens_model', attributes, options);
+  ScreensModel.associate = () => {
+    ScreensModel.hasOne(app.model.Users, { sourceKey: 'creator', foreignKey: 'id' });
+  };
   return ScreensModel;
 };

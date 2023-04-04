@@ -19,6 +19,13 @@ module.exports = options => {
         return false;
       }
       const { state, id, department_id, company_id } = userInfo;
+      if (!department_id && department_id !== 0) {
+        ctx.status = 403;
+        ctx.body = {
+          message: '该用户未分配部门',
+        };
+        return false;
+      }
       if (state !== 1) {
         ctx.status = 401;
         ctx.body = {
@@ -61,6 +68,13 @@ module.exports = options => {
             return false;
           }
           const { state, id, department_id, company_id } = user;
+          if (!department_id && department_id !== 0) {
+            ctx.status = 403;
+            ctx.body = {
+              message: '该用户未分配部门',
+            };
+            return false;
+          }
           if (state !== 1) {
             ctx.status = 401;
             ctx.body = {

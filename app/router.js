@@ -313,4 +313,14 @@ module.exports = app => {
   router.post(`${apiV1}/flow-folders/:id/bind-flows`, controller.v1.flowFolders.bind);
   router.post(`${apiV1}/flow-folders/:id/unbind-flows`, controller.v1.flowFolders.unbind);
   router.post(`${apiV1}/flow-folders/:id/default-flow`, controller.v1.flowFolders.setDefaultFlow);
+
+  // 大屏文件夹
+  router.post(`${apiV1}/screen-folders`, controller.v1.screenFolders.create);
+  router.put(`${apiV1}/screen-folders/:id`, controller.v1.screenFolders.update);
+  router.get(`${apiV1}/screen-folders`, controller.v1.screenFolders.findAll);
+  router.get(`${apiV1}/screen-folders/:id`, controller.v1.screenFolders.findOne);
+  router.delete(`${apiV1}/screen-folders/:id`, controller.v1.screenFolders.destroy);
+  router.post(`${apiV1}/screen-folders/:id/bind-screens`, controller.v1.screenFolders.bind);
+  router.post(`${apiV1}/screen-folders/:id/unbind-screens`, controller.v1.screenFolders.unbind);
+  router.post(`${apiV1}/screen-folders/:id/default-flow`, controller.v1.screenFolders.setDefaultScreen);
 };

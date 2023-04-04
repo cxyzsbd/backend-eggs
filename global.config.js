@@ -31,7 +31,7 @@ const REDIS_CONFIG = {
   PASSWORD: 'mySQL13test14',
 };
 const DATA_FORWARD_URL = 'http://java-web.lkys-bms.svc:555/';
-const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
+const CPP_FORWARD_URL = 'http://1.116.223.219:9999/';
 
 // const DB_CONFIG = {
 //   DATABASE1: 'lkys_new',
@@ -47,8 +47,8 @@ const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
 //   PASSWORD: '',
 // };
 
-// const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
-// // const DATA_FORWARD_URL = 'http://192.168.20.222/';
+// // const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
+// const DATA_FORWARD_URL = 'http://192.168.20.222/';
 // const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
 
 // 萤石云账号和秘钥

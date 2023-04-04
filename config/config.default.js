@@ -307,6 +307,7 @@ module.exports = appInfo => {
     ALARM_PUSH_EVENT_NAME: 'alarms', // 报警推送事件名
     CONFIGER_PREFIX: 'configer_', // 配置端用户前缀
     CONFIGER_CHECK_TIME: 90, // 配置端登录态校验存储时间
+    ROOT_DEPARTMENT_NAME: '根组织', // 根组织名称
   };
 
   return {

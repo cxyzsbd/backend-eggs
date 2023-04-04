@@ -3,13 +3,12 @@
 const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
-class FlowFoldersService extends Service {
+class ScreenFoldersService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
-    console.log('ids=============', departmentIds);
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where = { ...where, company_id };
@@ -18,16 +17,16 @@ class FlowFoldersService extends Service {
     };
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const total = await ctx.model.FlowFolders.count({ where });
-    const data = await ctx.model.FlowFolders.findAll({
+    const total = await ctx.model.ScreenFolders.count({ where });
+    const data = await ctx.model.ScreenFolders.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       where,
       order: Order,
       include: [
         {
-          model: ctx.model.Flows,
-          as: 'flows',
+          model: ctx.model.Screens,
+          as: 'screens',
           through: {
             where: { is_default: 1 },
           },
@@ -52,12 +51,12 @@ class FlowFoldersService extends Service {
         [Op.in]: departmentIds,
       };
     }
-    return await ctx.model.FlowFolders.findOne({
+    return await ctx.model.ScreenFolders.findOne({
       where: payload,
       include: [
         {
-          model: ctx.model.Flows,
-          as: 'flows',
+          model: ctx.model.Screens,
+          as: 'screens',
         },
       ],
     });
@@ -67,12 +66,12 @@ class FlowFoldersService extends Service {
     const { ctx } = this;
     const { request_user, company_id, department_id } = ctx.request.header;
     payload = { ...payload, creator: request_user, company_id, department_id };
-    return await ctx.model.FlowFolders.create(payload);
+    return await ctx.model.ScreenFolders.create(payload);
   }
 
   async update(payload) {
     const { ctx } = this;
-    return await ctx.model.FlowFolders.update(payload, { where: { id: payload.id } });
+    return await ctx.model.ScreenFolders.update(payload, { where: { id: payload.id } });
   }
 
   async destroy(payload) {
@@ -80,12 +79,12 @@ class FlowFoldersService extends Service {
     const { id } = payload;
     const transaction = await ctx.model.transaction();
     try {
-      const res = await ctx.model.FlowFolders.destroy({ where: { id }, transaction });
+      const res = await ctx.model.ScreenFolders.destroy({ where: { id }, transaction });
       if (res) {
         // 删除绑定关系
-        await ctx.model.FlowFolderFlows.destroy({
+        await ctx.model.ScreenFolderScreens.destroy({
           where: {
-            flow_folder_id: id,
+            screen_folder_id: id,
           },
           transaction,
         });
@@ -101,67 +100,67 @@ class FlowFoldersService extends Service {
 
   async bind(payload) {
     const { ctx } = this;
-    const { id, flow_ids } = payload;
-    let tempArr = flow_ids.map(flow_id => {
+    const { id, screen_ids } = payload;
+    let tempArr = screen_ids.map(screen_id => {
       return {
-        flow_id,
-        flow_folder_id: id,
+        screen_id,
+        screen_folder_id: id,
       };
     });
-    let isHaveArr = await ctx.model.FlowFolderFlows.findAll({
+    let isHaveArr = await ctx.model.ScreenFolderScreens.findAll({
       where: {
-        flow_id: {
-          [Op.in]: flow_ids,
+        screen_id: {
+          [Op.in]: screen_ids,
         },
       },
       raw: true,
     });
-    isHaveArr = isHaveArr.map(item => item.flow_id);
-    tempArr = tempArr.filter(item => !isHaveArr.includes(item.flow_id));
+    isHaveArr = isHaveArr.map(item => item.screen_id);
+    tempArr = tempArr.filter(item => !isHaveArr.includes(item.screen_id));
     // console.log('tempArr', tempArr);
     let res = {
       exists: isHaveArr,
       success: 0,
     };
     if (tempArr.length) {
-      res.success = (await ctx.model.FlowFolderFlows.bulkCreate(tempArr)).length;
+      res.success = (await ctx.model.ScreenFolderScreens.bulkCreate(tempArr)).length;
     }
     return res;
   }
 
   async unbind(payload) {
     const { ctx } = this;
-    const { id, flow_ids } = payload;
-    return await ctx.model.FlowFolders.destroy({ where: {
-      flow_id: {
-        [Op.in]: flow_ids,
+    const { id, screen_ids } = payload;
+    return await ctx.model.ScreenFolders.destroy({ where: {
+      screen_id: {
+        [Op.in]: screen_ids,
       },
-      flow_folder_id: id,
+      screen_folder_id: id,
     } });
   }
 
-  async setDefaultFlow(payload) {
+  async setDefaultScreen(payload) {
     const { ctx } = this;
-    const { id, flow_id } = payload;
+    const { id, screen_id } = payload;
     const transaction = await ctx.model.transaction();
     try {
-      const res = await ctx.model.FlowFolderFlows.update({
+      const res = await ctx.model.ScreenFolderScreens.update({
         is_default: 1,
       }, {
         where: {
-          flow_folder_id: id,
-          flow_id,
+          screen_folder_id: id,
+          screen_id,
         },
         transaction,
       });
       if (res && res[0] !== 0) {
-        await ctx.model.FlowFolderFlows.update({
+        await ctx.model.ScreenFolderScreens.update({
           is_default: 0,
         }, {
           where: {
-            flow_folder_id: id,
-            flow_id: {
-              [Op.not]: flow_id,
+            screen_folder_id: id,
+            screen_id: {
+              [Op.not]: screen_id,
             },
           },
           transaction,
@@ -177,4 +176,4 @@ class FlowFoldersService extends Service {
   }
 }
 
-module.exports = FlowFoldersService;
+module.exports = ScreenFoldersService;
