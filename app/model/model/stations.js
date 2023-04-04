@@ -120,7 +120,7 @@ module.exports = app => {
   };
   const StationsModel = sequelize.define('stations_model', attributes, options);
   StationsModel.associate = function() {
-    StationsModel.hasMany(app.model.StationTags, { sourceKey: 'id', foreignKey: 'station_id' });
+    StationsModel.hasMany(app.model.StationAttrs, { sourceKey: 'id', foreignKey: 'station_id' });
   };
   return StationsModel;
 };

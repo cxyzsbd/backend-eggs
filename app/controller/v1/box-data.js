@@ -121,8 +121,9 @@ class BoxDataController extends BaseController {
     } else {
       dataO = await app.utils.tools.solveDownloadDataParams(params.param_type, params.param_arr, company_id);
     }
-    console.log('data', JSON.stringify(dataO));
+    // console.log('data', JSON.stringify(dataO));
     data = dataO.filter(item => item.boxcode && item.tagname);
+    console.log('data==============', data);
     if (![ 'data', 'down-data' ].includes(apiUrl) && (!data || !data.length)) {
       this.BAD_REQUEST({ message: '无效参数' });
       return false;

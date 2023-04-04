@@ -58,7 +58,7 @@ class StationsService extends Service {
       where: payload,
       include: [
         {
-          model: ctx.model.StationTags,
+          model: ctx.model.StationAttrs,
         },
       ],
     });

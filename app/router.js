@@ -102,10 +102,6 @@ module.exports = app => {
   router.get(`${apiV1}/inspection-tasks/:id`, controller.v1.inspectionTasks.findOne);
   router.delete(`${apiV1}/inspection-tasks/:id`, controller.v1.inspectionTasks.destroy);
 
-  // 用户关注报警点位
-  router.post(`${apiV1}/user-alarm-tags`, controller.v1.userAlarmTags.bulkOperation);
-  router.get(`${apiV1}/user-alarm-tags`, controller.v1.userAlarmTags.findAll);
-
   // 设备台账
   router.post(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.create);
   router.put(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.update);
@@ -238,13 +234,6 @@ module.exports = app => {
   router.get(`${apiV1}/station-files/:id`, controller.v1.stationFiles.findOne);
   router.delete(`${apiV1}/station-files/:id`, controller.v1.stationFiles.destroy);
 
-  // 站点订阅点位
-  router.post(`${apiV1}/station-tags`, controller.v1.stationTags.create);
-  router.put(`${apiV1}/station-tags/:id`, controller.v1.stationTags.update);
-  router.get(`${apiV1}/station-tags`, controller.v1.stationTags.findAll);
-  router.get(`${apiV1}/station-tags/:id`, controller.v1.stationTags.findOne);
-  router.delete(`${apiV1}/station-tags/:id`, controller.v1.stationTags.destroy);
-
   // 站点订阅属性
   router.post(`${apiV1}/station-attrs`, controller.v1.stationAttrs.create);
   router.put(`${apiV1}/station-attrs/:id`, controller.v1.stationAttrs.update);
@@ -322,5 +311,5 @@ module.exports = app => {
   router.delete(`${apiV1}/screen-folders/:id`, controller.v1.screenFolders.destroy);
   router.post(`${apiV1}/screen-folders/:id/bind-screens`, controller.v1.screenFolders.bind);
   router.post(`${apiV1}/screen-folders/:id/unbind-screens`, controller.v1.screenFolders.unbind);
-  router.post(`${apiV1}/screen-folders/:id/default-flow`, controller.v1.screenFolders.setDefaultScreen);
+  router.post(`${apiV1}/screen-folders/:id/default-screen`, controller.v1.screenFolders.setDefaultScreen);
 };
