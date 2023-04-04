@@ -64,9 +64,13 @@ class _objectName_Service extends Service {
       return [];
     }
     const departments = await app.utils.tools.getRedisCachePublic('departments');
-    if (!department_id) {
+    if (isNaN(department_id)) {
+      return [];
+    }
+    if (department_id === 0) {
       // 管理员
-      return (departments.filter(item => item.company_id === company_id)).sort(sortBy(prop_order, rev));
+      const departmentChildren = (departments.filter(item => item.company_id === company_id)).sort(sortBy(prop_order, rev));
+      return [{ id: 0, name: '根组织', parent_id: '' }, ...departmentChildren ];
     }
     // 普通用户
     // 获取当前用户的部门信息

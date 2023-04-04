@@ -9,6 +9,7 @@ class FlowFoldersService extends Service {
     const { company_id } = ctx.request.header;
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
+    console.log('ids=============', departmentIds);
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where = { ...where, company_id };
