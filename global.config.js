@@ -31,7 +31,7 @@ const REDIS_CONFIG = {
   PASSWORD: 'mySQL13test14',
 };
 const DATA_FORWARD_URL = 'http://java-web.lkys-bms.svc:555/';
-const CPP_FORWARD_URL = 'http://1.116.223.219:9999/';
+const CPP_FORWARD_URL = 'http://172.17.16.3:9999/';
 
 // const DB_CONFIG = {
 //   DATABASE1: 'lkys_new',
