@@ -114,6 +114,7 @@ class KingdeeController extends BaseController {
             refresh_token,
             is_super_user,
             expire_time: expires_in,
+            kingdee_access_token: access_token,
           });
           return false;
         }
@@ -149,6 +150,7 @@ class KingdeeController extends BaseController {
             refresh_token,
             is_super_user,
             expire_time: expires_in,
+            kingdee_access_token: access_token,
           });
         }
       } else {
@@ -197,13 +199,17 @@ class KingdeeController extends BaseController {
     const { ctx, app, service } = this;
     ctx.logger.warn('金蝶用户登出', ctx.request);
     ctx.logger.warn('金蝶用户登出query', ctx.query);
-    const { ch, domain } = ctx.query;
+    const { ch, domain, kingdee_access_token } = ctx.query;
     const rule = {
       ch: {
         type: 'string',
         required: true,
       },
       domain: {
+        type: 'string',
+        required: true,
+      },
+      kingdee_access_token: {
         type: 'string',
         required: true,
       },
@@ -221,12 +227,13 @@ class KingdeeController extends BaseController {
     const timestamp = Math.floor(Date.now() / 1000);
     const signature = await app.utils.tools.sha1Encrypt(`${client_id}${client_secret}${timestamp}${domain}`);
     try {
-      const res = await ctx.curl(`https://api.kingdee.com/auth/oauth2/logout?client_id=${client_id}&signiture=${signature}&timestamp=${timestamp}&redirect_uri=${domain}`, {
+      const res = await ctx.curl(`https://api.kingdee.com/auth/oauth2/logout?client_id=${client_id}&signiture=${signature}&timestamp=${timestamp}&redirect_uri=${domain}&access_token=${kingdee_access_token}`, {
         method: 'GET',
         rejectUnauthorized: false,
         timeout: 30000,
         headers: {
           'Content-Type': 'application/json',
+          accesstoken: kingdee_access_token,
         },
       }).catch(err => {
         ctx.logger.error(err);

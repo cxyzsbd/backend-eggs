@@ -5,16 +5,32 @@ const { Op } = require('sequelize');
 
 class FlowFoldersService extends Service {
   async findAll(payload) {
-    const { ctx } = this;
+    const { ctx, app } = this;
+    const redisAttr = app.redis.clients.get('attrs');
     const { company_id } = ctx.request.header;
+    const allStations = JSON.parse(await redisAttr.get('stations'));
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
+    const stations = allStations.filter(item => departmentIds.includes(item.department_id));
+    const station_ids = stations.map(item => item.id);
     console.log('ids=============', departmentIds);
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where = { ...where, company_id };
-    where.department_id = {
-      [Op.in]: departmentIds,
+    where = {
+      ...where,
+      [Op.or]: [
+        {
+          department_id: {
+            [Op.in]: departmentIds,
+          },
+        },
+        {
+          station_id: {
+            [Op.in]: station_ids,
+          },
+        },
+      ],
     };
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
