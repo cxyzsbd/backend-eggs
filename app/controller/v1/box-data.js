@@ -181,8 +181,8 @@ class BoxDataController extends BaseController {
         return false;
       });
       // console.log('params======================', data);
-      // console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
-      // console.log('res==================', res.data);
+      console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
+      console.log('res==================', res.data);
       // ctx.logger.warn('res==================', res.data.hisraw[0].dataList);
       if (!res) {
         this.SERVER_ERROR();

@@ -38,6 +38,13 @@ module.exports = class Tools {
     return decrypted;
   }
 
+  // sha1加密
+  async sha1Encrypt(str) {
+    const sha1 = crypto.createHash('sha1');
+    sha1.update(str);
+    return sha1.digest('hex');
+  }
+
   /**
    * 雪花算法生成id
    */

@@ -97,6 +97,59 @@ class DeviceTagsController extends BaseController {
     await app.utils.tools.setAttrsRedisCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
+
+  /**
+   * 获取属性及其实时数据
+  * 获取属性及其实时数据
+  * post device-tag-datas
+  * body deviceTagsDataReq
+  */
+  async getTagDatas() {
+    const { ctx, service, app } = this;
+    const requestBaseUrl = app.config.dataForwardBaseUrl;
+    const params = { ...ctx.request.body, ...ctx.query };
+    ctx.validate(ctx.rule.deviceTagsDataReq, params);
+    let { data, noTagAttrs } = await service.deviceTags.getTagDatas(params);
+    try {
+      let resData = [];
+      if (noTagAttrs && noTagAttrs.length) {
+        const attr_values = await ctx.service.cache.get('attr_values', 'attrs') || {};
+        noTagAttrs = noTagAttrs.map(item => {
+          item.value = attr_values[item.id] || null;
+          return item;
+        });
+        resData = [ ...resData, ...noTagAttrs ];
+      }
+      // 如果data为空数组，直接返回
+      if ((!data || !data.length) && (noTagAttrs && noTagAttrs.length)) {
+        this.SUCCESS(resData);
+        return false;
+      }
+      const res = await ctx.curl(`${requestBaseUrl}box-data/data`, {
+        method: 'POST',
+        rejectUnauthorized: false,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        dataType: 'json',
+        data,
+      }).catch(err => {
+        console.log(err);
+        return false;
+      });
+      if (!res) {
+        this.SERVER_ERROR();
+        return false;
+      }
+      if (res && res.data && res.data.length) {
+        resData = [ ...resData, ...res.data ];
+      }
+      this.SUCCESS(resData);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = DeviceTagsController;

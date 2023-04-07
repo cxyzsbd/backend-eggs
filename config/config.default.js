@@ -48,6 +48,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
+      '/api/v1/device-tag-datas',
     ],
   };
   config.auth = {
@@ -57,6 +58,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
+      '/api/v1/device-tag-datas',
     ],
   };
   config.validateSuperUser = {
@@ -70,6 +72,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
+      '/api/v1/device-tag-datas',
     ],
   };
 

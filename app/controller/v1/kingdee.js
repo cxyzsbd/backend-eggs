@@ -12,7 +12,8 @@ class KingdeeController extends BaseController {
   * @summary 金蝶校验用户
   * @description 金蝶对接校验用户
   * @router get kingdee/validate-user
-  * @request query string *auth_code "金蝶校验code"
+  * @request query string *ch
+  * @request query string *domain
   */
   async validateUser() {
     const { ctx, app, service } = this;
@@ -182,6 +183,60 @@ class KingdeeController extends BaseController {
     // 不存在,添加
     const res = await service.kingdee.create(params);
     res ? this.SUCCESS() : this.SERVER_ERROR({ message: '同步失败' });
+  }
+
+  /**
+  * @apikey
+  * @summary 登出
+  * @description 登出
+  * @router post kingdee/logout
+  * @request query string *ch
+  * @request query string *domain
+  */
+  async logout() {
+    const { ctx, app, service } = this;
+    ctx.logger.warn('金蝶用户登出', ctx.request);
+    ctx.logger.warn('金蝶用户登出query', ctx.query);
+    const { ch, domain } = ctx.query;
+    const rule = {
+      ch: {
+        type: 'string',
+        required: true,
+      },
+      domain: {
+        type: 'string',
+        required: true,
+      },
+    };
+    ctx.validate(rule, ctx.query);
+    let params = {};
+    try {
+      const key = app.utils.tools.md5(domain).slice(0, 16);
+      params = JSON.parse(await app.utils.tools.aesDecrypt(ch, key));
+    } catch (error) {
+      this.UNAUTHORIZED({ message: '应用id不匹配' });
+      ctx.logger.error(error);
+    }
+    const { clientId: client_id, clientSecret: client_secret } = params;
+    const timestamp = Math.floor(Date.now() / 1000);
+    const signature = await app.utils.tools.sha1Encrypt(`${client_id}${client_secret}${timestamp}${domain}`);
+    try {
+      const res = await ctx.curl(`https://api.kingdee.com/auth/oauth2/logout?client_id=${client_id}&signiture=${signature}&timestamp=${timestamp}&redirect_uri=${domain}`, {
+        method: 'GET',
+        rejectUnauthorized: false,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).catch(err => {
+        ctx.logger.error(err);
+        return false;
+      });
+      console.log('res===============', res);
+      this.SUCCESS(res);
+    } catch (error) {
+      ctx.logger.error(error);
+    }
   }
 }
 

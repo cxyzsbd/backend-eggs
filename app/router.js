@@ -169,6 +169,7 @@ module.exports = app => {
   router.put(`${apiV1}/device-tags/:id`, controller.v1.deviceTags.update);
   router.get(`${apiV1}/device-tags`, controller.v1.deviceTags.findAll);
   router.delete(`${apiV1}/device-tags/:id`, controller.v1.deviceTags.destroy);
+  router.post(`${apiV1}/device-tag-datas`, controller.v1.deviceTags.getTagDatas);
 
   // 超管管理公司
   router.post(`${apiV1}/super-user/companys`, controller.v1.companys.create);
@@ -273,6 +274,7 @@ module.exports = app => {
   // 校验金蝶用户
   router.get(`${apiV1}/kingdee/validate-user`, controller.v1.kingdee.validateUser);
   router.post(`${apiV1}/kingdee/synchronize-user`, controller.v1.kingdee.synchronizeUser);
+  router.post(`${apiV1}/kingdee/logout`, controller.v1.kingdee.logout);
 
   // 可视化图片
   router.get(`${apiV1}/visual-images`, controller.v1.visualImages.findAll);

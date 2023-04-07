@@ -55,6 +55,19 @@ const body = {
       description: '关联实际点位长点名',
     },
   },
+  deviceTagsDataReq: {
+    device_id: {
+      type: 'number',
+      required: true,
+      description: '设备id',
+    },
+    attr_ids: {
+      type: 'array',
+      itemType: 'number',
+      required: false,
+      description: '属性id集合，不传查设备下所有属性',
+    },
+  },
 };
 
 module.exports = {

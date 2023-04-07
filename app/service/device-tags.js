@@ -60,6 +60,22 @@ class DeviceTagsService extends Service {
     const { ctx } = this;
     return await ctx.model.DeviceTags.destroy({ where: { id: payload.id } });
   }
+
+  async getTagDatas(payload) {
+    const { ctx } = this;
+    const { device_id, attr_ids = [] } = payload;
+    const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
+    let tempArr = attr_tags.filter(item => item.device_id === device_id);
+    if (attr_ids.length) {
+      tempArr = tempArr.filter(item => attr_ids.includes(item.id));
+    }
+    let data = tempArr.filter(item => item.boxcode && item.tagname);
+    let noTagAttrs = tempArr.filter(item => !item.boxcode || !item.tagname);
+    return {
+      data,
+      noTagAttrs
+    }
+  }
 }
 
 module.exports = DeviceTagsService;
