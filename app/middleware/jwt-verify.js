@@ -6,7 +6,7 @@ module.exports = options => {
     const regUrl = url.slice(0, (url.indexOf('?') > 0 ? url.indexOf('?') : url.length));
     // const isInWhiteList = whiteList.includes(regUrl);
     // 实时数据、历史数据、实时报警、历史报警、数据下置等接口如果无token情况下，传递签名，签名校验通过也可放行
-    const dataApiList = [ '/api/v1/box-data/data', '/api/v1/box-data/his-data', '/api/v1/box-data/alarm', '/api/v1/box-data/his-alarm', '/api/v1/box-data/down-data' ];
+    const dataApiList = [ '/api/v1/box-data/data', '/api/v1/box-data/his-data', '/api/v1/box-data/original-his-data', '/api/v1/box-data/alarm', '/api/v1/box-data/his-alarm', '/api/v1/box-data/down-data' ];
     // 有用户id并且数据相关接口，通过用户校验
     if (user_id && dataApiList.includes(regUrl)) {
       const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(user_id);

@@ -52,7 +52,7 @@ module.exports = () => {
     // console.log('isInPermissions', isInPermissions);
     if (isInPermissions && isInPermissions.length) {
       // console.log('isInPermissions[0]', isInPermissions[0]);
-      record.content = `${isInPermissions[0].name}-${isInPermissions[0].mark_name}`;
+      record.content = `${isInPermissions[0].mark_name}-${isInPermissions[0].name}`;
     }
     await next();
     // 从接口响应判断操作是否成功

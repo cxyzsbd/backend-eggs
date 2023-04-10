@@ -73,6 +73,9 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
       '/api/v1/device-tag-datas',
+      '/api/v1/kingdee/logout',
+      '/api/v1/screens/*/files',
+      '/api/v1/flows/*/files',
     ],
   };
 
