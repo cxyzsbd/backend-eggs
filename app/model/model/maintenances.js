@@ -64,7 +64,7 @@ module.exports = app => {
       defaultValue: '1',
       primaryKey: false,
       autoIncrement: false,
-      comment: '单次巡检持续时间，配合单位，默认1天',
+      comment: '单次保养持续时间，配合单位，默认1天',
       field: 'duration',
     },
     duration_unit: {
@@ -159,7 +159,7 @@ module.exports = app => {
     },
   };
   const options = {
-    tableName: 'inspections',
+    tableName: 'maintenances',
     paranoid: true,
     timestamps: true,
     createdAt: false,
@@ -168,17 +168,17 @@ module.exports = app => {
     comment: '',
     indexes: [],
   };
-  const InspectionsModel = sequelize.define('inspections_model', attributes, options);
-  InspectionsModel.associate = function() {
-    InspectionsModel.hasMany(app.model.InspectionTasks, { foreignKey: 'inspection_id', sourceKey: 'id' });
-    InspectionsModel.hasMany(app.model.InspectionTargets, { foreignKey: 'inspection_id', sourceKey: 'id' });
-    InspectionsModel.belongsToMany(app.model.Users, {
+  const MaintenancesModel = sequelize.define('maintenances_model', attributes, options);
+  MaintenancesModel.associate = function() {
+    MaintenancesModel.hasMany(app.model.MaintenanceTasks, { foreignKey: 'maintenance_id', sourceKey: 'id' });
+    MaintenancesModel.hasMany(app.model.MaintenanceTargets, { foreignKey: 'maintenance_id', sourceKey: 'id' });
+    MaintenancesModel.belongsToMany(app.model.Users, {
       as: 'handlers',
-      through: app.model.InspectionHandlers,
-      foreignKey: 'inspection_id',
+      through: app.model.MaintenanceHandlers,
+      foreignKey: 'maintenance_id',
       otherKey: 'handler',
     });
-    InspectionsModel.hasOne(app.model.Users, { foreignKey: 'id', sourceKey: 'creator', as: 'creator_info' });
+    MaintenancesModel.hasOne(app.model.Users, { foreignKey: 'id', sourceKey: 'creator', as: 'creator_info' });
   };
-  return InspectionsModel;
+  return MaintenancesModel;
 };

@@ -3,17 +3,17 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller 巡检任务 inspection-tasks
+* @controller 保养任务 maintenance-tasks
 */
 
-class InspectionTasksController extends BaseController {
+class MaintenanceTasksController extends BaseController {
   /**
   * @apikey
-  * @summary 巡检任务列表
-  * @description 获取所有巡检任务
+  * @summary 保养任务列表
+  * @description 获取所有保养任务
   * @request query number pageSize
   * @request query number pageNumber
-  * @router get inspection-tasks
+  * @router get maintenance-tasks
   */
   async findAll() {
     const { ctx, service } = this;
@@ -24,7 +24,7 @@ class InspectionTasksController extends BaseController {
         status: Number(params.status),
       };
     }
-    let rule = ctx.rule.inspectionTasksPutBodyReq;
+    let rule = ctx.rule.maintenanceTasksPutBodyReq;
     rule = {
       ...rule,
       status: {
@@ -38,38 +38,38 @@ class InspectionTasksController extends BaseController {
       queryOrigin: params,
     });
     ctx.validate(allRule, query);
-    const res = await service.inspectionTasks.findAll(query);
+    const res = await service.maintenanceTasks.findAll(query);
     this.SUCCESS(res);
   }
 
   /**
   * @apikey
-  * @summary 获取某个 巡检任务
-  * @description 获取某个 巡检任务
-  * @router get inspection-tasks/:id
+  * @summary 获取某个 保养任务
+  * @description 获取某个 保养任务
+  * @router get maintenance-tasks/:id
   * @request path string *id eg:1
   */
   async findOne() {
     const { ctx, service } = this;
-    ctx.validate(ctx.rule.inspectionTasksId, ctx.params);
-    const res = await service.inspectionTasks.findOne(ctx.params);
+    ctx.validate(ctx.rule.maintenanceTasksId, ctx.params);
+    const res = await service.maintenanceTasks.findOne(ctx.params);
     res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
 
   /**
   * @apikey
-  * @summary 删除 巡检任务
-  * @description 删除 巡检任务
-  * @router delete inspection-tasks/:id
+  * @summary 删除 保养任务
+  * @description 删除 保养任务
+  * @router delete maintenance-tasks/:id
   * @request path string *id eg:1
   */
   async destroy() {
     const { ctx, service } = this;
     let params = ctx.params;
-    ctx.validate(ctx.rule.inspectionTasksId, params);
-    const res = await service.inspectionTasks.destroy(params);
+    ctx.validate(ctx.rule.maintenanceTasksId, params);
+    const res = await service.maintenanceTasks.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 }
 
-module.exports = InspectionTasksController;
+module.exports = MaintenanceTasksController;

@@ -11,7 +11,7 @@ class WorkOrdersController extends BaseController {
   * @apikey
   * @summary 工单列表
   * @description 获取所有工单
-  * @request query string name
+  * @request query number list_type '1:我创建；2：我审核的；3：我处理的'
   * @request query number pageSize
   * @request query number pageNumber
   * @router get work-orders
@@ -40,13 +40,19 @@ class WorkOrdersController extends BaseController {
         required: false,
         description: '审核人',
       },
+      list_type: {
+        type: 'number',
+        enum: [ 1, 2, 3 ],
+        required: false,
+        description: '1:我创建；2：我审核的；3：我处理的',
+      },
     };
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.workOrders.findAll(query);
+    const res = await service.workOrders.findAll(query, queryOrigin);
     this.SUCCESS(res);
   }
 

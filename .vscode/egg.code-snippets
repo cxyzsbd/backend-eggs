@@ -88,7 +88,7 @@
       "    const { ctx, service } = this;",
       "    let params = ctx.params;",
       "    params.id = Number(params.id);",
-      "    ctx.validate(ctx.rule.objectsDelBodyReq, params);",
+      "    ctx.validate(ctx.rule.objectsId, params);",
       "    const res = await service.objects.destroy(params);",
       "    res ? this.NO_CONTENT() : this.NOT_FOUND();",
       "  }",
@@ -140,8 +140,8 @@
       "  async findAll(payload) {",
       "    const { ctx } = this;",
       "    const { pageSize, pageNumber, prop_order, order } = payload;",
-      "    const where = payload.where;",
-      "    const Order = [];",
+      "    let where = payload.where;",
+      "    let Order = [];",
       "    prop_order && order ? Order.push([prop_order, order]) : null;",
       "    const total = await ctx.model.MODEL_NAME.count({ where });",
       "    const data = await ctx.model.MODEL_NAME.findAll({",
@@ -187,11 +187,11 @@
     "prefix": "restful-router",
     "body": [
       "//对象",
-      "router.post('/api/v1/objects', controller.v1.objects.create);",
-      "router.put('/api/v1/objects/:id', controller.v1.objects.update);",
-      "router.get('/api/v1/objects', controller.v1.objects.findAll);",
-      "router.get('/api/v1/objects/:id', controller.v1.objects.findOne);",
-      "router.delete('/api/v1/objects/:id', controller.v1.objects.destroy);"
+      "router.post(`${apiV1}/objects`, controller.v1.objects.create);",
+      "router.put(`${apiV1}/objects/:id`, controller.v1.objects.update);",
+      "router.get(`${apiV1}/objects`, controller.v1.objects.findAll);",
+      "router.get(`${apiV1}/objects/:id`, controller.v1.objects.findOne);",
+      "router.delete(`${apiV1}/objects/:id`, controller.v1.objects.destroy);"
     ]
   },
   //事务

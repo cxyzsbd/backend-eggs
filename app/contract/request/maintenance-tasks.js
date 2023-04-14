@@ -1,15 +1,15 @@
 'use strict';
 
 const body = {
-  inspectionTasksId: {
+  maintenanceTasksId: {
     id: { type: 'string', required: true, description: '编号' },
   },
-  inspectionTasksBodyReq: {
-    inspection_id: {
+  maintenanceTasksBodyReq: {
+    maintenance_id: {
       type: 'string',
       required: true,
       max: 20,
-      description: '巡检编号',
+      description: '保养编号',
     },
     name: {
       type: 'string',
@@ -38,8 +38,8 @@ const body = {
 
 module.exports = {
   ...body,
-  inspectionTasksPutBodyReq: {
-    ...body.inspectionTasksId,
-    ...body.inspectionTasksBodyReq,
+  maintenanceTasksPutBodyReq: {
+    ...body.maintenanceTasksId,
+    ...body.maintenanceTasksBodyReq,
   },
 };

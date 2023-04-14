@@ -44,6 +44,7 @@ class AppBootHook {
     // 应用启动完毕
     // 运维消息
     app.messenger.on('iom_redis_expire_subscribe', async message => {
+      ctx.logger.info('运维定时任务', message);
       const messageArr = message.split('__');
       const messageType = messageArr[0];
       // 巡检任务

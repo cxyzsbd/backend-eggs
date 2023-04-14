@@ -25,10 +25,10 @@ module.exports = app => {
     type: {
       type: DataTypes.INTEGER(1),
       allowNull: false,
-      defaultValue: null,
+      defaultValue: '1',
       primaryKey: false,
       autoIncrement: false,
-      comment: '工单类型',
+      comment: '工单类型：1：报警工单；2：巡检工单；3：其他工单；4：维修工单',
       field: 'type',
     },
     level: {
@@ -70,7 +70,7 @@ module.exports = app => {
     end_time: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: '截止时间',
@@ -165,6 +165,15 @@ module.exports = app => {
       autoIncrement: false,
       comment: '处理图片',
       field: 'handle_imgs',
+    },
+    signature_img: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '签名图',
+      field: 'signature_img',
     },
     create_at: {
       type: DataTypes.DATE,

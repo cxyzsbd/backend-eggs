@@ -104,6 +104,7 @@ class DevicesService extends Service {
         await ctx.model.EquipmentAccounts.create({
           id: equipmentAccountId, name, type, brand, model, desc, networking: 1, creator: request_user, company_id,
           device_id: device.id,
+          station_id,
         }, { transaction });
       }
       await transaction.commit();

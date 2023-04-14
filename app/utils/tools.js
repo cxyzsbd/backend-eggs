@@ -23,6 +23,46 @@ module.exports = class Tools {
     this.globalConfig = globalConfig;
   }
 
+  // 工单推送
+  socketWorkOrderPush(type = 1, data) {
+    const { app } = this;
+    const nsp = app.io.of('/');
+    const {
+      socketCompanyRoomNamePrefix,
+      socketUserPrefix,
+    } = app.config;
+
+  }
+
+  // 推送
+  socketPush(target_id = null, type = 'all', event, data) {
+    const { app } = this;
+    const nsp = app.io.of('/');
+    const {
+      socketOnlineUserRoomName,
+      socketDepartmentRoomNamePrefix,
+      socketCompanyRoomNamePrefix,
+      socketCompanyAdminPrefix,
+      socketUserPrefix,
+    } = app.config;
+    let prefix = '';
+    switch (type) {
+      case 'company':
+        prefix = socketCompanyRoomNamePrefix; break;
+      case 'companyAdmin':
+        prefix = socketCompanyAdminPrefix; break;
+      case 'department':
+        prefix = socketDepartmentRoomNamePrefix; break;
+      case 'user':
+        prefix = socketUserPrefix; break;
+      case 'all':
+        prefix = socketOnlineUserRoomName; break;
+      default:
+        prefix = socketOnlineUserRoomName; break;
+    }
+    nsp.to(`${prefix}${target_id}`).emit(event, data);
+  }
+
   // AES加密
   async aesEncrypt(data, secretKey, iv = null) {
     const cipher = crypto.createCipheriv('aes-128-ecb', secretKey, iv);

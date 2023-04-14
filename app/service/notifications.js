@@ -1,14 +1,19 @@
 'use strict';
 
 const Service = require('egg').Service;
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 class NotificationsService extends Service {
   async findAll(payload) {
     const { ctx } = this;
+    const { request_user } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
-    const Order = [];
+    let where = payload.where;
+    where = {
+      ...where,
+      receiver_id: request_user,
+    };
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.Notifications.count({ where });
     const data = await ctx.model.Notifications.findAll({
@@ -69,6 +74,22 @@ class NotificationsService extends Service {
   async destroy(payload) {
     const { ctx } = this;
     return await ctx.model.Notifications.destroy({ where: { id: payload.id } });
+  }
+
+  async markRead(payload) {
+    const { ctx } = this;
+    const { request_user } = ctx.request.header;
+    const { ids } = payload;
+    return await ctx.model.Notifications.update({
+      is_read: 1,
+    }, {
+      where: {
+        id: {
+          [Op.in]: ids,
+        },
+        receiver_id: request_user,
+      },
+    });
   }
 }
 

@@ -102,6 +102,20 @@ module.exports = app => {
   router.get(`${apiV1}/inspection-tasks/:id`, controller.v1.inspectionTasks.findOne);
   router.delete(`${apiV1}/inspection-tasks/:id`, controller.v1.inspectionTasks.destroy);
 
+  // 保养
+  router.post(`${apiV1}/maintenances`, controller.v1.maintenances.create);
+  router.put(`${apiV1}/maintenances/:id`, controller.v1.maintenances.update);
+  router.get(`${apiV1}/maintenances`, controller.v1.maintenances.findAll);
+  router.get(`${apiV1}/maintenances/:id`, controller.v1.maintenances.findOne);
+  router.delete(`${apiV1}/maintenances/:id`, controller.v1.maintenances.destroy);
+  router.patch(`${apiV1}/maintenances/:id/stop`, controller.v1.maintenances.stop);
+  router.patch(`${apiV1}/maintenances/:id/start`, controller.v1.maintenances.start);
+
+  // 保养任务
+  router.get(`${apiV1}/maintenance-tasks`, controller.v1.maintenanceTasks.findAll);
+  router.get(`${apiV1}/maintenance-tasks/:id`, controller.v1.maintenanceTasks.findOne);
+  router.delete(`${apiV1}/maintenance-tasks/:id`, controller.v1.maintenanceTasks.destroy);
+
   // 设备台账
   router.post(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.create);
   router.put(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.update);
@@ -314,4 +328,22 @@ module.exports = app => {
   router.post(`${apiV1}/screen-folders/:id/bind-screens`, controller.v1.screenFolders.bind);
   router.post(`${apiV1}/screen-folders/:id/unbind-screens`, controller.v1.screenFolders.unbind);
   router.post(`${apiV1}/screen-folders/:id/default-screen`, controller.v1.screenFolders.setDefaultScreen);
+
+  // 公告
+  router.post(`${apiV1}/announcements`, controller.v1.announcements.create);
+  router.put(`${apiV1}/announcements/:id`, controller.v1.announcements.update);
+  router.get(`${apiV1}/announcements`, controller.v1.announcements.findAll);
+  router.get(`${apiV1}/view-announcements`, controller.v1.announcements.viewList);
+  router.get(`${apiV1}/announcements/:id`, controller.v1.announcements.findOne);
+  router.delete(`${apiV1}/announcements/:id`, controller.v1.announcements.destroy);
+  router.put(`${apiV1}/announcements/:id/publish`, controller.v1.announcements.publish);
+  router.put(`${apiV1}/announcements/:id/recall`, controller.v1.announcements.recall);
+  router.post(`${apiV1}/announcements/mark-read`, controller.v1.announcements.markRead);
+
+  // 消息
+  router.get(`${apiV1}/notifications`, controller.v1.notifications.findAll);
+  router.post(`${apiV1}/notifications/mark-read`, controller.v1.notifications.markRead);
+
+  // 发送短信
+  // router.post(`${apiV1}/sms`, controller.v1.sms.send);
 };

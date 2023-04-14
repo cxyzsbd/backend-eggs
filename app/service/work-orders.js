@@ -21,27 +21,43 @@ class WorkOrdersService extends Service {
     }
     return sn;
   }
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx, app } = this;
     const { pageSize, pageNumber, prop_order, order, status } = payload;
-    const { company_id } = ctx.request.header;
+    const { st, et, list_type } = queryOrigin;
+    const { company_id, request_user } = ctx.request.header;
     let where = payload.where;
+    delete where.list_type;
     where.company_id = company_id;
-    const Order = [];
-    if (status || status == 0) {
-      if (status == 4) {
+    if (st && et) {
+      where.create_at = {
+        [Op.between]: [ st, et ],
+      };
+    }
+    let Order = [];
+    if (status || status === 0) {
+      if (status === 4) {
+        delete where.status;
         where[Op.and] = [
           { status: {
             [Op.lte]: 2,
           } },
           { end_time: {
-            [Op.gt]: new Date().getTime(),
+            [Op.lt]: new Date().getTime(),
           } },
         ];
-      } else if (status != 3) {
+      } else if (status !== 3) {
         where.end_time = {
-          [Op.gt]: new Date().getTime(),
+          [Op.gte]: new Date().getTime(),
         };
+      }
+    }
+    if (list_type) {
+      switch (Number(list_type)) {
+        case 1:where.creator = request_user; break;
+        case 2:where.approver = request_user; break;
+        case 3:where.handler = request_user; break;
+        default: where.creator = request_user; break;
       }
     }
     prop_order && order ? Order.push([ prop_order, order ]) : null;
@@ -155,20 +171,29 @@ class WorkOrdersService extends Service {
   async approval(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
+    let { approval_result, not_pass_reason = '', handler = null, id } = payload;
+    approval_result = Number(approval_result);
     const transaction = await ctx.model.transaction();
     try {
       let operationObj = {
-        work_order_id: payload.id,
+        work_order_id: id,
         type: 3,
         operator: request_user,
-        operation_result: payload.approval_result,
+        operation_result: approval_result,
       };
-      if (payload.approval_result == 1) {
-        operationObj.not_pass_reason = payload.not_pass_reason;
+      let updateObj = {
+        approver: request_user,
+        status: approval_result === 1 ? 1 : 0,
+      };
+      if (payload.approval_result === 0) {
+        operationObj.not_pass_reason = not_pass_reason;
+      } else {
+        updateObj = {
+          ...updateObj,
+          handler,
+        };
       }
-      await ctx.model.WorkOrders.update({
-        status: payload.approval_result == 1 ? 1 : 0,
-      }, {
+      await ctx.model.WorkOrders.update(updateObj, {
         where: { id: payload.id },
         transaction,
       });
@@ -203,10 +228,15 @@ class WorkOrdersService extends Service {
   async complete(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
-    const { handle_result, id } = payload;
+    const { handle_result, id, signature_img = null, handle_imgs = '', handle_audios = '', remark = '' } = payload;
     const res = await ctx.model.WorkOrders.update({
       status: 3,
       handle_result,
+      signature_img,
+      handle_imgs,
+      handle_audios,
+      remark,
+      complete_at: new Date(),
     }, {
       where: { id },
     });

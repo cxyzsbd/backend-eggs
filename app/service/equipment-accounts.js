@@ -6,8 +6,8 @@ class EquipmentAccountsService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
-    const Order = [];
+    let where = payload.where;
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.EquipmentAccounts.count({ where });
     const data = await ctx.model.EquipmentAccounts.findAll({
@@ -16,6 +16,12 @@ class EquipmentAccountsService extends Service {
       // raw: true,
       where,
       order: Order,
+      include: [
+        {
+          model: ctx.model.Stations,
+          as: 'station',
+        },
+      ],
     });
     return {
       data,

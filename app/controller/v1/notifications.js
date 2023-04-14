@@ -54,6 +54,20 @@ class notificationsController extends BaseController {
     const res = await service.notifications.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
+  /**
+  * @apikey
+  * @summary 消息标记已读
+  * @description 消息标记已读
+  * @router delete notifications/mark-read
+  * @request body notificationMarkReadBodyReq
+  */
+  async markRead() {
+    const { ctx, service } = this;
+    let params = ctx.reuqest.body;
+    ctx.validate(ctx.rule.notificationMarkReadBodyReq, params);
+    await service.notifications.markRead(params);
+    this.SUCCESS();
+  }
 }
 
 module.exports = notificationsController;

@@ -148,6 +148,15 @@ module.exports = app => {
       comment: '如果是由设备生成而来，则必有，设备id',
       field: 'device_id',
     },
+    station_id: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '站点id，可选参数',
+      field: 'station_id',
+    },
   };
   const options = {
     tableName: 'equipment_accounts',
@@ -155,5 +164,8 @@ module.exports = app => {
     indexes: [],
   };
   const EquipmentAccountsModel = sequelize.define('equipment_accounts_model', attributes, options);
+  EquipmentAccountsModel.associate = () => {
+    EquipmentAccountsModel.hasOne(app.model.Stations, { foreignKey: 'id', sourceKey: 'station_id', as: 'station' });
+  };
   return EquipmentAccountsModel;
 };

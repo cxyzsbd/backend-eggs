@@ -32,6 +32,14 @@ const body = {
       description: '目标id',
     },
   },
+  notificationMarkReadBodyReq: {
+    ids: {
+      type: 'array',
+      required: true,
+      itemType: 'number',
+      description: '消息id集合',
+    },
+  },
 };
 
 module.exports = {

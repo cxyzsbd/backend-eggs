@@ -3,7 +3,7 @@
 const Service = require('egg').Service;
 const { Sequelize, Op } = require('sequelize');
 
-class InspectionsService extends Service {
+class MaintenancesService extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
@@ -12,8 +12,8 @@ class InspectionsService extends Service {
     where.company_id = company_id;
     const Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const count = await ctx.model.Inspections.count({ where });
-    const data = await ctx.model.Inspections.findAll({
+    const count = await ctx.model.Maintenances.count({ where });
+    const data = await ctx.model.Maintenances.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       where,
@@ -41,7 +41,7 @@ class InspectionsService extends Service {
 
   async findOne(payload) {
     const { ctx } = this;
-    return await ctx.model.Inspections.findOne({
+    return await ctx.model.Maintenances.findOne({
       where: payload,
       include: [
         {
@@ -50,10 +50,10 @@ class InspectionsService extends Service {
           attributes: { exclude: [ 'password' ] },
         },
         {
-          model: ctx.model.InspectionTasks,
+          model: ctx.model.MaintenanceTasks,
         },
         {
-          model: ctx.model.InspectionTargets,
+          model: ctx.model.MaintenanceTargets,
           include: [
             {
               model: ctx.model.EquipmentAccounts,
@@ -75,24 +75,24 @@ class InspectionsService extends Service {
     const transaction = await ctx.model.transaction();
     try {
       // 创建巡检计划
-      const res = await ctx.model.Inspections.create(payload, { transaction });
+      const res = await ctx.model.Maintenances.create(payload, { transaction });
       // 巡检人
       const handlersArr = payload.handlers.map(handler => {
         return {
           handler,
-          inspection_id: res.id,
+          maintenance_id: res.id,
         };
       });
-      await ctx.model.InspectionHandlers.bulkCreate(handlersArr, { transaction });
+      await ctx.model.MaintenanceHandlers.bulkCreate(handlersArr, { transaction });
       // 巡检目标
       const targetArr = payload.targets.map(t => {
         return {
-          inspection_id: res.id,
+          maintenance_id: res.id,
           equipment_account_id: t.equipment_account_id,
           items: t.items,
         };
       });
-      await ctx.model.InspectionTargets.bulkCreate(targetArr, { transaction });
+      await ctx.model.MaintenanceTargets.bulkCreate(targetArr, { transaction });
       await transaction.commit();
       return res;
     } catch (e) {
@@ -135,7 +135,7 @@ class InspectionsService extends Service {
         res1 = null,
         res2 = null;
       if (Object.keys(updateParamsNew).length) {
-        res = await ctx.model.Inspections.update(updateParamsNew, {
+        res = await ctx.model.Maintenances.update(updateParamsNew, {
           where: {
             id,
           },
@@ -144,9 +144,9 @@ class InspectionsService extends Service {
       }
       // 巡检人
       if (handlers) {
-        const oldHandlers = await ctx.model.InspectionHandlers.findAll({
+        const oldHandlers = await ctx.model.MaintenanceHandlers.findAll({
           where: {
-            inspection_id: id,
+            maintenance_id: id,
           },
           raw: true,
           transaction,
@@ -164,9 +164,9 @@ class InspectionsService extends Service {
           }
         });
         if (delArr.length) {
-          res1 = await ctx.model.InspectionHandlers.destroy({
+          res1 = await ctx.model.MaintenanceHandlers.destroy({
             where: {
-              inspection_id: id,
+              maintenance_id: id,
               handler: {
                 [Op.in]: delArr,
               },
@@ -178,30 +178,30 @@ class InspectionsService extends Service {
           const addTempArr = addArr.map(h => {
             return {
               handler: h,
-              inspection_id: id,
+              maintenance_id: id,
             };
           });
-          res1 = await ctx.model.InspectionHandlers.bulkCreate(addTempArr, { transaction });
+          res1 = await ctx.model.MaintenanceHandlers.bulkCreate(addTempArr, { transaction });
         }
       }
       // 巡检目标
       if (targets) {
         // 删除原目标
-        await ctx.model.InspectionTargets.destroy({
+        await ctx.model.MaintenanceTargets.destroy({
           where: {
-            inspection_id: id,
+            maintenance_id: id,
           },
           transaction,
         });
         // 插入新目标
         const targetArr = targets.map(t => {
           return {
-            inspection_id: id,
+            maintenance_id: id,
             equipment_account_id: t.equipment_account_id,
             items: t.items,
           };
         });
-        res2 = await ctx.model.InspectionTargets.bulkCreate(targetArr, { transaction });
+        res2 = await ctx.model.MaintenanceTargets.bulkCreate(targetArr, { transaction });
       }
       await transaction.commit();
       return res || res1 || res2;
@@ -214,8 +214,8 @@ class InspectionsService extends Service {
 
   async destroy(payload) {
     const { ctx } = this;
-    return await ctx.model.Inspections.destroy({ where: payload });
+    return await ctx.model.Maintenances.destroy({ where: payload });
   }
 }
 
-module.exports = InspectionsService;
+module.exports = MaintenancesService;

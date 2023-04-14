@@ -15,7 +15,7 @@ module.exports = agent => {
       case iomRedisEventKey:
         // 过期订阅,发送到master进程，再分发给任意worker进程处理
         // 采用随机发送到单个worker进程的方式，让过期回调事件只执行一次
-        agent.messenger.sendRandom('iom_expire_subscribe', message);
+        agent.messenger.sendRandom('iom_redis_expire_subscribe', message);
         break;
       default:
         console.info('未处理的订阅事件：channel-【' + channel + '】,message-【' + message + '】');

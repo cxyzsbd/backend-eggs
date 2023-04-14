@@ -16,6 +16,7 @@ module.exports = app => {
       console.log('socket无token');
       return false;
     }
+    console.log('ip======================', ctx.ip);
     console.log('socket有token=========', accessToken);
     // console.log('start connection!');
     // console.log(socket.rooms);
@@ -53,7 +54,8 @@ module.exports = app => {
         }
       }
       // setTimeout(() => {
-      //   nsp.to(socketOnlineUserRoomName).emit('message', { aaa: 222 });
+      //   console.log('推送', nsp.adapter.rooms);
+      //   nsp.to(`${socketUserPrefix}_2_4`).emit('inspection', { aaa: 222 });
       // }, 3000);
     } catch (error) {
       console.log('error', error);

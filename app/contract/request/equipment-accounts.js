@@ -68,6 +68,11 @@ const body = {
       required: false,
       description: '设备id，当台账是由设备生成是必有',
     },
+    station_id: {
+      type: 'number',
+      required: false,
+      description: '关联站点id',
+    },
   },
 };
 

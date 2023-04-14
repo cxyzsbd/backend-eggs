@@ -314,6 +314,7 @@ module.exports = appInfo => {
     CONFIGER_PREFIX: 'configer_', // 配置端用户前缀
     CONFIGER_CHECK_TIME: 90, // 配置端登录态校验存储时间
     ROOT_DEPARTMENT_NAME: '根组织', // 根组织名称
+    portmapping_smscode_verify: false, // 设备端口映射smscode验证码校验开关
   };
 
   return {

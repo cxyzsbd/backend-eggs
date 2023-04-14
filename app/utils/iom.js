@@ -12,6 +12,7 @@ module.exports = class Iom {
     const { dayjs } = app.utils.tools;
     const { socketUserPrefix } = app.config;
     const nsp = app.io.of('/');
+    ctx.logger.info('巡检执行推送：', inspectionId);
     const inspection = await ctx.model.Inspections.findOne({
       where: { id: inspectionId },
       raw: true,
@@ -19,14 +20,17 @@ module.exports = class Iom {
     if (!inspection) {
       return false;
     }
-    const inspectionTargets = await ctx.model.inspectionTargets.findAll({
+    ctx.logger.info('巡检执行推送巡检内容：', inspection);
+    const inspectionTargets = await ctx.model.InspectionTargets.findAll({
       where: { inspection_id: inspectionId },
       raw: true,
     });
-    const inspectionHandlers = await ctx.inspectionHandlers.findAll({
+    const inspectionHandlers = await ctx.model.InspectionHandlers.findAll({
       where: { inspection_id: inspectionId },
       raw: true,
     });
+    ctx.logger.info('巡检执行推送巡检目标：', inspectionTargets);
+    ctx.logger.info('巡检执行推送巡检执行人：', inspectionHandlers);
     const transaction = await ctx.model.transaction();
     try {
       const start_time = inspection.next_time || inspection.start_time;
@@ -38,7 +42,9 @@ module.exports = class Iom {
         end_time = dayjs(start_time).add(duration, u);
       }
       // 1.创建巡检任务
+      const taskId = await app.utils.tools.SnowFlake();
       const task = await ctx.model.InspectionTasks.create({
+        id: taskId,
         inspection_id: inspection.id,
         name: `${inspection.name}-${dayjs(start_time).format('YYYYMMDDHHmmss')}`,
         start_time,
@@ -46,6 +52,7 @@ module.exports = class Iom {
         company_id,
         status: 1,
       }, { transaction });
+      ctx.logger.info('巡检生成任务结果：', task);
       if (task) {
         // 2.生成巡检任务结果
         const taskTargets = inspectionTargets.map(item => {
@@ -55,6 +62,7 @@ module.exports = class Iom {
           };
         });
         await ctx.model.InspectionResults.bulkCreate(taskTargets, { transaction });
+        ctx.logger.info('巡检生成结果：', taskTargets);
         // 3.备份巡检人员
         const taskHandlers = inspectionHandlers.map(item => {
           return {
@@ -63,9 +71,12 @@ module.exports = class Iom {
           };
         });
         await ctx.model.InspectionTaskHandlers.bulkCreate(taskHandlers, { transaction });
+        ctx.logger.info('巡检任务备份执行人：', taskHandlers);
+        const companyPrefix = company_id ? company_id : '';
         // 4.通知
         taskHandlers.forEach(item => {
-          nsp.to(`${socketUserPrefix}${item.handler}`).emit('inspection_task', task);
+          ctx.logger.info('巡检任务通知执行人：', item.handler);
+          nsp.to(`${socketUserPrefix}_${companyPrefix}_${item.handler}`).emit('inspection', task);
         });
         if (inspection.cycle !== 1) {
           // 5.修改计划表
@@ -82,14 +93,17 @@ module.exports = class Iom {
             default: count = 1; unit = 'day'; break;
           }
           const next_time = dayjs(start_time).add(count, unit);
+          ctx.logger.info('巡检任务下次执行时间：', next_time);
           // 判断下次执行时间有没有大于结束时间
           if (dayjs(inspection.end_time).isAfter(dayjs(next_time))) {
+            ctx.logger.info('巡检计划结束前还能执行下次任务：', inspection.end_time);
             await ctx.model.Inspections.update({
               next_time,
             }, {
               where: { id: inspectionId },
               transaction,
             });
+            ctx.logger.info('巡检计划更新下次执行时间：', next_time);
             // 6.创建下一个倒计时任务
             // 提醒时间
             const remindTime = dayjs(next_time).subtract(Number(inspection.remind_time), 'second');
@@ -98,7 +112,9 @@ module.exports = class Iom {
             const redisPub = app.redis.clients.get('iom');
             redisPub.set(key, 1);
             redisPub.expire(key, diff);
+            ctx.logger.info('巡检计划创建新的倒计时任务：', key);
           } else {
+            ctx.logger.info('巡检计划无后续任务：', next_time);
             await ctx.model.Inspections.update({
               next_time: null,
             }, {

@@ -91,6 +91,12 @@ const body = {
       required: false,
       description: '处理图片地址',
     },
+    signature_img: {
+      type: 'string',
+      max: 255,
+      required: false,
+      description: '签名图',
+    },
   },
 };
 

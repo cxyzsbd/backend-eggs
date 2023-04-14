@@ -13,14 +13,14 @@ module.exports = app => {
       comment: null,
       field: 'id',
     },
-    inspection_id: {
+    maintenance_id: {
       type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '巡检编号',
-      field: 'inspection_id',
+      comment: '保养编号',
+      field: 'maintenance_id',
     },
     equipment_account_id: {
       type: DataTypes.BIGINT.UNSIGNED,
@@ -37,7 +37,7 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '巡检项，用逗号分隔',
+      comment: '保养项，用逗号分隔',
       field: 'items',
       get() {
         const rawValue = this.getDataValue('items');
@@ -49,13 +49,13 @@ module.exports = app => {
     },
   };
   const options = {
-    tableName: 'inspection_targets',
+    tableName: 'maintenance_targets',
     comment: '',
     indexes: [],
   };
-  const InspectionTargetsModel = sequelize.define('inspection_targets_model', attributes, options);
-  InspectionTargetsModel.associate = () => {
-    InspectionTargetsModel.hasOne(app.model.EquipmentAccounts, { foreignKey: 'id', sourceKey: 'equipment_account_id', as: 'equipment_account' });
+  const MaintenanceTargetsModel = sequelize.define('maintenance_targets_model', attributes, options);
+  MaintenanceTargetsModel.associate = () => {
+    MaintenanceTargetsModel.hasOne(app.model.EquipmentAccounts, { foreignKey: 'id', sourceKey: 'equipment_account_id', as: 'equipment_account' });
   };
-  return InspectionTargetsModel;
+  return MaintenanceTargetsModel;
 };

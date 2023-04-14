@@ -39,7 +39,7 @@ module.exports = () => {
       record.request_body = null;
     }
     const regUrl = `${action}:${path}`;
-    console.log('regUrl', regUrl);
+    // console.log('regUrl', regUrl);
     let { permissionsAll } = await ctx.app.utils.tools.getRedisCachePublic('permissions');
     permissionsAll = permissionsAll.map(item => {
       const url = `${item.action.toLowerCase()}:${item.url}`;

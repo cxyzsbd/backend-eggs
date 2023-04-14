@@ -28,7 +28,7 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '巡检任务id',
+      comment: '保养任务id',
       field: 'task_id',
     },
     results: {
@@ -37,15 +37,8 @@ module.exports = app => {
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '巡检结果',
+      comment: '保养结果',
       field: 'results',
-      get() {
-        const rawValue = this.getDataValue('items');
-        return rawValue ? JSON.parse(rawValue) : null;
-      },
-      set(value) {
-        this.setDataValue('items', JSON.stringify(value));
-      },
     },
     audios: {
       type: DataTypes.TEXT,
@@ -103,10 +96,10 @@ module.exports = app => {
     },
   };
   const options = {
-    tableName: 'inspection_results',
+    tableName: 'maintenance_results',
     comment: '',
     indexes: [],
   };
-  const InspectionResultsModel = sequelize.define('inspection_results_model', attributes, options);
-  return InspectionResultsModel;
+  const MaintenanceResultsModel = sequelize.define('maintenance_results_model', attributes, options);
+  return MaintenanceResultsModel;
 };

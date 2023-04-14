@@ -18,10 +18,24 @@ class DataForwardController extends BaseController {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     const requestBaseUrl = app.config.dataForwardBaseUrl;
+    const { portmapping_smscode_verify } = app.config;
     const { method, url, header, body } = ctx.request;
     const data = body || {};
     const apiUrl = url.indexOf('?') !== -1 ? url.slice(21, url.indexOf('?')) : url.slice(21);
     const params = { ...ctx.query, ...body };
+    if (apiUrl === 'portmapping' && portmapping_smscode_verify) {
+      const { opt, smscode } = params;
+      if (Number(opt) === 3) {
+        const defaultRedis = app.redis.clients.get('default');
+        const redisKey = `USER_SMS_${request_user}`;
+        const verifyCode = await defaultRedis.get(redisKey);
+        if (!verifyCode || !smscode || verifyCode !== smscode) {
+          this.INVALID_REQUEST({ message: '验证码错误' });
+          return false;
+        }
+        await defaultRedis.del(redisKey);
+      }
+    }
     console.log('apiUrl', apiUrl);
     try {
       const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
@@ -58,8 +72,20 @@ class DataForwardController extends BaseController {
     const { ctx, app } = this;
     const requestBaseUrl = app.config.cppForwardBaseUrl;
     const { method, url, header, body } = ctx.request;
-    const data = body || {};
+    const { company_id } = header;
+    let data = body || {};
+    data = {
+      ...data,
+      company: company_id,
+    };
     const apiUrl = url.indexOf('?') !== -1 ? url.slice(20, url.indexOf('?')) : url.slice(20);
+    if (apiUrl === 'readtasklist') {
+      const departments = await ctx.service.departments.getUserDepartments();
+      const departmentIds = departments.map(item => item.id);
+      data.department_ids = departmentIds;
+      data.company_id = company_id;
+      // console.log('departmentIds=============', departmentIds);
+    }
     try {
       const res = await ctx.curl(`${requestBaseUrl}api/v1/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method,

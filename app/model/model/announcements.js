@@ -33,8 +33,8 @@ module.exports = app => {
     },
     sort: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
-      defaultValue: null,
+      allowNull: true,
+      defaultValue: '0',
       primaryKey: false,
       autoIncrement: false,
       comment: '优先级',
@@ -112,12 +112,29 @@ module.exports = app => {
       comment: '过期时间',
       field: 'expire_at',
     },
+    creator: {
+      type: DataTypes.INTEGER(11).UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'creator',
+    },
   };
   const options = {
     tableName: 'announcements',
+    paranoid: true,
+    timestamps: true,
+    createdAt: false,
+    updatedAt: false,
+    deletedAt: 'delete_at',
     comment: '',
     indexes: [],
   };
   const AnnouncementsModel = sequelize.define('announcements_model', attributes, options);
+  AnnouncementsModel.associate = () => {
+    AnnouncementsModel.hasMany(app.model.AnnouncementRead, { foreignKey: 'announcement_id', sourceKey: 'id', as: 'announcement_read' });
+  };
   return AnnouncementsModel;
 };
