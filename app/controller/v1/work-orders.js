@@ -124,12 +124,23 @@ class WorkOrdersController extends BaseController {
   * @request body workOrdersApprovalBodyReq
   */
   async approval() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
+    const { request_user } = ctx.request.header;
     const params = { ...ctx.params, ...ctx.request.body };
     ctx.validate({
       ...ctx.rule.workOrdersId,
       ...ctx.rule.workOrdersApprovalBodyReq,
     }, params);
+    const data = await ctx.model.WorkOrders.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
+    if (!data) {
+      this.BAD_REQUEST({ message: '工单不存在' });
+      return false;
+    }
     if (params.approval_result == 1 && !params.handler) {
       this.BAD_REQUEST({ message: '处理人不能为空' });
       return false;
@@ -139,6 +150,9 @@ class WorkOrdersController extends BaseController {
       return false;
     }
     const res = await service.workOrders.approval(params);
+    if (res) {
+      await app.utils.iom.workOrderNotice({ data, sender_id: request_user, receiver_id: params.handler, type: 2 });
+    }
     res ? this.SUCCESS() : this.NOT_FOUND();
   }
 

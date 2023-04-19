@@ -43,6 +43,11 @@ class InspectionsService extends Service {
     const { ctx } = this;
     return await ctx.model.Inspections.findOne({
       where: payload,
+      attributes: {
+        include: [
+          [ Sequelize.col('creator_info.username'), 'creator_name' ],
+        ],
+      },
       include: [
         {
           as: 'handlers',
@@ -51,6 +56,11 @@ class InspectionsService extends Service {
         },
         {
           model: ctx.model.InspectionTasks,
+        },
+        {
+          model: ctx.model.Users,
+          as: 'creator_info',
+          attributes: [],
         },
         {
           model: ctx.model.InspectionTargets,
@@ -118,10 +128,9 @@ class InspectionsService extends Service {
       duration_unit = null,
       desc = null,
       status = null,
-      state = null,
       remind_time = null,
     } = payload;
-    let updateParams = { name, cycle, start_time, end_time, next_time, duration, duration_unit, desc, status, state, remind_time };
+    let updateParams = { name, cycle, start_time, end_time, next_time, duration, duration_unit, desc, status, remind_time };
     let updateParamsNew = {};
     Object.keys(updateParams).forEach(key => {
       if (updateParams[key] !== null) {

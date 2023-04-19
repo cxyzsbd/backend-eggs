@@ -53,12 +53,6 @@ const body = {
       required: false,
       description: '描述',
     },
-    state: {
-      type: 'number',
-      required: true,
-      enum: [ 0, 1 ],
-      description: '是否启用：1:启用；0:停用',
-    },
     handlers: {
       type: 'array',
       required: true,
@@ -70,6 +64,11 @@ const body = {
       type: 'number',
       required: true,
       description: '任务开始前多久通知，单位秒',
+    },
+    status: {
+      type: 'number',
+      required: false,
+      description: '状态（1：进行中；2：已停止；3：已完成）',
     },
     targets: {
       type: 'array',

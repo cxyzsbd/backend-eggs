@@ -210,6 +210,9 @@ class UserService extends Service {
     const { ctx, app } = this;
     const { request_user } = ctx.request.header;
     user_id = user_id || request_user;
+    if (!user_id) {
+      return null;
+    }
     const res = await ctx.model.Users.findOne({
       include: [
         {

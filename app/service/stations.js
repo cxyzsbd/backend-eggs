@@ -82,8 +82,9 @@ class StationsService extends Service {
 
   async destroy(payload) {
     const { ctx, app } = this;
-    const redisAttr = app.redis.clients.get('attrs');
-    const allDevices = JSON.parse(await redisAttr.get('devices'));
+    // const redisAttr = app.redis.clients.get('attrs');
+    // const allDevices = JSON.parse(await redisAttr.get('devices'));
+    const allDevices = JSON.parse(await app.utils.tools.getDevicesCache());
     const { id } = payload;
     const transaction = await ctx.model.transaction();
     try {

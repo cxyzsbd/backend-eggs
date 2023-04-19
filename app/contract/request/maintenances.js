@@ -53,11 +53,10 @@ const body = {
       required: false,
       description: '描述',
     },
-    state: {
+    status: {
       type: 'number',
-      required: true,
-      enum: [ 0, 1 ],
-      description: '是否启用：1:启用；0:停用',
+      required: false,
+      description: '状态（1：进行中；2：已停止；3：已完成）',
     },
     handlers: {
       type: 'array',

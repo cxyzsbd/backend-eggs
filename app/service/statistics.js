@@ -173,8 +173,9 @@ class StatisticsService extends Service {
 
   async companyDeviceCount() {
     const { ctx, app } = this;
-    const redisAttr = app.redis.clients.get('attrs');
-    const allStations = JSON.parse(await redisAttr.get('stations'));
+    // const redisAttr = app.redis.clients.get('attrs');
+    // const allStations = JSON.parse(await redisAttr.get('stations'));
+    const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const { company_id } = ctx.request.header;
     let where = {
       company_id,
@@ -187,6 +188,7 @@ class StatisticsService extends Service {
       attributes: [ 'station_id' ],
       group: 'station_id',
     });
+    // console.log('station_counts=====', station_counts);
     let station_counts_data = station_counts.map(item => {
       let info = allStations.filter(station => station.id === item.station_id);
       // console.log('info', info);
@@ -203,6 +205,18 @@ class StatisticsService extends Service {
         total -= item.count;
       }
     });
+    const tIds = tempArr.map(t => t.station_id);
+    // console.log('tIds============', tIds);
+    allStations.forEach(item => {
+      if (item.company_id === company_id && !tIds.includes(item.id)) {
+        tempArr.push({
+          station_id: item.id,
+          station_info: item,
+          count: 0,
+        });
+      }
+    });
+    // console.log('tempArr======', tempArr);
     return {
       total,
       station_device_counts: tempArr,

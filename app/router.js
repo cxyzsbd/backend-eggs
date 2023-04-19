@@ -101,6 +101,10 @@ module.exports = app => {
   router.get(`${apiV1}/inspection-tasks`, controller.v1.inspectionTasks.findAll);
   router.get(`${apiV1}/inspection-tasks/:id`, controller.v1.inspectionTasks.findOne);
   router.delete(`${apiV1}/inspection-tasks/:id`, controller.v1.inspectionTasks.destroy);
+  router.post(`${apiV1}/inspection-tasks/:id/confirm`, controller.v1.inspectionTasks.confirm);
+  router.post(`${apiV1}/inspection-tasks/:id/results`, controller.v1.inspectionTasks.subResult);
+  router.post(`${apiV1}/inspection-tasks/:id/complete`, controller.v1.inspectionTasks.complete);
+  router.get(`${apiV1}/inspection-tasks/:id/operation-records`, controller.v1.inspectionTasks.operationRecords);
 
   // 保养
   router.post(`${apiV1}/maintenances`, controller.v1.maintenances.create);
@@ -115,6 +119,10 @@ module.exports = app => {
   router.get(`${apiV1}/maintenance-tasks`, controller.v1.maintenanceTasks.findAll);
   router.get(`${apiV1}/maintenance-tasks/:id`, controller.v1.maintenanceTasks.findOne);
   router.delete(`${apiV1}/maintenance-tasks/:id`, controller.v1.maintenanceTasks.destroy);
+  router.post(`${apiV1}/maintenance-tasks/:id/confirm`, controller.v1.maintenanceTasks.confirm);
+  router.post(`${apiV1}/maintenance-tasks/:id/results`, controller.v1.maintenanceTasks.subResult);
+  router.post(`${apiV1}/maintenance-tasks/:id/complete`, controller.v1.maintenanceTasks.complete);
+  router.get(`${apiV1}/maintenance-tasks/:id/operation-records`, controller.v1.maintenanceTasks.operationRecords);
 
   // 设备台账
   router.post(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.create);

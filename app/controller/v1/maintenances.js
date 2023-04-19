@@ -99,7 +99,7 @@ class MaintenancesController extends BaseController {
       ctx.logger.info('保养提醒时间还没到，生成倒计时提醒任务:', remindTime);
       const diff = dayjs(remindTime).diff(dayjs(), 'second');
       ctx.logger.info('保养提醒时间倒计时时间:', diff);
-      let key = `INSPECTION__${res.id}__${company_id}`;
+      let key = `MAINTENANCE__${res.id}__${company_id}`;
       const redisPub = app.redis.clients.get('iom');
       redisPub.set(key, 1);
       redisPub.expire(key, diff);
@@ -123,8 +123,13 @@ class MaintenancesController extends BaseController {
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.maintenancesPutBodyReq, params);
     // 判断保养是否有暂停,暂停状态才能编辑
-    const maintenance = await service.maintenances.findOne({ id: params.id });
-    if (maintenance && maintenance.state != 0) {
+    const maintenance = await ctx.model.Maintenances.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
+    if (maintenance && maintenance.status !== 2) {
       this.BAD_REQUEST({ message: '停用状态下才可编辑' });
       return false;
     }
@@ -159,13 +164,27 @@ class MaintenancesController extends BaseController {
     const { company_id } = ctx.request.header;
     let params = ctx.params;
     ctx.validate(ctx.rule.maintenancesId, params);
+    const maintenance = await ctx.model.Maintenances.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
+    if (!maintenance) {
+      this.NOT_FOUND({ message: '计划不存在' });
+      return false;
+    }
+    if (maintenance.status !== 1) {
+      this.BAD_REQUEST({ message: '该状态不能进行暂停操作' });
+      return false;
+    }
     // 修改状态
     const res = await service.maintenances.update({
-      state: 0,
+      status: 2,
       id: params.id,
     });
     // 清除倒计时任务
-    let key = `INSPECTION__${params.id}__${company_id}`;
+    let key = `MAINTENANCE__${params.id}__${company_id}`;
     const redisPub = app.redis.clients.get('iom');
     redisPub.del(key);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
@@ -184,15 +203,24 @@ class MaintenancesController extends BaseController {
     const { company_id } = ctx.request.header;
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.maintenanceStartBodyReq, params);
-    const maintenance = await service.maintenances.findOne({ id: params.id });
+    const maintenance = await ctx.model.Maintenances.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
     if (!maintenance) {
       this.NOT_FOUND({ message: '计划不存在' });
+      return false;
+    }
+    if (maintenance.status !== 2) {
+      this.BAD_REQUEST({ message: '停用状态下才可启动' });
       return false;
     }
     // 修改状态
     const res = await service.maintenances.update({
       next_time: params.next_time,
-      state: 1,
+      status: 1,
       id: params.id,
     });
     if (res && res[0] !== 0) {
@@ -201,7 +229,7 @@ class MaintenancesController extends BaseController {
       const remindTime = dayjs(params.next_time).subtract(Number(maintenance.remind_time), 'second');
       if (dayjs(remindTime).isAfter(dayjs())) {
         const diff = dayjs(remindTime).diff(dayjs(), 'second');
-        let key = `INSPECTION__${maintenance.id}__${company_id}`;
+        let key = `MAINTENANCE__${maintenance.id}__${company_id}`;
         const redisPub = app.redis.clients.get('iom');
         redisPub.set(key, 1);
         redisPub.expire(key, diff);

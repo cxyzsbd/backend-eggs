@@ -9,6 +9,7 @@ module.exports = options => {
     // 有用户id并且数据相关接口，通过用户校验
     if (dataApiList.includes(regUrl)) {
       const { user_id, company_id, department_id } = ctx.query;
+      // console.log('ctx.query===========', ctx.query);
       if (user_id) {
         const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(user_id);
         // console.log('userInfo', userInfo);
@@ -40,6 +41,7 @@ module.exports = options => {
         return false;
       } else if (company_id && (department_id || department_id == 0)) {
         // 将公共参数放到请求头
+        // console.log('regUrl=================================1111', regUrl);
         ctx.request.header = { ...ctx.request.header, request_user: null, department_id, company_id };
         await next();
         return false;

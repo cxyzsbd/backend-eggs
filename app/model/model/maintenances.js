@@ -109,17 +109,8 @@ module.exports = app => {
       defaultValue: '1',
       primaryKey: false,
       autoIncrement: false,
-      comment: '状态：1:进行中；2:已完成',
+      comment: '状态：1:进行中；2：已停止；3:已完成',
       field: 'status',
-    },
-    state: {
-      type: DataTypes.INTEGER(1),
-      allowNull: false,
-      defaultValue: '0',
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '是否启用：1:启用；0:停用',
-      field: 'state',
     },
     remind_time: {
       type: DataTypes.INTEGER(10),

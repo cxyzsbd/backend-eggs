@@ -40,7 +40,6 @@ class AppBootHook {
     const { app } = this;
     const ctx = app.createAnonymousContext();
     const cameraPhotoRedisPub = app.redis.clients.get('camera_photos');
-    const iomRedisPub = app.redis.clients.get('iom');
     // 应用启动完毕
     // 运维消息
     app.messenger.on('iom_redis_expire_subscribe', async message => {
@@ -52,6 +51,12 @@ class AppBootHook {
         const inspectionId = messageArr[1];
         const company_id = messageArr[2];
         app.utils.iom.inspectionPush(inspectionId, company_id);
+      }
+      // 保养任务
+      if (messageType === 'MAINTENANCE') {
+        const maintenanceId = messageArr[1];
+        const company_id = messageArr[2];
+        app.utils.iom.maintenancePush(maintenanceId, company_id);
       }
     });
 

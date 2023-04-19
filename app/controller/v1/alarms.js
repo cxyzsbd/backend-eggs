@@ -49,10 +49,9 @@ class alarmsController extends BaseController {
     // 推送逻辑
     let { tn, boxCode } = params;
     tn = `${tn}.PV`;
-    const redisAttr = app.redis.clients.get('attrs');
-    const allAttrs = JSON.parse(await redisAttr.get('attr_tags'));
-    const allStations = JSON.parse(await redisAttr.get('stations'));
-    const allDevices = JSON.parse(await redisAttr.get('devices'));
+    const allAttrs = JSON.parse(await app.utils.tools.getAttrsCache());
+    const allStations = JSON.parse(await app.utils.tools.getStationsCache());
+    const allDevices = JSON.parse(await app.utils.tools.getDevicesCache());
     // 按照点位找到属性列表
     const attrs = allAttrs.filter(item => item.boxcode === boxCode && item.tagname === tn);
     console.log('属性列表=================', attrs);

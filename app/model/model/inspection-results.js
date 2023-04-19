@@ -32,20 +32,20 @@ module.exports = app => {
       field: 'task_id',
     },
     results: {
-      type: DataTypes.TEXT,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
       comment: '巡检结果',
       field: 'results',
-      get() {
-        const rawValue = this.getDataValue('items');
-        return rawValue ? JSON.parse(rawValue) : null;
-      },
-      set(value) {
-        this.setDataValue('items', JSON.stringify(value));
-      },
+      // get() {
+      //   const rawValue = this.getDataValue('items');
+      //   return rawValue ? JSON.parse(rawValue) : null;
+      // },
+      // set(value) {
+      //   this.setDataValue('items', JSON.stringify(value));
+      // },
     },
     audios: {
       type: DataTypes.TEXT,
@@ -108,5 +108,8 @@ module.exports = app => {
     indexes: [],
   };
   const InspectionResultsModel = sequelize.define('inspection_results_model', attributes, options);
+  InspectionResultsModel.associate = () => {
+    InspectionResultsModel.hasOne(app.model.EquipmentAccounts, { foreignKey: 'id', sourceKey: 'equipment_account_id', as: 'equipment_account' });
+  };
   return InspectionResultsModel;
 };

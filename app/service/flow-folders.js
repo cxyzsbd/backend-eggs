@@ -6,9 +6,10 @@ const { Op } = require('sequelize');
 class FlowFoldersService extends Service {
   async findAll(payload) {
     const { ctx, app } = this;
-    const redisAttr = app.redis.clients.get('attrs');
+    // const redisAttr = app.redis.clients.get('attrs');
     const { company_id } = ctx.request.header;
-    const allStations = JSON.parse(await redisAttr.get('stations'));
+    // const allStations = JSON.parse(await redisAttr.get('stations'));
+    const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
     const stations = allStations.filter(item => departmentIds.includes(item.department_id));

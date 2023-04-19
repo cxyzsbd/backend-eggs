@@ -32,7 +32,7 @@ module.exports = app => {
       field: 'task_id',
     },
     results: {
-      type: DataTypes.TEXT,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
@@ -101,5 +101,8 @@ module.exports = app => {
     indexes: [],
   };
   const MaintenanceResultsModel = sequelize.define('maintenance_results_model', attributes, options);
+  MaintenanceResultsModel.associate = () => {
+    MaintenanceResultsModel.hasOne(app.model.EquipmentAccounts, { foreignKey: 'id', sourceKey: 'equipment_account_id', as: 'equipment_account' });
+  };
   return MaintenanceResultsModel;
 };

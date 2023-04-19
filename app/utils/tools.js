@@ -242,7 +242,22 @@ module.exports = class Tools {
       // 存到redis中
       await ctx.service.cache.set(key, tempObj, 2 * 60 * 60, 'attrs');
     });
+    return deviceTags;
     // console.log('companys========', newCompanysObj);
+  }
+
+  async getAttrsCache() {
+    const { app } = this;
+    const redisAttr = app.redis.clients.get('attrs');
+    const data = await redisAttr.get('attr_tags');
+    if (!data) {
+      const attrs = await this.setAttrsRedisCache();
+      if (!attrs) {
+        return null;
+      }
+      return await this.getAttrsCache();
+    }
+    return data;
   }
 
   // 设置站点缓存
@@ -250,6 +265,21 @@ module.exports = class Tools {
     const { ctx } = this;
     const stations = await ctx.model.Stations.findAll({ raw: true });
     await ctx.service.cache.set('stations', stations, 2 * 60 * 60, 'attrs');
+    return stations;
+  }
+
+  async getStationsCache() {
+    const { app } = this;
+    const redisAttr = app.redis.clients.get('attrs');
+    const data = await redisAttr.get('stations');
+    if (!data) {
+      const stations = await this.setStationsCache();
+      if (!stations) {
+        return null;
+      }
+      return await this.getStationsCache();
+    }
+    return data;
   }
 
   // 设置设备缓存
@@ -257,6 +287,21 @@ module.exports = class Tools {
     const { ctx } = this;
     const devices = await ctx.model.Devices.findAll({ raw: true });
     await ctx.service.cache.set('devices', devices, 2 * 60 * 60, 'attrs');
+    return devices;
+  }
+
+  async getDevicesCache() {
+    const { app } = this;
+    const redisAttr = app.redis.clients.get('attrs');
+    const data = await redisAttr.get('devices');
+    if (!data) {
+      const stations = await this.setDevicesCache();
+      if (!stations) {
+        return null;
+      }
+      return await this.getDevicesCache();
+    }
+    return data;
   }
 
   // 设置可视化分享缓存

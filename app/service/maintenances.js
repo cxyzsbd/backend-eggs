@@ -43,6 +43,11 @@ class MaintenancesService extends Service {
     const { ctx } = this;
     return await ctx.model.Maintenances.findOne({
       where: payload,
+      attributes: {
+        include: [
+          [ Sequelize.col('creator_info.username'), 'creator_name' ],
+        ],
+      },
       include: [
         {
           as: 'handlers',
@@ -51,6 +56,11 @@ class MaintenancesService extends Service {
         },
         {
           model: ctx.model.MaintenanceTasks,
+        },
+        {
+          model: ctx.model.Users,
+          as: 'creator_info',
+          attributes: [],
         },
         {
           model: ctx.model.MaintenanceTargets,
@@ -74,9 +84,9 @@ class MaintenancesService extends Service {
     payload.status = 1;
     const transaction = await ctx.model.transaction();
     try {
-      // 创建巡检计划
+      // 创建保养计划
       const res = await ctx.model.Maintenances.create(payload, { transaction });
-      // 巡检人
+      // 保养人
       const handlersArr = payload.handlers.map(handler => {
         return {
           handler,
@@ -84,7 +94,7 @@ class MaintenancesService extends Service {
         };
       });
       await ctx.model.MaintenanceHandlers.bulkCreate(handlersArr, { transaction });
-      // 巡检目标
+      // 保养目标
       const targetArr = payload.targets.map(t => {
         return {
           maintenance_id: res.id,
@@ -118,10 +128,9 @@ class MaintenancesService extends Service {
       duration_unit = null,
       desc = null,
       status = null,
-      state = null,
       remind_time = null,
     } = payload;
-    let updateParams = { name, cycle, start_time, end_time, next_time, duration, duration_unit, desc, status, state, remind_time };
+    let updateParams = { name, cycle, start_time, end_time, next_time, duration, duration_unit, desc, status, remind_time };
     let updateParamsNew = {};
     Object.keys(updateParams).forEach(key => {
       if (updateParams[key] !== null) {
@@ -130,7 +139,7 @@ class MaintenancesService extends Service {
     });
     const transaction = await ctx.model.transaction();
     try {
-      // 更新巡检计划
+      // 更新保养计划
       let res = null,
         res1 = null,
         res2 = null;
@@ -142,7 +151,7 @@ class MaintenancesService extends Service {
           transaction,
         });
       }
-      // 巡检人
+      // 保养人
       if (handlers) {
         const oldHandlers = await ctx.model.MaintenanceHandlers.findAll({
           where: {
@@ -184,7 +193,7 @@ class MaintenancesService extends Service {
           res1 = await ctx.model.MaintenanceHandlers.bulkCreate(addTempArr, { transaction });
         }
       }
-      // 巡检目标
+      // 保养目标
       if (targets) {
         // 删除原目标
         await ctx.model.MaintenanceTargets.destroy({

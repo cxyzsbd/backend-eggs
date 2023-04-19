@@ -1,6 +1,10 @@
 module.exports = () => {
   return async function(ctx, next) {
     const { method, url, header: { request_user } } = ctx.request;
+    if (!request_user) {
+      await next();
+      return false;
+    }
     // console.log('requestbody=====================', body);
     // console.log('requestbody=====================', url);
     // 将当前请求处理成资源标准格式
@@ -21,7 +25,7 @@ module.exports = () => {
     if (isInPermissions && isInPermissions.length) {
       // const params = { ...body, ...ctx.query };
       // 获取用户所有权限
-      const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(request_user);
+      const userInfo = await ctx.app.utils.tools.getRedisCacheUserinfo(request_user) || {};
       let roles = userInfo.roles || [];
       roles = roles.map(item => item.id);
       // console.log('roles====================',roles);

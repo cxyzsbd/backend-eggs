@@ -123,7 +123,7 @@ class BoxDataController extends BaseController {
     }
     // console.log('data', JSON.stringify(dataO));
     data = dataO.filter(item => item.boxcode && item.tagname);
-    console.log('data==============', data);
+    // console.log('data==============', data);
     if (![ 'data', 'down-data' ].includes(apiUrl) && (!data || !data.length)) {
       this.BAD_REQUEST({ message: '无效参数' });
       return false;
@@ -181,8 +181,8 @@ class BoxDataController extends BaseController {
         return false;
       });
       // console.log('params======================', data);
-      console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
-      console.log('res==================', res.data);
+      // console.log(`${requestBaseUrl}box-data/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`);
+      // console.log('res==================', res.data);
       // ctx.logger.warn('res==================', res.data.hisraw[0].dataList);
       if (!res) {
         this.SERVER_ERROR();

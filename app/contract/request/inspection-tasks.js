@@ -42,4 +42,32 @@ module.exports = {
     ...body.inspectionTasksId,
     ...body.inspectionTasksBodyReq,
   },
+  inspectionsubReslutsBodyReq: {
+    ...body.inspectionTasksId,
+    equipment_account_id: {
+      type: 'string',
+      required: true,
+      description: '巡检目标id',
+    },
+    results: {
+      type: 'object',
+      required: true,
+      description: '巡检结果,如{"通电状态":"异常","运行状态":"异常","其他情况":"异常"}',
+    },
+    audios: {
+      type: 'string',
+      required: false,
+      description: '音频',
+    },
+    imgs: {
+      type: 'string',
+      required: false,
+      description: '图片',
+    },
+    remarks: {
+      type: 'string',
+      required: false,
+      description: '备注',
+    },
+  },
 };

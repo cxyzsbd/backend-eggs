@@ -12,7 +12,7 @@ class ScreensService extends Service {
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where.company_id = company_id;
-    const Order = [];
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Screens.count({ where });
     const data = await ctx.model.Screens.findAll({
@@ -110,9 +110,9 @@ class ScreensService extends Service {
       [Op.not]: null,
     };
     where.company_id = company_id;
-    const Order = [];
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
-    const count = await ctx.model.Screens.count({ where });
+    const count = await ctx.model.Screens.count({ where, paranoid: false });
     const data = await ctx.model.Screens.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,

@@ -123,8 +123,13 @@ class InspectionsController extends BaseController {
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.inspectionsPutBodyReq, params);
     // 判断巡检是否有暂停,暂停状态才能编辑
-    const inspection = await service.inspections.findOne({ id: params.id });
-    if (inspection && inspection.state != 0) {
+    const inspection = await ctx.model.Inspections.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
+    if (inspection && inspection.status !== 2) {
       this.BAD_REQUEST({ message: '停用状态下才可编辑' });
       return false;
     }
@@ -159,9 +164,23 @@ class InspectionsController extends BaseController {
     const { company_id } = ctx.request.header;
     let params = ctx.params;
     ctx.validate(ctx.rule.inspectionsId, params);
+    const inspection = await ctx.model.Inspections.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
+    if (!inspection) {
+      this.NOT_FOUND({ message: '计划不存在' });
+      return false;
+    }
+    if (inspection.status !== 1) {
+      this.BAD_REQUEST({ message: '该状态不能进行暂停操作' });
+      return false;
+    }
     // 修改状态
     const res = await service.inspections.update({
-      state: 0,
+      status: 2,
       id: params.id,
     });
     // 清除倒计时任务
@@ -184,15 +203,24 @@ class InspectionsController extends BaseController {
     const { company_id } = ctx.request.header;
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.inspectionStartBodyReq, params);
-    const inspection = await service.inspections.findOne({ id: params.id });
+    const inspection = await ctx.model.Inspections.findOne({
+      where: {
+        id: params.id,
+      },
+      raw: true,
+    });
     if (!inspection) {
       this.NOT_FOUND({ message: '计划不存在' });
+      return false;
+    }
+    if (inspection.status !== 2) {
+      this.BAD_REQUEST({ message: '停用状态下才可启动' });
       return false;
     }
     // 修改状态
     const res = await service.inspections.update({
       next_time: params.next_time,
-      state: 1,
+      status: 1,
       id: params.id,
     });
     if (res && res[0] !== 0) {

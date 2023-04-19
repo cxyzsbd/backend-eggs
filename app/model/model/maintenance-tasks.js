@@ -84,13 +84,14 @@ module.exports = app => {
   };
   const MaintenanceTasksModel = sequelize.define('maintenance_tasks_model', attributes, options);
   MaintenanceTasksModel.associate = function() {
-    MaintenanceTasksModel.hasOne(app.model.Maintenances, { foreignKey: 'id', sourceKey: 'maintenance_id' });
+    MaintenanceTasksModel.hasOne(app.model.Maintenances, { foreignKey: 'id', sourceKey: 'maintenance_id', as: 'maintenance_info' });
     MaintenanceTasksModel.belongsToMany(app.model.Users, {
       as: 'handlers',
       through: app.model.MaintenanceTaskHandlers,
       foreignKey: 'task_id',
       otherKey: 'handler',
     });
+    MaintenanceTasksModel.hasMany(app.model.MaintenanceResults, { foreignKey: 'task_id', sourceKey: 'id', as: 'maintenance_results' });
   };
   return MaintenanceTasksModel;
 };

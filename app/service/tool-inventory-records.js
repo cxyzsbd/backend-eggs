@@ -19,6 +19,7 @@ class ToolInventoryRecordsService extends Service {
           model: ctx.model.Users,
           attributes: [ 'username' ],
           as: 'creator_info',
+          paranoid: false,
         },
       ],
       where,

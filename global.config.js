@@ -47,8 +47,8 @@ const CPP_FORWARD_URL = 'http://172.17.16.3:9999/';
 //   PASSWORD: '',
 // };
 
-// // const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
-// const DATA_FORWARD_URL = 'http://192.168.20.222/';
+// const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
+// // const DATA_FORWARD_URL = 'http://192.168.20.222/';
 // const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
 
 // 萤石云账号和秘钥
