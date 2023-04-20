@@ -4,13 +4,24 @@ const Service = require('egg').Service;
 const { Sequelize, Op } = require('sequelize');
 
 class InspectionsService extends Service {
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    let where = payload.where;
-    where.company_id = company_id;
-    const Order = [];
+    const { st, et } = queryOrigin;
+    let where = {
+      ...payload.where,
+      company_id,
+    };
+    if (st && et) {
+      where = {
+        ...where,
+        create_at: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Inspections.count({ where });
     const data = await ctx.model.Inspections.findAll({
@@ -153,46 +164,61 @@ class InspectionsService extends Service {
       }
       // 巡检人
       if (handlers) {
-        const oldHandlers = await ctx.model.InspectionHandlers.findAll({
+        await ctx.model.InspectionHandlers.destroy({
           where: {
             inspection_id: id,
           },
-          raw: true,
           transaction,
         });
-        const oldHandlerIds = oldHandlers.map(item => item.handler);
-        const diffArr = lodash.difference(oldHandlerIds, handlers);
-        let delArr = [],
-          addArr = [];
-        diffArr.forEach(h => {
-          if (oldHandlerIds.includes(h)) {
-            delArr.push(h);
-          }
-          if (handlers.includes(h)) {
-            addArr.push(h);
-          }
+        const handlerArr = handlers.map(handler => {
+          return {
+            inspection_id: id,
+            handler,
+          };
         });
-        if (delArr.length) {
-          res1 = await ctx.model.InspectionHandlers.destroy({
-            where: {
-              inspection_id: id,
-              handler: {
-                [Op.in]: delArr,
-              },
-            },
-            transaction,
-          });
-        }
-        if (addArr.length) {
-          const addTempArr = addArr.map(h => {
-            return {
-              handler: h,
-              inspection_id: id,
-            };
-          });
-          res1 = await ctx.model.InspectionHandlers.bulkCreate(addTempArr, { transaction });
-        }
+        res1 = await ctx.model.InspectionHandlers.bulkCreate(handlerArr, { transaction });
       }
+      // if (handlers) {
+      //   const oldHandlers = await ctx.model.InspectionHandlers.findAll({
+      //     where: {
+      //       inspection_id: id,
+      //     },
+      //     raw: true,
+      //     transaction,
+      //   });
+      //   const oldHandlerIds = oldHandlers.map(item => item.handler);
+      //   const diffArr = lodash.difference(oldHandlerIds, handlers);
+      //   let delArr = [],
+      //     addArr = [];
+      //   diffArr.forEach(h => {
+      //     if (oldHandlerIds.includes(h)) {
+      //       delArr.push(h);
+      //     }
+      //     if (handlers.includes(h)) {
+      //       addArr.push(h);
+      //     }
+      //   });
+      //   if (delArr.length) {
+      //     res1 = await ctx.model.InspectionHandlers.destroy({
+      //       where: {
+      //         inspection_id: id,
+      //         handler: {
+      //           [Op.in]: delArr,
+      //         },
+      //       },
+      //       transaction,
+      //     });
+      //   }
+      //   if (addArr.length) {
+      //     const addTempArr = addArr.map(h => {
+      //       return {
+      //         handler: h,
+      //         inspection_id: id,
+      //       };
+      //     });
+      //     res1 = await ctx.model.InspectionHandlers.bulkCreate(addTempArr, { transaction });
+      //   }
+      // }
       // 巡检目标
       if (targets) {
         // console.log('巡检目标===================', targets);

@@ -1,15 +1,28 @@
 'use strict';
 
 const Service = require('egg').Service;
+const { Op } = require('sequelize');
 
 class ToolsService extends Service {
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
+    const { st, et } = queryOrigin;
     const { company_id } = ctx.request.header;
     let where = payload.where;
-    where.company_id = company_id;
-    const Order = [];
+    where = {
+      ...where,
+      company_id,
+    };
+    if (st && et) {
+      where = {
+        ...where,
+        create_at: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Tools.count({ where });
     const data = await ctx.model.Tools.findAll({
@@ -105,16 +118,25 @@ class ToolsService extends Service {
     }
   }
 
-  async inventoryRecords(payload) {
+  async inventoryRecords(payload, queryOrigin) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
+    const { st, et } = queryOrigin;
     const { company_id } = ctx.request.header;
     let where = payload.where;
     if (Number(where.tool_id) === 0) {
       delete where.tool_id;
     }
     where.company_id = company_id;
-    const Order = [];
+    if (st && et) {
+      where = {
+        ...where,
+        operating_time: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.ToolInventoryRecords.count({ where });
     const data = await ctx.model.ToolInventoryRecords.findAll({

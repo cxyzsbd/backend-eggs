@@ -1,12 +1,19 @@
 'use strict';
 
 const Service = require('egg').Service;
+const { Op } = require('sequelize');
 
 class EquipmentAccountsService extends Service {
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
+    const { st, et } = queryOrigin;
     let where = payload.where;
+    if (st && et) {
+      where.create_at = {
+        [Op.between]: [ st, et ],
+      };
+    }
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.EquipmentAccounts.count({ where });

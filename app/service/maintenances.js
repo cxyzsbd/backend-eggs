@@ -4,13 +4,24 @@ const Service = require('egg').Service;
 const { Sequelize, Op } = require('sequelize');
 
 class MaintenancesService extends Service {
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    let where = payload.where;
-    where.company_id = company_id;
-    const Order = [];
+    const { st, et } = queryOrigin;
+    let where = {
+      ...payload.where,
+      company_id,
+    };
+    if (st && et) {
+      where = {
+        ...where,
+        create_at: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.Maintenances.count({ where });
     const data = await ctx.model.Maintenances.findAll({
@@ -130,6 +141,7 @@ class MaintenancesService extends Service {
       status = null,
       remind_time = null,
     } = payload;
+    console.log('参数================', payload);
     let updateParams = { name, cycle, start_time, end_time, next_time, duration, duration_unit, desc, status, remind_time };
     let updateParamsNew = {};
     Object.keys(updateParams).forEach(key => {
@@ -153,46 +165,66 @@ class MaintenancesService extends Service {
       }
       // 保养人
       if (handlers) {
-        const oldHandlers = await ctx.model.MaintenanceHandlers.findAll({
+        await ctx.model.MaintenanceHandlers.destroy({
           where: {
             maintenance_id: id,
           },
-          raw: true,
           transaction,
         });
-        const oldHandlerIds = oldHandlers.map(item => item.handler);
-        const diffArr = lodash.difference(oldHandlerIds, handlers);
-        let delArr = [],
-          addArr = [];
-        diffArr.forEach(h => {
-          if (oldHandlerIds.includes(h)) {
-            delArr.push(h);
-          }
-          if (handlers.includes(h)) {
-            addArr.push(h);
-          }
+        const handlerArr = handlers.map(handler => {
+          return {
+            maintenance_id: id,
+            handler,
+          };
         });
-        if (delArr.length) {
-          res1 = await ctx.model.MaintenanceHandlers.destroy({
-            where: {
-              maintenance_id: id,
-              handler: {
-                [Op.in]: delArr,
-              },
-            },
-            transaction,
-          });
-        }
-        if (addArr.length) {
-          const addTempArr = addArr.map(h => {
-            return {
-              handler: h,
-              maintenance_id: id,
-            };
-          });
-          res1 = await ctx.model.MaintenanceHandlers.bulkCreate(addTempArr, { transaction });
-        }
+        res1 = await ctx.model.MaintenanceHandlers.bulkCreate(handlerArr, { transaction });
       }
+      // if (handlers) {
+      //   const oldHandlers = await ctx.model.MaintenanceHandlers.findAll({
+      //     where: {
+      //       maintenance_id: id,
+      //     },
+      //     raw: true,
+      //     transaction,
+      //   });
+      //   const oldHandlerIds = oldHandlers.map(item => item.handler);
+      //   console.log('oldHandlerIds=================', oldHandlerIds);
+      //   const diffArr = lodash.difference(oldHandlerIds, handlers);
+      //   console.log('diffArr=======================', diffArr);
+      //   let delArr = [],
+      //     addArr = [];
+      //   diffArr.forEach(h => {
+      //     if (oldHandlerIds.includes(h)) {
+      //       delArr.push(h);
+      //     }
+      //     if (handlers.includes(h)) {
+      //       addArr.push(h);
+      //     }
+      //   });
+      //   console.log('delArr===================', delArr);
+      //   console.log('addArr===================', addArr);
+      //   if (delArr.length) {
+      //     res1 = await ctx.model.MaintenanceHandlers.destroy({
+      //       where: {
+      //         maintenance_id: id,
+      //         handler: {
+      //           [Op.in]: delArr,
+      //         },
+      //       },
+      //       transaction,
+      //     });
+      //   }
+      //   if (addArr.length) {
+      //     const addTempArr = addArr.map(h => {
+      //       return {
+      //         handler: h,
+      //         maintenance_id: id,
+      //       };
+      //     });
+      //     console.log('addTempArr==============', addTempArr);
+      //     res1 = await ctx.model.MaintenanceHandlers.bulkCreate(addTempArr, { transaction });
+      //   }
+      // }
       // 保养目标
       if (targets) {
         // 删除原目标

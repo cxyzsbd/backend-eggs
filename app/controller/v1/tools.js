@@ -17,12 +17,12 @@ class ToolsController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.toolsPutBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.tools.findAll(query);
+    const res = await service.tools.findAll(query, queryOrigin);
     this.SUCCESS(res);
   }
 
@@ -142,13 +142,13 @@ class ToolsController extends BaseController {
   */
   async inventoryRecords() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.toolsInventoryBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
     query.where.tool_id = ctx.params.tool_id;
-    const res = await service.tools.inventoryRecords(query);
+    const res = await service.tools.inventoryRecords(query, queryOrigin);
     this.SUCCESS(res);
   }
 }

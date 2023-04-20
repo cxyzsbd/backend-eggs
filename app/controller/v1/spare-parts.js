@@ -17,12 +17,12 @@ class SparePartsController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.sparePartsPutBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.spareParts.findAll(query);
+    const res = await service.spareParts.findAll(query, queryOrigin);
     this.SUCCESS(res);
   }
 
@@ -139,17 +139,19 @@ class SparePartsController extends BaseController {
   * @apikey
   * @summary 库存操作记录
   * @description 库存操作记录
+  * @request query number pageSize
+  * @request query number pageNumber
   * @router get spare-parts/:spare_parts_id/inventory-records
   */
   async inventoryRecords() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.sparePartsInventoryBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
     query.where.spare_parts_id = ctx.params.spare_parts_id;
-    const res = await service.spareParts.inventoryRecords(query);
+    const res = await service.spareParts.inventoryRecords(query, queryOrigin);
     this.SUCCESS(res);
   }
 }

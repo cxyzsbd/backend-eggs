@@ -28,12 +28,12 @@ class InspectionsController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.inspectionsPutBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.inspections.findAll(query);
+    const res = await service.inspections.findAll(query, queryOrigin);
     this.SUCCESS(res);
   }
 
