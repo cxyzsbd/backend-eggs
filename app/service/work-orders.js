@@ -140,7 +140,9 @@ class WorkOrdersService extends Service {
         type: 1,
         operator: request_user,
       });
-      await app.utils.iom.workOrderNotice({ data: res, sender_id: request_user, receiver_id: payload.approver, type: 1 });
+      if (payload.approver) {
+        await app.utils.iom.workOrderNotice({ data: res, sender_id: request_user, receiver_id: payload.approver, type: 1 });
+      }
     }
     return res;
   }

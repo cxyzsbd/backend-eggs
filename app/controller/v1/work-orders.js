@@ -150,7 +150,7 @@ class WorkOrdersController extends BaseController {
       return false;
     }
     const res = await service.workOrders.approval(params);
-    if (res) {
+    if (res && params.handler) {
       await app.utils.iom.workOrderNotice({ data, sender_id: request_user, receiver_id: params.handler, type: 2 });
     }
     res ? this.SUCCESS() : this.NOT_FOUND();

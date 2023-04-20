@@ -195,6 +195,7 @@ class InspectionsService extends Service {
       }
       // 巡检目标
       if (targets) {
+        // console.log('巡检目标===================', targets);
         // 删除原目标
         await ctx.model.InspectionTargets.destroy({
           where: {
