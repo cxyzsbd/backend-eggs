@@ -9,6 +9,9 @@ module.exports = class wxTools {
   async getWxAccessToken(invalid_token = false) {
     const { ctx, app } = this;
     const { APPID, APP_SECRET } = envConfig.WX_XCX_CONFIG;
+    if (!APPID || !APP_SECRET) {
+      return false;
+    }
     const { REDIS_ACCESS_TOKEN_KEY } = envConfig.WX_GZH_CONFIG;
     if (!invalid_token) {
       // 先从redis拿
@@ -55,6 +58,9 @@ module.exports = class wxTools {
   async wxUserInfoByOpenid(openid, invalid_token = false) {
     const { ctx } = this;
     const access_token_res = await this.getWxAccessToken(invalid_token);
+    if (!access_token_res) {
+      return false;
+    }
     const user_info = await ctx.curl(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${access_token_res.access_token}&openid=${openid}&lang=zh_CN`, {
       dataType: 'json',
       method: 'GET',
@@ -95,6 +101,9 @@ module.exports = class wxTools {
       return false;
     }
     const access_token_res = await this.getWxAccessToken(invalid_token);
+    if (!access_token_res) {
+      return false;
+    }
     const message_res = await ctx.curl(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${access_token_res.access_token}`, {
       method: 'POST',
       rejectUnauthorized: false,
@@ -288,6 +297,47 @@ module.exports = class wxTools {
     const data = {
       touser: info[4],
       template_id: envConfig.WX_GZH_CONFIG.NEW_TASK_TEMPLATE_ID,
+      data: {
+        first: {
+          value: `您有一个新的${info[0] == 'inspection' ? '巡检' : '保养'}任务，请及时处理!`,
+          color: '#333',
+        },
+        keyword1: {
+          value: info[2],
+          color: '#333',
+        },
+        keyword2: {
+          value: info[3],
+          color: '#333',
+        },
+        keyword3: {
+          value: info[7],
+          color: '#333',
+        },
+        keyword4: {
+          value: `截止时间:${dayjs(Number(info[6])).format('YYYY-MM-DD HH:mm:ss')}`,
+          color: '#333',
+        },
+        keyword5: {
+          value: info[5],
+          color: '#333',
+        },
+        remark: {
+          value: '请前往小程序查看任务详情！',
+          color: '#333',
+        },
+      },
+    };
+    await this.sendMessageBase(data, false, callback);
+  }
+
+  async systermAlarmMessage(info = null, callback = null) {
+    if (!info) {
+      return false;
+    }
+    const data = {
+      touser: info[4],
+      template_id: envConfig.WX_GZH_CONFIG.SYSTERM_ALARM_TEMPLATE_ID,
       data: {
         first: {
           value: `您有一个新的${info[0] == 'inspection' ? '巡检' : '保养'}任务，请及时处理!`,

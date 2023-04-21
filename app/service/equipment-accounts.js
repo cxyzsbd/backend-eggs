@@ -1,7 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 class EquipmentAccountsService extends Service {
   async findAll(payload, queryOrigin) {
@@ -60,6 +60,59 @@ class EquipmentAccountsService extends Service {
   async destroy(payload) {
     const { ctx } = this;
     return await ctx.model.EquipmentAccounts.destroy({ where: { id: payload.id } });
+  }
+
+  async operationRecords(payload, queryOrigin) {
+    const { ctx } = this;
+    const { pageSize, pageNumber, prop_order, order, id } = payload;
+    const { st, et } = queryOrigin;
+    if (!id) {
+      return null;
+    }
+    let where = {
+      ...payload.where,
+      path: {
+        [Op.like]: `%/equipment-accounts/${id}%`,
+      },
+      action: {
+        [Op.not]: 'get',
+      },
+    };
+
+    if (st && et) {
+      where.operation_time = {
+        [Op.between]: [ st, et ],
+      };
+    }
+    let Order = [];
+    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    const count = await ctx.model.OperationRecords.count({ where });
+    const data = await ctx.model.OperationRecords.findAll({
+      where,
+      limit: pageSize,
+      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+      order: [
+        [ 'operation_time', 'DESC' ],
+      ],
+      attributes: {
+        include: [
+          [ Sequelize.col('operator.username'), 'operator_name' ],
+        ],
+      },
+      include: [
+        {
+          model: ctx.model.Users,
+          as: 'operator',
+          attributes: [],
+        },
+      ],
+    });
+    return {
+      data,
+      pageNumber,
+      pageSize,
+      total: count,
+    };
   }
 }
 

@@ -5,14 +5,17 @@ const WX_XCX_CONFIG = {
 };
 const WX_GZH_CONFIG = {
   REDIS_ACCESS_TOKEN_KEY: 'WX_ACCESS_TOKEN',
-  ASE_KEY: '49jWGT7w2DJM69TpfZ01mKThJGrA8CH4j6i36o8Vyye',
-  WX_GZH_TOKEN: 'linhoon',
+  ASE_KEY: '',
+  WX_GZH_TOKEN: '',
+  APPID: 'wx6fa6db3981713d40',
+  APP_SECRET: 'b2bef9f8907200bb67648d272f7199a9',
   // 消息模板
-  WORK_ORDER_TEMPLATE_ID: 'MyNthiRgHIk-wT3VE5sUI2GSoGjlWDZ8_mb9dw_-eMg', // 工单提醒
-  INSPECTION_TEMPLATE_ID: '_KE115iADg3kVUvCledvF-HUfGQ85mw52YgPONx0PaI', // 巡检提醒
-  WORK_ORDER_APPROVER_ID: 'U-XIVmdrkTJS6sgStvArkE0xR2PJcLqrBwTBsSz13MU', // 工单审批提醒
-  WORK_ORDER_APPROVER_RESULT_ID: 'pf6682uQuDBq4xFTpnAMIivcg4xAwv9Qyg8pAKP5Hoc', // 审批结果
-  NEW_TASK_TEMPLATE_ID: '', // 新任务提醒
+  WORK_ORDER_TEMPLATE_ID: 'tQQ22FAxSslcOqbup7pBkvOIN6TI8tQn6lHMRY4E3eA', // 新工单提醒
+  INSPECTION_TEMPLATE_ID: 'Qoe5IPhgWTzHOlRl27JsXN4FqndV8RMFYDYJq_6tcT4', // 巡检提醒
+  WORK_ORDER_APPROVER_ID: 'nE9XNaJr9nV1FsaPoDz7SaXNKa4gZKELBuQZiBiV73g', // 工单审批提醒
+  WORK_ORDER_APPROVER_RESULT_ID: 'X2ZlPKgzdL7mUFPc5ad_nQNkLMoFT9-Hau_5-uLYPlc', // 审批结果
+  SYSTERM_ALARM_TEMPLATE_ID: '70-5tcDiCE3o7-5CUWO5N_FFtsEt_yNGRVsyMKDrU-A', // 系统报警
+  NEW_TASK_TEMPLATE_ID: 'sv4whcn7CmEn-cqV2WiZV5baupWu3oMnP5to1fWZV5I', // 新任务提醒
 };
 
 // mysql
@@ -57,16 +60,6 @@ const YS_APP_KEY = {
   appSecret: 'dd2caf4f132c6d985b62f8711a633b16',
 };
 
-// 金蝶用户系统校验参数
-const KINGDEE_PARAMS = {
-  client_id: '243571', // 应用id
-  client_secret: '60caf37ff275445a6fc68e441da316b2', // 应用安全码
-};
-// const KINGDEE_PARAMS = {
-//   client_id: '245121', // 应用id
-//   client_secret: 'bfb751b2cac304fabe70901baadf90ce', // 应用安全码
-// };
-
 module.exports = {
   WX_GZH_CONFIG,
   WX_XCX_CONFIG,
@@ -74,6 +67,5 @@ module.exports = {
   REDIS_CONFIG,
   DATA_FORWARD_URL,
   YS_APP_KEY,
-  KINGDEE_PARAMS,
   CPP_FORWARD_URL,
 };

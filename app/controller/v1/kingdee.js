@@ -43,7 +43,6 @@ class KingdeeController extends BaseController {
       ctx.logger.error(error);
     }
     console.log('params=================', params);
-    // const { KINGDEE_PARAMS: { client_id, client_secret } } = app.utils.tools.globalConfig;
     const { clientId: client_id, clientSecret: client_secret, authCode: auth_code, adminUser: a, rootOrgId: b } = params;
     try {
       const res = await ctx.curl(`https://api.kingdee.com/auth/user/auth_code/validation?client_id=${client_id}&client_secret=${client_secret}&auth_code=${auth_code}`, {

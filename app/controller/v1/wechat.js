@@ -144,6 +144,9 @@ class MiniProgramController extends BaseController {
     if (event === 'subscribe') {
       // 关注
       const wx_user_info_res = await app.utils.wx.wxUserInfoByOpenid(FromUserName);
+      if (!wx_user_info_res) {
+        return false;
+      }
       const wx_user_info = wx_user_info_res.data;
       // console.log('wx_user_info_res', wx_user_info_res);
       // console.log('wx_user_info', wx_user_info);

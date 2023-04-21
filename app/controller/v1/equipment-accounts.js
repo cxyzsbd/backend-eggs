@@ -84,6 +84,27 @@ class EquipmentAccountsController extends BaseController {
     const res = await service.equipmentAccounts.destroy(params);
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
+
+  /**
+  * @apikey
+  * @summary 台账操作记录
+  * @description 台账操作记录
+  * @request query number pageSize
+  * @request query number pageNumber
+  * @router get equipment-accounts/:id/operation-records
+  * @request path string *id eg:1
+  */
+  async operationRecords() {
+    const { ctx, service } = this;
+    const params = { ...ctx.query, ...ctx.params };
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
+      rule: ctx.rule.equipmentAccountsId,
+      queryOrigin: params,
+    });
+    ctx.validate(allRule, query);
+    const res = await service.equipmentAccounts.operationRecords(query, queryOrigin);
+    this.SUCCESS(res);
+  }
 }
 
 module.exports = EquipmentAccountsController;
