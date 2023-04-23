@@ -91,6 +91,7 @@ class CompanysController extends BaseController {
       },
     };
     ctx.validate(rule, params);
+    params.department_id = 0;
     const res = await ctx.service.users.create(params);
     if (res && res.message) {
       this.BAD_REQUEST(res);
