@@ -69,7 +69,9 @@ class EquipmentAccountsService extends Service {
     if (!id) {
       return null;
     }
-    let where = {
+    let where = payload.where;
+    delete where.id;
+    where = {
       ...payload.where,
       path: {
         [Op.like]: `%/equipment-accounts/${id}%`,

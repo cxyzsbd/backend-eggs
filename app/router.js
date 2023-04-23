@@ -130,6 +130,7 @@ module.exports = app => {
   router.get(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.findAll);
   router.get(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.findOne);
   router.delete(`${apiV1}/equipment-accounts/:id`, controller.v1.equipmentAccounts.destroy);
+  router.get(`${apiV1}/equipment-accounts/:id/operation-records`, controller.v1.equipmentAccounts.operationRecords);
 
   // 工具
   router.post(`${apiV1}/tools`, controller.v1.tools.create);

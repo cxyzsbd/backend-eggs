@@ -62,9 +62,9 @@ class DeviceTagsService extends Service {
   }
 
   async getTagDatas(payload) {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const { device_id, attr_ids = [] } = payload;
-    const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
+    const attr_tags = JSON.parse(await app.utils.tools.getAttrsCache());
     let tempArr = attr_tags.filter(item => item.device_id === device_id);
     if (attr_ids.length) {
       tempArr = tempArr.filter(item => attr_ids.includes(item.id));
@@ -73,8 +73,8 @@ class DeviceTagsService extends Service {
     let noTagAttrs = tempArr.filter(item => !item.boxcode || !item.tagname);
     return {
       data,
-      noTagAttrs
-    }
+      noTagAttrs,
+    };
   }
 }
 

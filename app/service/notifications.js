@@ -16,6 +16,7 @@ class NotificationsService extends Service {
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.Notifications.count({ where });
+    const unread = await ctx.model.Notifications.count({ where: { ...where, is_read: 0 } });
     const data = await ctx.model.Notifications.findAll({
       limit: pageSize,
       offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
@@ -39,6 +40,7 @@ class NotificationsService extends Service {
       pageNumber,
       pageSize,
       total,
+      unread,
     };
   }
 

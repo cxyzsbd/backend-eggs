@@ -418,7 +418,7 @@ module.exports = class Tools {
   async solveParams(type, tags = [], company_id = null) {
     const { ctx } = this;
     // console.log('company_id', company_id);
-    const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
+    const attr_tags = JSON.parse(await this.getAttrsCache());
     if (type === 1) {
       tags = tags.map(t => Number(t));
       // console.log('tags===========', tags);
@@ -445,7 +445,7 @@ module.exports = class Tools {
   // 处理属性转成长点名统一方法
   async solveDownloadDataParams(type, tags = [], company_id = null) {
     const { ctx } = this;
-    const attr_tags = await ctx.service.cache.get('attr_tags', 'attrs');
+    const attr_tags = JSON.parse(await this.getAttrsCache());
     if (type === 1) {
       tags = tags.map(item => {
         let attrs = attr_tags.filter(attr => Number(attr.id) === Number(item.id));

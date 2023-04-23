@@ -58,12 +58,12 @@ class notificationsController extends BaseController {
   * @apikey
   * @summary 消息标记已读
   * @description 消息标记已读
-  * @router delete notifications/mark-read
+  * @router post notifications/mark-read
   * @request body notificationMarkReadBodyReq
   */
   async markRead() {
     const { ctx, service } = this;
-    let params = ctx.reuqest.body;
+    let params = ctx.request.body;
     ctx.validate(ctx.rule.notificationMarkReadBodyReq, params);
     await service.notifications.markRead(params);
     this.SUCCESS();
