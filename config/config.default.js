@@ -76,6 +76,16 @@ module.exports = appInfo => {
       '/api/v1/kingdee/logout',
       '/api/v1/screens/*/files',
       '/api/v1/flows/*/files',
+      '/api/v1/cpp-forward/showtasklog',
+      '/api/v1/cpp-forward/updatetasklog',
+      '/api/v1/cpp-forward/starttask',
+      '/api/v1/cpp-forward/stoptask',
+      '/api/v1/cpp-forward/updatetaskstaus',
+      '/api/v1/data-forward/tagname',
+      '/api/v1/data-forward/dataget',
+      '/api/v1/box-data/data',
+      '/api/v1/box-data/his-data',
+      '/api/v1/box-data/original-his-data',
     ],
   };
 

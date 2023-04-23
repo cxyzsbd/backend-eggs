@@ -56,9 +56,11 @@ module.exports = () => {
     }
     await next();
     // 从接口响应判断操作是否成功
-    record.response_code = ctx.status;
-    if ([ 200, 201 ].includes(record.response_code)) {
-      await ctx.model.OperationRecords.create(record);
+    if (isInPermissions && isInPermissions.length) {
+      record.response_code = ctx.status;
+      if ([ 200, 201 ].includes(record.response_code)) {
+        await ctx.model.OperationRecords.create(record);
+      }
     }
   };
 };
