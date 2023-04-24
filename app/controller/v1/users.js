@@ -188,12 +188,11 @@ class UsersController extends BaseController {
    */
   async login() {
     const { ctx, service, app } = this;
-    const { CONFIGER_PREFIX, CONFIGER_CHECK_TIME } = app.config;
-    const defaultRedis = app.redis.clients.get('default');
     const { username, password, is_configer = 0 } = ctx.request.body;
     ctx.validate(ctx.rule.userLoginBodyReq, ctx.request.body);
     // 判断用户是否存在
     const user = await service.users.findOne({ username }, []);
+    console.log('user=============', user);
     if (!user) {
       this.BAD_REQUEST({ message: '用户不存在' });
       return false;
@@ -202,7 +201,7 @@ class UsersController extends BaseController {
       this.BAD_REQUEST({ message: '账号被停用' });
       return false;
     }
-    const { id, email, phone, avatar } = user;
+    const { id } = user;
     // 判断密码是否一致
     if (user.password !== password) {
       this.BAD_REQUEST({ message: '密码错误' });

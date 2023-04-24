@@ -1,7 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
-const { Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 class UserService extends Service {
   /**
@@ -12,7 +12,7 @@ class UserService extends Service {
   async create(payload) {
     const { ctx, app } = this;
     const username_check = await ctx.model.Users.findOne({ where: {
-      username: payload.username,
+      username: Sequelize.where(Sequelize.fn('BINARY', Sequelize.col('username')), payload.username),
     } });
     if (username_check) {
       return { message: '用户名已存在' };
@@ -42,12 +42,12 @@ class UserService extends Service {
   }
   async findOne({ id = null, username = '' }, exclude = [ 'password', 'delete_at' ], include = true) {
     const { ctx } = this;
-    const where = {};
+    let where = {};
     if (id) {
       where.id = id;
     }
     if (username && username.length) {
-      where.username = username;
+      where.username = Sequelize.where(Sequelize.fn('BINARY', Sequelize.col('username')), username);
     }
     return await ctx.model.Users.findOne({
       where,
