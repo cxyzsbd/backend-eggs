@@ -9,8 +9,13 @@ class OperationRecordsService extends Service {
     const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
     const { st, et } = queryOrigin;
-    let where = payload.where;
-    where.company_id = company_id;
+    let where = {
+      ...payload.where,
+      company_id,
+      content: {
+        [Op.not]: null,
+      },
+    };
     if (st && et) {
       where.operation_time = {
         [Op.between]: [ st, et ],
