@@ -43,9 +43,9 @@ module.exports = () => {
     let { permissionsAll } = await ctx.app.utils.tools.getRedisCachePublic('permissions');
     permissionsAll = permissionsAll.map(item => {
       const url = `${item.action.toLowerCase()}:${item.url}`;
-      const regexp = /\{.*\}/g;// 匹配占位符,匹配{*}
+      const regexp = /\{[^\/]*\}/g;// 匹配占位符,匹配{*}
       // console.log('reg===========', new RegExp(url.replace(regexp, '.*') + '$'));
-      return { ...item, reg: new RegExp(url.replace(regexp, '.*') + '$') };
+      return { ...item, reg: new RegExp(url.replace(regexp, '[^\/]*') + '$') };
     });
     // console.log('permissionsAll', permissionsAll);
     const isInPermissions = permissionsAll.filter(item => item.reg.test(regUrl));
