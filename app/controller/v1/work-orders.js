@@ -86,6 +86,33 @@ class WorkOrdersController extends BaseController {
 
   /**
   * @apikey
+  * @summary 事件触发工单
+  * @description 事件触发工单
+  * @router post event-work-orders
+  * @request body eventWorkOrdersBodyReq
+  */
+  async eventWorkOrder() {
+    const { ctx, app } = this;
+    let params = ctx.request.body;
+    ctx.validate(ctx.rule.eventWorkOrdersBodyReq, params);
+    const { device_id } = params;
+    const allDevices = JSON.parse(await app.utils.tools.getDevicesCache());
+    const devices = allDevices.filter(item => Number(item.id) === Number(device_id));
+    if (!devices || !devices.length) {
+      this.BAD_REQUEST({ message: '设备不存在' });
+      return false;
+    }
+    const device = devices[0];
+    params = {
+      ...params,
+      company_id: device.company_id,
+    };
+    await ctx.service.workOrders.eventWorkOrder(params);
+    this.CREATED();
+  }
+
+  /**
+  * @apikey
   * @summary 更新 工单
   * @description 更新 工单
   * @router put work-orders/:id
@@ -186,6 +213,18 @@ class WorkOrdersController extends BaseController {
     ctx.validate(rule, params);
     const res = await service.workOrders.complete(params);
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
+  }
+
+  /**
+  * @apikey
+  * @summary 工单数量统计
+  * @description 工单数量统计
+  * @router get work-orders-statistics
+  */
+  async statistics() {
+    const { ctx } = this;
+    const res = await ctx.service.workOrders.statistics();
+    this.SUCCESS(res);
   }
 }
 

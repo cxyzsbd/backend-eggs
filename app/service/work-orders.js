@@ -147,6 +147,20 @@ class WorkOrdersService extends Service {
     return res;
   }
 
+  async eventWorkOrder(payload) {
+    const { ctx, app } = this;
+    payload.id = await app.utils.tools.SnowFlake();
+    payload.creator = 0;
+    const res = await ctx.model.WorkOrders.create(payload);
+    // 操作记录
+    if (res) {
+      if (payload.approver) {
+        await app.utils.iom.workOrderNotice({ data: res, sender_id: null, receiver_id: payload.approver, type: 1 });
+      }
+    }
+    return res;
+  }
+
   async update(payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
@@ -252,6 +266,63 @@ class WorkOrdersService extends Service {
       });
     }
     return res;
+  }
+
+  async statistics() {
+    const { ctx } = this;
+    const WorkOrders = ctx.model.WorkOrders;
+    const { company_id, request_user } = ctx.request.header;
+    const where = {
+      company_id,
+      handler: request_user,
+    };
+    // 未接收
+    const notReceiveCount = await WorkOrders.count({
+      where: {
+        ...where,
+        status: 1,
+        end_time: {
+          [Op.gte]: new Date().getTime(),
+        },
+      },
+    });
+    // 已接收，未完成
+    const receivedCount = await WorkOrders.count({
+      where: {
+        ...where,
+        status: 2,
+        end_time: {
+          [Op.gte]: new Date().getTime(),
+        },
+      },
+    });
+    // 已完成
+    const completeCount = await WorkOrders.count({
+      where: {
+        ...where,
+        status: 3,
+      },
+    });
+    // 已逾期
+    const overdueCount = await WorkOrders.count({
+      where: {
+        ...where,
+        [Op.and]: [
+          { status: {
+            [Op.lte]: 2,
+          } },
+          { end_time: {
+            [Op.lt]: new Date().getTime(),
+          } },
+        ],
+      },
+    });
+    return {
+      notReceiveCount,
+      receivedCount,
+      completeCount,
+      overdueCount,
+    };
   }
 }
 

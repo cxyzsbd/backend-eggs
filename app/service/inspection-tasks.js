@@ -221,6 +221,99 @@ class InspectionTasksService extends Service {
     });
     return data;
   }
+
+  async statistics() {
+    const { ctx } = this;
+    const InspectionTasks = ctx.model.InspectionTasks;
+    const InspectionTaskHandlers = ctx.model.InspectionTaskHandlers;
+    const { company_id, request_user } = ctx.request.header;
+    const where = {
+      company_id,
+    };
+    // 未接收
+    const notReceiveCount = await InspectionTasks.count({
+      where: {
+        ...where,
+        status: 1,
+        end_time: {
+          [Op.gte]: new Date().getTime(),
+        },
+      },
+      include: [
+        {
+          model: InspectionTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    // 已接收，未完成
+    const receivedCount = await InspectionTasks.count({
+      where: {
+        ...where,
+        status: 2,
+        end_time: {
+          [Op.gte]: new Date().getTime(),
+        },
+      },
+      include: [
+        {
+          model: InspectionTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    // 已完成
+    const completeCount = await InspectionTasks.count({
+      where: {
+        ...where,
+        status: 3,
+      },
+      include: [
+        {
+          model: InspectionTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    // 已逾期
+    const overdueCount = await InspectionTasks.count({
+      where: {
+        ...where,
+        [Op.and]: [
+          { status: {
+            [Op.lte]: 2,
+          } },
+          { end_time: {
+            [Op.lt]: new Date().getTime(),
+          } },
+        ],
+      },
+      include: [
+        {
+          model: InspectionTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    return {
+      notReceiveCount,
+      receivedCount,
+      completeCount,
+      overdueCount,
+    };
+  }
 }
 
 module.exports = InspectionTasksService;

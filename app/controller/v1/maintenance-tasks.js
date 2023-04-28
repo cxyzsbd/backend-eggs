@@ -198,6 +198,18 @@ class MaintenanceTasksController extends BaseController {
     const res = await service.maintenanceTasks.operationRecords(params.id);
     this.SUCCESS(res);
   }
+
+  /**
+  * @apikey
+  * @summary 保养任务数量统计
+  * @description 保养任务数量统计
+  * @router get maintenance-tasks-statistics
+  */
+  async statistics() {
+    const { ctx } = this;
+    const res = await ctx.service.maintenanceTasks.statistics();
+    this.SUCCESS(res);
+  }
 }
 
 module.exports = MaintenanceTasksController;

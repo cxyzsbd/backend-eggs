@@ -106,4 +106,12 @@ module.exports = {
     ...body.workOrdersBodyReq,
     ...body.workOrdersId,
   },
+  eventWorkOrdersBodyReq: {
+    ...body.workOrdersBodyReq,
+    device_id: {
+      type: 'number',
+      required: true,
+      description: '设备id',
+    },
+  },
 };

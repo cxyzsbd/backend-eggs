@@ -198,6 +198,18 @@ class InspectionTasksController extends BaseController {
     const res = await service.inspectionTasks.operationRecords(params.id);
     this.SUCCESS(res);
   }
+
+  /**
+  * @apikey
+  * @summary 巡检任务数量统计
+  * @description 巡检任务数量统计
+  * @router get inspection-tasks-statistics
+  */
+  async statistics() {
+    const { ctx } = this;
+    const res = await ctx.service.inspectionTasks.statistics();
+    this.SUCCESS(res);
+  }
 }
 
 module.exports = InspectionTasksController;

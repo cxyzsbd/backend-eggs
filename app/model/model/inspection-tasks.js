@@ -91,6 +91,7 @@ module.exports = app => {
       foreignKey: 'task_id',
       otherKey: 'handler',
     });
+    InspectionTasksModel.hasMany(app.model.InspectionTaskHandlers, { foreignKey: 'task_id', sourceKey: 'id' });
     InspectionTasksModel.hasMany(app.model.InspectionResults, { foreignKey: 'task_id', sourceKey: 'id', as: 'inspection_results' });
   };
   return InspectionTasksModel;

@@ -221,6 +221,99 @@ class MaintenanceTasksService extends Service {
     });
     return data;
   }
+
+  async statistics() {
+    const { ctx } = this;
+    const MaintenanceTasks = ctx.model.MaintenanceTasks;
+    const MaintenanceTaskHandlers = ctx.model.MaintenanceTaskHandlers;
+    const { company_id, request_user } = ctx.request.header;
+    const where = {
+      company_id,
+    };
+    // 未接收
+    const notReceiveCount = await MaintenanceTasks.count({
+      where: {
+        ...where,
+        status: 1,
+        end_time: {
+          [Op.gte]: new Date().getTime(),
+        },
+      },
+      include: [
+        {
+          model: MaintenanceTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    // 已接收，未完成
+    const receivedCount = await MaintenanceTasks.count({
+      where: {
+        ...where,
+        status: 2,
+        end_time: {
+          [Op.gte]: new Date().getTime(),
+        },
+      },
+      include: [
+        {
+          model: MaintenanceTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    // 已完成
+    const completeCount = await MaintenanceTasks.count({
+      where: {
+        ...where,
+        status: 3,
+      },
+      include: [
+        {
+          model: MaintenanceTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    // 已逾期
+    const overdueCount = await MaintenanceTasks.count({
+      where: {
+        ...where,
+        [Op.and]: [
+          { status: {
+            [Op.lte]: 2,
+          } },
+          { end_time: {
+            [Op.lt]: new Date().getTime(),
+          } },
+        ],
+      },
+      include: [
+        {
+          model: MaintenanceTaskHandlers,
+          where: {
+            handler: request_user,
+          },
+          required: true,
+        },
+      ],
+    });
+    return {
+      notReceiveCount,
+      receivedCount,
+      completeCount,
+      overdueCount,
+    };
+  }
 }
 
 module.exports = MaintenanceTasksService;

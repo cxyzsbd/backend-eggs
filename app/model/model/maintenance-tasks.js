@@ -91,6 +91,7 @@ module.exports = app => {
       foreignKey: 'task_id',
       otherKey: 'handler',
     });
+    MaintenanceTasksModel.hasMany(app.model.MaintenanceTaskHandlers, { foreignKey: 'task_id', sourceKey: 'id' });
     MaintenanceTasksModel.hasMany(app.model.MaintenanceResults, { foreignKey: 'task_id', sourceKey: 'id', as: 'maintenance_results' });
   };
   return MaintenanceTasksModel;
