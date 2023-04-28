@@ -49,6 +49,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
       '/api/v1/device-tag-datas',
+      '/api/v1/event-work-orders',
     ],
   };
   config.auth = {
@@ -59,6 +60,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
       '/api/v1/device-tag-datas',
+      '/api/v1/event-work-orders',
     ],
   };
   config.validateSuperUser = {
@@ -86,6 +88,7 @@ module.exports = appInfo => {
       '/api/v1/box-data/data',
       '/api/v1/box-data/his-data',
       '/api/v1/box-data/original-his-data',
+      '/api/v1/event-work-orders',
     ],
   };
 
@@ -290,7 +293,7 @@ module.exports = appInfo => {
 
   config.multipart = {
     fileSize: '50mb', // 文件大小限制
-    fileExtensions: [ '.doc', '.xls', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.gif' ], // 上传文件类型扩展
+    fileExtensions: [ '.doc', '.xls', '.xlsx', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.gif' ], // 上传文件类型扩展
   };
 
   config.bodyParser = {
