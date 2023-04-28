@@ -76,6 +76,7 @@ module.exports = app => {
 
   // 工单
   router.post(`${apiV1}/work-orders`, controller.v1.workOrders.create);
+  router.post(`${apiV1}/event-work-orders`, controller.v1.workOrders.eventWorkOrder);
   router.put(`${apiV1}/work-orders/:id`, controller.v1.workOrders.update);
   router.patch(`${apiV1}/work-orders/:id/approval`, controller.v1.workOrders.approval);
   router.patch(`${apiV1}/work-orders/:id/confirm`, controller.v1.workOrders.confirm);
@@ -87,6 +88,7 @@ module.exports = app => {
   router.get(`${apiV1}/work-orders`, controller.v1.workOrders.findAll);
   router.get(`${apiV1}/work-orders/:id`, controller.v1.workOrders.findOne);
   router.delete(`${apiV1}/work-orders/:id`, controller.v1.workOrders.destroy);
+  router.get(`${apiV1}/work-orders-statistics`, controller.v1.workOrders.statistics);
 
   // 巡检
   router.post(`${apiV1}/inspections`, controller.v1.inspections.create);
@@ -105,6 +107,7 @@ module.exports = app => {
   router.post(`${apiV1}/inspection-tasks/:id/results`, controller.v1.inspectionTasks.subResult);
   router.post(`${apiV1}/inspection-tasks/:id/complete`, controller.v1.inspectionTasks.complete);
   router.get(`${apiV1}/inspection-tasks/:id/operation-records`, controller.v1.inspectionTasks.operationRecords);
+  router.get(`${apiV1}/inspection-tasks-statistics`, controller.v1.inspectionTasks.statistics);
 
   // 保养
   router.post(`${apiV1}/maintenances`, controller.v1.maintenances.create);
@@ -123,6 +126,7 @@ module.exports = app => {
   router.post(`${apiV1}/maintenance-tasks/:id/results`, controller.v1.maintenanceTasks.subResult);
   router.post(`${apiV1}/maintenance-tasks/:id/complete`, controller.v1.maintenanceTasks.complete);
   router.get(`${apiV1}/maintenance-tasks/:id/operation-records`, controller.v1.maintenanceTasks.operationRecords);
+  router.get(`${apiV1}/maintenance-tasks-statistics`, controller.v1.maintenanceTasks.statistics);
 
   // 设备台账
   router.post(`${apiV1}/equipment-accounts`, controller.v1.equipmentAccounts.create);
@@ -193,6 +197,8 @@ module.exports = app => {
   router.get(`${apiV1}/device-tags`, controller.v1.deviceTags.findAll);
   router.delete(`${apiV1}/device-tags/:id`, controller.v1.deviceTags.destroy);
   router.post(`${apiV1}/device-tag-datas`, controller.v1.deviceTags.getTagDatas);
+  router.get(`${apiV1}/devices/:device_id/export-attrs`, controller.v1.deviceTags.exportAttrs);
+  router.post(`${apiV1}/devices/:device_id/import-attrs`, controller.v1.deviceTags.importAttrs);
 
   // 超管管理公司
   router.post(`${apiV1}/super-user/companys`, controller.v1.companys.create);
@@ -355,4 +361,9 @@ module.exports = app => {
 
   // 发送短信
   // router.post(`${apiV1}/sms`, controller.v1.sms.send);
+
+  // 数字孪生角色
+  router.get(`${apiV1}/yz-roles`, controller.v1.yzRoles.findAll);
+  router.get(`${apiV1}/users/:user_id/yz-roles`, controller.v1.yzRoles.findUserYzRoles);
+  router.post(`${apiV1}/users/:user_id/yz-roles`, controller.v1.yzRoles.save);
 };

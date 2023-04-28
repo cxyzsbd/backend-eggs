@@ -61,6 +61,11 @@ class DeviceTagsService extends Service {
     return await ctx.model.DeviceTags.destroy({ where: { id: payload.id } });
   }
 
+  async bulkCreate(arr) {
+    const { ctx } = this;
+    return await ctx.model.DeviceTags.bulkCreate(arr);
+  }
+
   async getTagDatas(payload) {
     const { ctx, app } = this;
     const { device_id, attr_ids = [] } = payload;

@@ -10,6 +10,8 @@ const intformat = require('biguint-format');
 const quarterOfYear = require('dayjs/plugin/quarterOfYear');
 dayjs.extend(quarterOfYear);
 const globalConfig = require('../../global.config');
+const Excel = require('exceljs');
+const XLSX = require('xlsx');
 module.exports = class Tools {
   constructor(app) {
     this.app = app;
@@ -21,6 +23,24 @@ module.exports = class Tools {
     this.md5 = md5;
     this.uuidv4 = uuidv4;
     this.globalConfig = globalConfig;
+    this.Excel = Excel;
+    this.XLSX = XLSX;
+  }
+
+  // 将文件流转换成 buffer
+  async streamToBuffer(stream) {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      stream.on('data', chunk => {
+        chunks.push(chunk);
+      });
+      stream.on('end', () => {
+        resolve(Buffer.concat(chunks));
+      });
+      stream.on('error', err => {
+        reject(err);
+      });
+    });
   }
 
   // 工单推送
