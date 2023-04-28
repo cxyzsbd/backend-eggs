@@ -47,10 +47,7 @@ class _objectName_Service extends Service {
       where: { id: { [Op.not]: id }, url, action },
     });
     if (one) {
-      const err = new Error('已存在');
-      err.parent = {};
-      err.parent.errno = 1062;
-      throw err;
+      return { message: '资源已存在' };
     }
     return await ctx.model.Permissions.update(payload, {
       ctx,

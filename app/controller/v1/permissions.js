@@ -79,6 +79,10 @@ class PermissionsController extends BaseController {
     ctx.validate(ctx.rule.permissionPutBodyReq, params);
     const res = await service.permissions.update(params);
     await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
+    if (res && res.message) {
+      this.BAD_REQUEST(res);
+      return false;
+    }
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
