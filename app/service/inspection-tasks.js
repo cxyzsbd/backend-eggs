@@ -222,14 +222,23 @@ class InspectionTasksService extends Service {
     return data;
   }
 
-  async statistics() {
+  async statistics(query) {
     const { ctx } = this;
+    const { st, et } = query;
     const InspectionTasks = ctx.model.InspectionTasks;
     const InspectionTaskHandlers = ctx.model.InspectionTaskHandlers;
     const { company_id, request_user } = ctx.request.header;
-    const where = {
+    let where = {
       company_id,
     };
+    if (st && et) {
+      where = {
+        ...where,
+        start_time: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
     // 未接收
     const notReceiveCount = await InspectionTasks.count({
       where: {

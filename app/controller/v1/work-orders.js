@@ -223,7 +223,7 @@ class WorkOrdersController extends BaseController {
   */
   async statistics() {
     const { ctx } = this;
-    const res = await ctx.service.workOrders.statistics();
+    const res = await ctx.service.workOrders.statistics(ctx.query);
     this.SUCCESS(res);
   }
 }

@@ -207,7 +207,7 @@ class InspectionTasksController extends BaseController {
   */
   async statistics() {
     const { ctx } = this;
-    const res = await ctx.service.inspectionTasks.statistics();
+    const res = await ctx.service.inspectionTasks.statistics(ctx.query);
     this.SUCCESS(res);
   }
 }

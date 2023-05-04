@@ -207,7 +207,7 @@ class MaintenanceTasksController extends BaseController {
   */
   async statistics() {
     const { ctx } = this;
-    const res = await ctx.service.maintenanceTasks.statistics();
+    const res = await ctx.service.maintenanceTasks.statistics(ctx.query);
     this.SUCCESS(res);
   }
 }

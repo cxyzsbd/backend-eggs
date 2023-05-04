@@ -14,8 +14,8 @@ const body = {
     type: {
       type: 'number',
       required: true,
-      enum: [ 1, 2, 3 ],
-      description: '1:报表；2：曲线；3：曲线对比',
+      enum: [ 1, 2, 3, 4 ],
+      description: '1:报表；2：曲线；3：曲线对比;4:移动端设备报警推送订阅',
     },
     attrs: {
       type: 'array',

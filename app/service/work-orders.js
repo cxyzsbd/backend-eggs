@@ -268,14 +268,23 @@ class WorkOrdersService extends Service {
     return res;
   }
 
-  async statistics() {
+  async statistics(query) {
     const { ctx } = this;
     const WorkOrders = ctx.model.WorkOrders;
+    const { st, et } = query;
     const { company_id, request_user } = ctx.request.header;
-    const where = {
+    let where = {
       company_id,
       handler: request_user,
     };
+    if (st && et) {
+      where = {
+        ...where,
+        create_at: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
     // 未接收
     const notReceiveCount = await WorkOrders.count({
       where: {

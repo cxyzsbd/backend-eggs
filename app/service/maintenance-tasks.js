@@ -222,14 +222,23 @@ class MaintenanceTasksService extends Service {
     return data;
   }
 
-  async statistics() {
+  async statistics(query) {
     const { ctx } = this;
+    const { st, et } = query;
     const MaintenanceTasks = ctx.model.MaintenanceTasks;
     const MaintenanceTaskHandlers = ctx.model.MaintenanceTaskHandlers;
     const { company_id, request_user } = ctx.request.header;
-    const where = {
+    let where = {
       company_id,
     };
+    if (st && et) {
+      where = {
+        ...where,
+        start_time: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
     // 未接收
     const notReceiveCount = await MaintenanceTasks.count({
       where: {
