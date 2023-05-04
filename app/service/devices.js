@@ -88,6 +88,7 @@ class DevicesService extends Service {
         creator: request_user,
         company_id,
         station_id,
+        model_id,
       }, { raw: true, transaction });
       if (device) {
         tags.map(t => {
