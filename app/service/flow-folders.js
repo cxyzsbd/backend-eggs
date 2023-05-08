@@ -4,10 +4,11 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class FlowFoldersService extends Service {
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx, app } = this;
     // const redisAttr = app.redis.clients.get('attrs');
     const { company_id } = ctx.request.header;
+    const { st, et } = queryOrigin;
     // const allStations = JSON.parse(await redisAttr.get('stations'));
     const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const departments = await ctx.service.departments.getUserDepartments();
@@ -17,6 +18,14 @@ class FlowFoldersService extends Service {
     console.log('ids=============', departmentIds);
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
+    if (st && et) {
+      where = {
+        ...where,
+        create_at: {
+          [Op.in]: [ st, et ],
+        },
+      };
+    }
     where = { ...where, company_id };
     where = {
       ...where,

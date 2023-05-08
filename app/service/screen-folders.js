@@ -4,9 +4,10 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class ScreenFoldersService extends Service {
-  async findAll(payload) {
+  async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
+    const { st, et } = queryOrigin;
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
     const { pageSize, pageNumber, prop_order, order } = payload;
@@ -15,6 +16,14 @@ class ScreenFoldersService extends Service {
     where.department_id = {
       [Op.in]: departmentIds,
     };
+    if (st && et) {
+      where = {
+        ...where,
+        create_at: {
+          [Op.between]: [ st, et ],
+        },
+      };
+    }
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.ScreenFolders.count({ where });

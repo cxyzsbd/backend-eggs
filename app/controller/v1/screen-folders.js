@@ -18,12 +18,12 @@ class screenFoldersController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.screenFoldersPutBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.screenFolders.findAll(query);
+    const res = await service.screenFolders.findAll(query, queryOrigin);
     this.SUCCESS(res);
   }
 

@@ -18,12 +18,12 @@ class flowFoldersController extends BaseController {
   */
   async findAll() {
     const { ctx, service } = this;
-    const { allRule, query } = this.findAllParamsDeal({
+    const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.flowFoldersPutBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
-    const res = await service.flowFolders.findAll(query);
+    const res = await service.flowFolders.findAll(query, queryOrigin);
     this.SUCCESS(res);
   }
 
