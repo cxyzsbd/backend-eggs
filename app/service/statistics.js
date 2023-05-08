@@ -33,7 +33,7 @@ class StatisticsService extends Service {
     // console.log('onlineUsers', onlineUsers);
     const companys = await app.utils.tools.getRedisCachePublic('companys');
     // console.log('companys', companys);
-    const company_counts_data = company_counts.map(item => {
+    let company_counts_data = company_counts.map(item => {
       let info = companys.filter(company => company.id === item.company_id);
       // console.log('info', info);
       return {
@@ -41,6 +41,7 @@ class StatisticsService extends Service {
         company_info: info && info.length ? info[0] : null,
       };
     });
+    company_counts_data = company_counts_data.filter(item => item.company_info !== null);
     return {
       total,
       company_counts: company_counts_data,
@@ -52,12 +53,17 @@ class StatisticsService extends Service {
     const { ctx, app } = this;
     const total = await ctx.models.BoxInfo.count();
     const company_counts = await ctx.models.BoxInfo.count({
+      where: {
+        department: {
+          [Op.not]: 0,
+        },
+      },
       group: 'department',
       attributes: [ 'department' ],
     });
     const companys = await app.utils.tools.getRedisCachePublic('companys');
     // console.log('companys', companys);
-    const company_counts_data = company_counts.map(item => {
+    let company_counts_data = company_counts.map(item => {
       let info = companys.filter(company => company.id === item.department);
       // console.log('info', info);
       return {
@@ -65,6 +71,7 @@ class StatisticsService extends Service {
         company_info: info && info.length ? info[0] : null,
       };
     });
+    company_counts_data = company_counts_data.filter(item => item.company_info !== null);
     return {
       total,
       company_counts: company_counts_data,
@@ -93,7 +100,7 @@ class StatisticsService extends Service {
     // console.log('company_counts', company_counts);
     const companys = await app.utils.tools.getRedisCachePublic('companys');
     // console.log('companys', companys);
-    const company_counts_data = company_counts.map(item => {
+    let company_counts_data = company_counts.map(item => {
       let info = companys.filter(company => company.id === item.company_id);
       // console.log('info', info);
       return {
@@ -101,6 +108,7 @@ class StatisticsService extends Service {
         company_info: info && info.length ? info[0] : null,
       };
     });
+    company_counts_data = company_counts_data.filter(item => item.company_info !== null);
     return {
       total,
       company_counts: company_counts_data,
