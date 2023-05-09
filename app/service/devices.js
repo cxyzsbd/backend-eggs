@@ -109,6 +109,7 @@ class DevicesService extends Service {
         }, { transaction });
       }
       await transaction.commit();
+      return device;
     } catch (e) {
       // 异常情况回滚数据库
       await transaction.rollback();
