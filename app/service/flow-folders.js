@@ -18,30 +18,52 @@ class FlowFoldersService extends Service {
     console.log('ids=============', departmentIds);
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
+    console.log('where========================', where);
     if (st && et) {
       where = {
         ...where,
         create_at: {
-          [Op.in]: [ st, et ],
+          [Op.between]: [ st, et ],
         },
       };
     }
     where = { ...where, company_id };
-    where = {
-      ...where,
-      [Op.or]: [
-        {
-          department_id: {
-            [Op.in]: departmentIds,
+    if (where[Op.or]) {
+      where[Op.or].map(item => {
+        return {
+          ...item,
+          [Op.or]: [
+            {
+              department_id: {
+                [Op.in]: departmentIds,
+              },
+            },
+            {
+              station_id: {
+                [Op.in]: station_ids,
+              },
+            },
+          ],
+        };
+      });
+    } else {
+      where = {
+        ...where,
+        [Op.or]: [
+          {
+            department_id: {
+              [Op.in]: departmentIds,
+            },
           },
-        },
-        {
-          station_id: {
-            [Op.in]: station_ids,
+          {
+            station_id: {
+              [Op.in]: station_ids,
+            },
           },
-        },
-      ],
-    };
+        ],
+      };
+    }
+
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.FlowFolders.count({ where });
