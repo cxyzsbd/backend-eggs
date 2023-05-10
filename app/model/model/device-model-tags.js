@@ -41,12 +41,12 @@ module.exports = app => {
       field: 'desc',
     },
     type: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.INTEGER(1),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '类型',
+      comment: '类型(1:int;2:float;3:int;4:string)',
       field: 'type',
     },
     range: {
