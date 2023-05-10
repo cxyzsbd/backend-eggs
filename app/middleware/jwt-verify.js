@@ -24,7 +24,7 @@ module.exports = options => {
         if (!department_id && department_id !== 0) {
           ctx.status = 403;
           ctx.body = {
-            message: '该用户未分配部门',
+            message: '请联系管理员为你添加角色和目录！',
           };
           return false;
         }
@@ -79,7 +79,7 @@ module.exports = options => {
           if (!department_id && department_id !== 0) {
             ctx.status = 403;
             ctx.body = {
-              message: '该用户未分配部门',
+              message: '请联系管理员为你添加角色和目录！',
             };
             return false;
           }
