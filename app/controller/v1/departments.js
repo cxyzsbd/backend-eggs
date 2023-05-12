@@ -97,6 +97,16 @@ class DepartmentsController extends BaseController {
       this.BAD_REQUEST({ message: '请先删除子级部门' });
       return false;
     }
+    // 判断目录下是否有站点
+    const stationCount = await ctx.model.Stations.count({
+      where: {
+        department_id: ctx.params.id,
+      },
+    });
+    if (stationCount > 0) {
+      this.BAD_REQUEST({ message: '该目录下存在站点，不能执行删除操作' });
+      return false;
+    }
     const res = await service.departments.destroy(ctx.params);
     await app.utils.tools.redisCachePublic('departments', 0, 'departments', 'Departments');
     if (res) {
