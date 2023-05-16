@@ -106,6 +106,8 @@ class StationsController extends BaseController {
     ctx.validate(ctx.rule.stationsId, params);
     const res = await service.stations.destroy(params);
     await app.utils.tools.setStationsCache();
+    await app.utils.tools.setAttrsRedisCache();
+    await app.utils.tools.setDevicesCache();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 }
