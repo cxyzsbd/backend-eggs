@@ -12,13 +12,14 @@ class UsersController extends BaseController {
     * @request body userCreateBodyReq
     */
   async create() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     ctx.validate(ctx.rule.userCreateBodyReq, ctx.request.body);
     const res = await ctx.service.users.create(ctx.request.body);
     if (res && res.message) {
       this.BAD_REQUEST(res);
       return false;
     }
+    app.utils.tools.youzhi_async_users();
     this.CREATED();
   }
   /**
@@ -169,13 +170,14 @@ class UsersController extends BaseController {
    * @request path number *id eg:1 用户id
    */
   async destroy() {
-    const { ctx, service } = this;
+    const { ctx, service, app } = this;
     ctx.validate(ctx.rule.userDelBodyReq, ctx.params);
     const res = await service.users.destroy(ctx.params);
     if (res) {
       // 删除redis用户信息缓存
       await service.cache.del(ctx.params.id);
     }
+    app.utils.tools.youzhi_async_users();
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 

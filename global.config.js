@@ -35,6 +35,7 @@ const REDIS_CONFIG = {
 };
 const DATA_FORWARD_URL = `http://${process.env.LKYS_JAVAMQTT_HOST}:${process.env.LKYS_JAVAMQTT_PORT}/`;
 const CPP_FORWARD_URL = 'http://172.17.16.3:9999/';
+const YOUZHI_REQUEST_URL = 'http://124.222.168.174:28080/';
 
 // const DB_CONFIG = {
 //   DATABASE1: 'lkys_new',
@@ -53,6 +54,7 @@ const CPP_FORWARD_URL = 'http://172.17.16.3:9999/';
 // // const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
 // const DATA_FORWARD_URL = 'http://192.168.20.222/';
 // const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
+// const YOUZHI_REQUEST_URL = 'http://124.222.168.174:28080/';
 
 // 萤石云账号和秘钥
 const YS_APP_KEY = {
@@ -68,4 +70,5 @@ module.exports = {
   DATA_FORWARD_URL,
   YS_APP_KEY,
   CPP_FORWARD_URL,
+  YOUZHI_REQUEST_URL,
 };

@@ -27,6 +27,22 @@ module.exports = class Tools {
     this.XLSX = XLSX;
   }
 
+  // 有智同步用户和角色
+  async youzhi_async_users() {
+    const { ctx, globalConfig: { YOUZHI_REQUEST_URL } } = this;
+    const res = await ctx.curl(`${YOUZHI_REQUEST_URL}system/syncUserInfo`, {
+      method: 'POST',
+      rejectUnauthorized: false,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      dataType: 'json',
+    }).catch(err => {
+      return false;
+    });
+    ctx.logger.error(`有智同步用户${YOUZHI_REQUEST_URL}`, res ? res.data : res);
+  }
+
   // 将文件流转换成 buffer
   async streamToBuffer(stream) {
     return new Promise((resolve, reject) => {

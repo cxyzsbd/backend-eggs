@@ -57,13 +57,14 @@ class YzRolesController extends BaseController {
   * @request body saveUserYzRolesBodyReq
   */
   async save() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const params = {
       ...ctx.params,
       ...ctx.request.body,
     };
     ctx.validate(ctx.rule.saveUserYzRolesBodyReq, params);
     await ctx.service.yzRoles.save(params);
+    app.utils.tools.youzhi_async_users();
     this.CREATED();
   }
 }
