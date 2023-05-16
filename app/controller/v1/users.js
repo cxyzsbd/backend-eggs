@@ -308,17 +308,17 @@ class UsersController extends BaseController {
   * @apikey
   * @summary 修改个人信息
   * @description 用户修改自己个人信息
-  * @router put users/person-info
+  * @router post users/person-info
   * @request body updatePersonInfoBody
   */
   async updateInfo() {
     const { ctx, service, app } = this;
-    const params = ctx.request.body;
+    let params = ctx.request.body;
     const { request_user } = ctx.request.header;
     ctx.validate(ctx.rule.updatePersonInfoBody, params);
     params.id = request_user;
     // 判断是不是存在同名用户
-    if (this.isParam(params.username)) {
+    if (params.username || params.username === 0) {
       const otherUser = await service.users.findOne({ id: {
         [Op.not]: params.id,
       }, username: params.username }, [], false);
