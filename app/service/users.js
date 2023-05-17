@@ -192,6 +192,7 @@ class UserService extends Service {
         },
         transaction,
       });
+      await ctx.model.UserWechatInfo.update({ user_id: null }, { where: { user_id: payload.id }, transaction });
       await transaction.commit();
       return res_user && rolesRes;
     } catch (e) {
