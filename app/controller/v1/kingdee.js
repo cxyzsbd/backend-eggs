@@ -77,34 +77,44 @@ class KingdeeController extends BaseController {
           const accessToken = app.jwt.sign({ user_id, type: 'access_token', is_super_user }, app.config.jwt.secret, { expiresIn: expires_in });
           const refresh_token = app.jwt.sign({ user_id, type: 'refresh_token', is_super_user }, app.config.jwt.secret, { expiresIn: app.config.jwt.refresh_expire });
           const last_login = app.utils.tools.dayjs().format('YYYY-MM-DD HH:mm:ss');
-          if (!a) {
-            ctx.logger.warn('金蝶校验用户不是管理员', a);
-            const userRole = await ctx.model.UserRoles.findOne({ where: { user_id, role_id: 1 }, raw: true });
-            if (userRole) {
-              ctx.logger.warn('金蝶校验原角色是管理员,删除角色');
-              await ctx.model.UserRoles.destroy({ where: { user_id, role_id: 1 } });
-            }
-          } else {
+          // 只有在金蝶那边是管理员并且在平台没有设置角色的情况下给用户添加管理员角色
+          if (a) {
             ctx.logger.warn('金蝶校验用户是管理员', a);
             const userRole = await ctx.model.UserRoles.findAll({ where: { user_id }, raw: true });
-            const AdminRole = userRole.filter(item => item.role_id === 1);
-            if (!AdminRole || !AdminRole.length) {
-              ctx.logger.warn('金蝶校验原角色不是管理员，增加管理员角色', AdminRole);
-              if (userRole && userRole.length) {
-                ctx.logger.warn('金蝶校验原角色不是管理员，修改角色', userRole);
-                await ctx.model.UserRoles.update({
-                  role_id: 1,
-                }, {
-                  where: {
-                    id: userRole[0].id,
-                  },
-                });
-              } else {
-                ctx.logger.warn('金蝶校验原角色不是管理员，创建角色', userRole);
-                await ctx.model.UserRoles.create({ user_id, role_id: 1 });
-              }
+            if (!userRole || !userRole.length) {
+              ctx.logger.warn('金蝶校验用户是管理员在平台没有角色', userRole);
+              const createRoleRes = await ctx.model.UserRoles.create({ user_id, role_id: 1 });
+              ctx.logger.warn('金蝶校验用户是管理员在平台没有角色添加管理员角色', createRoleRes);
             }
           }
+          // if (!a) {
+          //   ctx.logger.warn('金蝶校验用户不是管理员', a);
+          //   const userRole = await ctx.model.UserRoles.findOne({ where: { user_id, role_id: 1 }, raw: true });
+          //   if (userRole) {
+          //     ctx.logger.warn('金蝶校验原角色是管理员,删除角色');
+          //     await ctx.model.UserRoles.destroy({ where: { user_id, role_id: 1 } });
+          //   }
+          // } else {
+          //   ctx.logger.warn('金蝶校验用户是管理员', a);
+          //   const userRole = await ctx.model.UserRoles.findAll({ where: { user_id }, raw: true });
+          //   const AdminRole = userRole.filter(item => item.role_id === 1);
+          //   if (!AdminRole || !AdminRole.length) {
+          //     ctx.logger.warn('金蝶校验原角色不是管理员，增加管理员角色', AdminRole);
+          //     if (userRole && userRole.length) {
+          //       ctx.logger.warn('金蝶校验原角色不是管理员，修改角色', userRole);
+          //       await ctx.model.UserRoles.update({
+          //         role_id: 1,
+          //       }, {
+          //         where: {
+          //           id: userRole[0].id,
+          //         },
+          //       });
+          //     } else {
+          //       ctx.logger.warn('金蝶校验原角色不是管理员，创建角色', userRole);
+          //       await ctx.model.UserRoles.create({ user_id, role_id: 1 });
+          //     }
+          //   }
+          // }
           // 更新登录时间
           await service.users.update({ id: user_id, last_login });
           await app.utils.tools.redisCacheUserinfo(user_id);
