@@ -1,5 +1,7 @@
 const dayjs = require('dayjs');
 const fs = require('fs');
+const http = require('http');
+const https = require('https');
 const crypto = require('crypto');
 const path = require('path');
 const lodash = require('lodash');
@@ -316,6 +318,23 @@ module.exports = class Tools {
       return await this.getStationsCache();
     }
     return data;
+  }
+
+  // 下载远程文件保存到本地
+  async downloadFileToLocal(fileUrl, targetUrl) {
+    const protocol = fileUrl.startsWith('https://') ? https : http;
+    return new Promise((resolve, reject) => {
+      protocol.get(fileUrl, response => {
+        if (response.statusCode !== 200) {
+          reject(new Error(`请求失败: ${response.statusCode}`));
+          return;
+        }
+        const writer = fs.createWriteStream(targetUrl); // 本地保存的文件路径
+        response.pipe(writer);
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      }).on('error', reject);
+    });
   }
 
   // 设置设备缓存

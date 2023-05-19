@@ -1,5 +1,3 @@
-const request = require('request');
-const fs = require('fs');
 const path = require('path');
 class AppBootHook {
   constructor(app) {
@@ -110,7 +108,7 @@ class AppBootHook {
                   const filename = url.split('/').pop();
                   // console.log('filename=================',filename);
                   const target = path.join(app.config.baseDir, `../files/camera_photos/${deviceSerial}/`, filename);
-                  request(picUrl).pipe(fs.createWriteStream(target));
+                  await app.utils.tools.downloadFileToLocal(picUrl, target);
                   // 插入数据库
                   await ctx.model.CameraPhotos.create({
                     deviceSerial,
