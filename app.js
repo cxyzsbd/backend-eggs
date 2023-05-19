@@ -1,7 +1,9 @@
 const path = require('path');
+const jwtPlugin = require('./app/plugin/jsonwebtoken');
 class AppBootHook {
   constructor(app) {
     this.app = app;
+    jwtPlugin(app);
   }
 
   configWillLoad() {
