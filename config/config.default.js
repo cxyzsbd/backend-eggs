@@ -329,6 +329,25 @@ module.exports = appInfo => {
     CONFIGER_CHECK_TIME: 90, // 配置端登录态校验存储时间
     ROOT_DEPARTMENT_NAME: '根组织', // 根组织名称
     portmapping_smscode_verify: false, // 设备端口映射smscode验证码校验开关
+    SUPER_USER_PERMISSIONS: [
+      // 'post:/api/v1/roles',
+      'get:/api/v1/roles',
+      'get:/api/v1/roles/{id}',
+      // 'put:/api/v1/roles/{id}',
+      // 'delete:/api/v1/roles/{id}',
+      // 'post:/api/v1/permissions',
+      'get:/api/v1/permissions',
+      'get:/api/v1/permissions/{id}',
+      // 'put:/api/v1/permissions/{id}',
+      // 'delete:/api/v1/permissions/{id}',
+      // 'post:/api/v1/menus',
+      'post:/api/v1/role-menus',
+      'post:/api/v1/role-permissions',
+      'get:/api/v1/menus',
+      'get:/api/v1/menus/{id}',
+      // 'put:/api/v1/menus/{id}',
+      // 'delete:/api/v1/menus/{id}',
+    ],
   };
 
   return {

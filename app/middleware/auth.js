@@ -1,6 +1,7 @@
 module.exports = () => {
   return async function(ctx, next) {
     const { method, url, header: { request_user } } = ctx.request;
+    const { SUPER_USER_PERMISSIONS } = ctx.app.config;
     if (!request_user) {
       await next();
       return false;
@@ -40,18 +41,23 @@ module.exports = () => {
           permissions = [ ...permissions, ...item.permissions ];
         }
       });
-      // 将个人权限列表处理成正则表达式
-      permissions = permissions.map(item => {
-        // const regexp = /\{.*\}/g;// 匹配占位符,匹配{*}
-        const regexp = /\{[^\/]*\}/g;// 匹配占位符,匹配{*}
-        const p = `${item.action.toLowerCase()}:${item.url}`;
-        // 将返回的权限替换成改成正则表达式
-        // return new RegExp(p.replace(regexp, '\\\d+') + '$');
-        return new RegExp(p.replace(regexp, '[^\/]*') + '$');
-      });
-      // console.log('permissions===========================', permissions);
+      if (request_user === 1) {
+        permissions = SUPER_USER_PERMISSIONS;
+        permissions = permissions.map(item => {
+          const regexp = /\{[^\/]*\}/g;// 匹配占位符,匹配{*}
+          return new RegExp(item.replace(regexp, '[^\/]*') + '$');
+        });
+      } else {
+        // 将个人权限列表处理成正则表达式
+        permissions = permissions.map(item => {
+          const regexp = /\{[^\/]*\}/g;// 匹配占位符,匹配{*}
+          const p = `${item.action.toLowerCase()}:${item.url}`;
+          // 将返回的权限替换成改成正则表达式
+          return new RegExp(p.replace(regexp, '[^\/]*') + '$');
+        });
+      }
       let hasAuth = permissions.filter(item => item.test(regUrl));
-      // console.log('hasAuth===============', hasAuth);
+      console.log('hasAuth===============', hasAuth);
       if (!hasAuth || !hasAuth.length) {
         // 无权限
         ctx.status = 403;
