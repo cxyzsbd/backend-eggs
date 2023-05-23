@@ -33,8 +33,7 @@
     "egg-ci": "^2",
     "egg-mock": "^5",
     "eslint": "^8",
-    "eslint-config-egg": "^12",
-    "sequelize-automate": "^1.2.2"
+    "eslint-config-egg": "^12"
   },
   "engines": {
     "node": ">=16.0.0"
