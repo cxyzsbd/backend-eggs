@@ -8,15 +8,18 @@ class FlowFoldersService extends Service {
     const { ctx, app } = this;
     // const redisAttr = app.redis.clients.get('attrs');
     const { company_id } = ctx.request.header;
-    const { st, et } = queryOrigin;
+    const { st, et, component = 0 } = queryOrigin;
     // const allStations = JSON.parse(await redisAttr.get('stations'));
     const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
     const stations = allStations.filter(item => departmentIds.includes(item.department_id));
     const station_ids = stations.map(item => item.id);
-    console.log('ids=============', departmentIds);
-    const { pageSize, pageNumber, prop_order, order } = payload;
+    // console.log('ids=============', departmentIds);
+    let { pageSize, pageNumber, prop_order, order } = payload;
+    if (pageSize < 0 && Number(component) !== 1) {
+      pageSize = 20;
+    }
     let where = payload.where;
     console.log('where========================', where);
     if (st && et) {
@@ -27,11 +30,29 @@ class FlowFoldersService extends Service {
         },
       };
     }
-    where = { ...where, company_id };
-    if (where[Op.or]) {
-      where[Op.or].map(item => {
-        return {
-          ...item,
+    where = { ...where, company_id, component: Number(component) };
+    if (Number(component) !== 1) {
+      if (where[Op.or]) {
+        where[Op.or].map(item => {
+          return {
+            ...item,
+            [Op.or]: [
+              {
+                department_id: {
+                  [Op.in]: departmentIds,
+                },
+              },
+              {
+                station_id: {
+                  [Op.in]: station_ids,
+                },
+              },
+            ],
+          };
+        });
+      } else {
+        where = {
+          ...where,
           [Op.or]: [
             {
               department_id: {
@@ -45,49 +66,47 @@ class FlowFoldersService extends Service {
             },
           ],
         };
-      });
-    } else {
-      where = {
-        ...where,
-        [Op.or]: [
-          {
-            department_id: {
-              [Op.in]: departmentIds,
-            },
-          },
-          {
-            station_id: {
-              [Op.in]: station_ids,
-            },
-          },
-        ],
-      };
+      }
     }
 
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
+    let include = [
+      {
+        model: ctx.model.Flows,
+        as: 'flows',
+        through: {
+          where: { is_default: 1 },
+        },
+      },
+    ];
+    if (Number(component) === 1) {
+      include = [];
+    }
     const total = await ctx.model.FlowFolders.count({ where });
-    const data = await ctx.model.FlowFolders.findAll({
-      limit: pageSize,
-      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+    let tempObj = {
       where,
       order: Order,
-      include: [
-        {
-          model: ctx.model.Flows,
-          as: 'flows',
-          through: {
-            where: { is_default: 1 },
-          },
-        },
-      ],
-    });
-    return {
+      include,
+      limit: pageSize,
+      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+    };
+    if (pageSize < 0 && Number(component) === 1) {
+      delete tempObj.limit;
+      delete tempObj.offset;
+    }
+    const data = await ctx.model.FlowFolders.findAll(tempObj);
+    let resObj = {
       data,
+      total,
       pageNumber,
       pageSize,
-      total,
     };
+    if (pageSize < 0 && Number(component) === 1) {
+      delete resObj.pageNumber;
+      delete resObj.pageSize;
+    }
+    return resObj;
   }
 
   async findOne(payload) {

@@ -12,15 +12,20 @@ class flowFoldersController extends BaseController {
   * @summary 流程图文件夹列表
   * @description 获取所有流程图文件夹
   * @request query string name
+  * @request query number component
   * @request query number pageSize
   * @request query number pageNumber
   * @router get flow-folders
   */
   async findAll() {
     const { ctx, service } = this;
+    let params = ctx.query;
+    if (!params.component) {
+      params.component = 0;
+    }
     const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.flowFoldersPutBodyReq,
-      queryOrigin: ctx.query,
+      queryOrigin: params,
     });
     ctx.validate(allRule, query);
     const res = await service.flowFolders.findAll(query, queryOrigin);

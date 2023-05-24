@@ -12,15 +12,20 @@ class screenFoldersController extends BaseController {
   * @summary 大屏文件夹列表
   * @description 获取所有大屏文件夹
   * @request query string name
+  * @request query number component
   * @request query number pageSize
   * @request query number pageNumber
   * @router get screen-folders
   */
   async findAll() {
     const { ctx, service } = this;
+    let params = ctx.query;
+    if (!params.component) {
+      params.component = 0;
+    }
     const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.screenFoldersPutBodyReq,
-      queryOrigin: ctx.query,
+      queryOrigin: params,
     });
     ctx.validate(allRule, query);
     const res = await service.screenFolders.findAll(query, queryOrigin);

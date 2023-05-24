@@ -17,6 +17,11 @@ const body = {
     //   required: false,
     //   description: '流程图id',
     // },
+    component: {
+      type: 'number',
+      required: false,
+      description: '0:图纸；1：组件',
+    },
     station_id: {
       type: 'number',
       required: false,

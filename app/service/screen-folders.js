@@ -7,15 +7,21 @@ class ScreenFoldersService extends Service {
   async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
-    const { st, et } = queryOrigin;
+    console.log('queryOrigin===============', queryOrigin);
+    const { st, et, component = 0 } = queryOrigin;
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
-    const { pageSize, pageNumber, prop_order, order } = payload;
+    let { pageSize, pageNumber, prop_order, order } = payload;
+    if (pageSize < 0 && Number(component) !== 1) {
+      pageSize = 20;
+    }
     let where = payload.where;
-    where = { ...where, company_id };
-    where.department_id = {
-      [Op.in]: departmentIds,
-    };
+    where = { ...where, company_id, component: Number(component) };
+    if (Number(component) !== 1) {
+      where.department_id = {
+        [Op.in]: departmentIds,
+      };
+    }
     if (st && et) {
       where = {
         ...where,
@@ -25,29 +31,43 @@ class ScreenFoldersService extends Service {
       };
     }
     let Order = [];
+    let include = [
+      {
+        model: ctx.model.Screens,
+        as: 'screens',
+        through: {
+          where: { is_default: 1 },
+        },
+      },
+    ];
+    if (Number(component) === 1) {
+      include = [];
+    }
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.ScreenFolders.count({ where });
-    const data = await ctx.model.ScreenFolders.findAll({
-      limit: pageSize,
-      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+    let tempObj = {
       where,
       order: Order,
-      include: [
-        {
-          model: ctx.model.Screens,
-          as: 'screens',
-          through: {
-            where: { is_default: 1 },
-          },
-        },
-      ],
-    });
-    return {
+      include,
+      limit: pageSize,
+      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+    };
+    if (pageSize < 0 && Number(component) === 1) {
+      delete tempObj.limit;
+      delete tempObj.offset;
+    }
+    const data = await ctx.model.ScreenFolders.findAll(tempObj);
+    let resObj = {
       data,
+      total,
       pageNumber,
       pageSize,
-      total,
     };
+    if (pageSize < 0 && Number(component) === 1) {
+      delete resObj.pageNumber;
+      delete resObj.pageSize;
+    }
+    return resObj;
   }
 
   async findOne(payload) {

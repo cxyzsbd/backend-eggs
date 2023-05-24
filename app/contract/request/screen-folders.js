@@ -11,6 +11,11 @@ const body = {
       required: true,
       description: '文件夹名称',
     },
+    component: {
+      type: 'number',
+      required: false,
+      description: '0:图纸；1：组件',
+    },
   },
 };
 

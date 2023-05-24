@@ -22,6 +22,15 @@ module.exports = app => {
       comment: null,
       field: 'name',
     },
+    component: {
+      type: DataTypes.INTEGER(1),
+      allowNull: true,
+      defaultValue: '0',
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '0:图纸；1：组件',
+      field: 'component',
+    },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: true,
