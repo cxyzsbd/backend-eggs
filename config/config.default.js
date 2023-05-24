@@ -347,6 +347,7 @@ module.exports = appInfo => {
       'get:/api/v1/menus/{id}',
       // 'put:/api/v1/menus/{id}',
       // 'delete:/api/v1/menus/{id}',
+      'put:/api/v1/users/{id}',
     ],
   };
 
