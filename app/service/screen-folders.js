@@ -91,6 +91,20 @@ class ScreenFoldersService extends Service {
     });
   }
 
+  async findAllComponents(id) {
+    const { ctx } = this;
+    const folder = await ctx.model.ScreenFolders.findOne({
+      where: { id },
+      include: [
+        {
+          model: ctx.model.Screens,
+          as: 'screens',
+        },
+      ],
+    });
+    return folder;
+  }
+
   async create(payload) {
     const { ctx } = this;
     const { request_user, company_id, department_id } = ctx.request.header;

@@ -335,6 +335,7 @@ module.exports = app => {
   router.post(`${apiV1}/flow-folders/:id/bind-flows`, controller.v1.flowFolders.bind);
   router.post(`${apiV1}/flow-folders/:id/unbind-flows`, controller.v1.flowFolders.unbind);
   router.post(`${apiV1}/flow-folders/:id/default-flow`, controller.v1.flowFolders.setDefaultFlow);
+  router.get(`${apiV1}/flow-folders/:id/components`, controller.v1.flowFolders.findAllComponents);
 
   // 大屏文件夹
   router.post(`${apiV1}/screen-folders`, controller.v1.screenFolders.create);
@@ -345,6 +346,7 @@ module.exports = app => {
   router.post(`${apiV1}/screen-folders/:id/bind-screens`, controller.v1.screenFolders.bind);
   router.post(`${apiV1}/screen-folders/:id/unbind-screens`, controller.v1.screenFolders.unbind);
   router.post(`${apiV1}/screen-folders/:id/default-screen`, controller.v1.screenFolders.setDefaultScreen);
+  router.get(`${apiV1}/screen-folders/:id/components`, controller.v1.screenFolders.findAllComponents);
 
   // 公告
   router.post(`${apiV1}/announcements`, controller.v1.announcements.create);

@@ -48,6 +48,33 @@ class flowFoldersController extends BaseController {
 
   /**
   * @apikey
+  * @summary 根据目录获取组件
+  * @description 根据目录获取组件
+  * @router get flow-folders/:id/components
+  * @request path number *id eg:1
+  */
+  async findAllComponents() {
+    const { ctx, service } = this;
+    const { company_id } = ctx.request.header;
+    ctx.validate(ctx.rule.flowFoldersId, ctx.params);
+    const { id } = ctx.params;
+    const floder = await ctx.model.FlowFolders.findOne({
+      where: {
+        id,
+        company_id,
+        component: 1,
+      },
+    });
+    if (!floder) {
+      this.NOT_FOUND({ message: '目录不存在' });
+      return false;
+    }
+    const res = await service.flowFolders.findAllComponents(id);
+    this.SUCCESS(res);
+  }
+
+  /**
+  * @apikey
   * @summary 创建 流程图文件夹
   * @description 创建 流程图文件夹
   * @router post flow-folders
