@@ -167,7 +167,7 @@ class DeviceTagsController extends BaseController {
       // { header: '设备ID', key: 'device_id', width: 10 },
       // { header: '点名', key: 'tag', width: 50 },
       { header: '属性名', key: 'name', width: 50 },
-      { header: '值类型(1:int;2:float;3:int;4:string)', key: 'type', width: 30 },
+      { header: '值类型(1:int;2:float;4:string)', key: 'type', width: 30 },
       { header: '描述', key: 'desc', width: 50 },
       { header: '单位', key: 'unit', width: 30 },
       { header: '值范围', key: 'range', width: 60 },
@@ -179,7 +179,11 @@ class DeviceTagsController extends BaseController {
     ];
     for (const row of results) {
       let data = row.toJSON();
-      let tagnameArr = data.tagname.split('\\');
+      // console.log('row=======================', row);
+      let tagnameArr = [ '', '', '' ];
+      if (data.tagname) {
+        tagnameArr = data.tagname.split('\\');
+      }
       data = {
         ...data,
         channel_name: tagnameArr[0],
@@ -242,7 +246,11 @@ class DeviceTagsController extends BaseController {
     let createArr = [];
     addArr.forEach(item => {
       if (!failDataNames.includes(item['属性名'])) {
-        createArr.push(item);
+        if (item['属性名'].length > 20) {
+          failArr.push(item);
+        } else {
+          createArr.push(item);
+        }
       } else {
         failArr.push(item);
       }

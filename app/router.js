@@ -190,6 +190,8 @@ module.exports = app => {
   router.put(`${apiV1}/device-model-tags/:id`, controller.v1.deviceModelTags.update);
   router.get(`${apiV1}/device-model-tags`, controller.v1.deviceModelTags.findAll);
   router.delete(`${apiV1}/device-model-tags/:id`, controller.v1.deviceModelTags.destroy);
+  router.get(`${apiV1}/device-models/:model_id/export-attrs`, controller.v1.deviceModelTags.exportAttrs);
+  router.post(`${apiV1}/device-models/:model_id/import-attrs`, controller.v1.deviceModelTags.importAttrs);
 
   // 设备绑定点位
   router.post(`${apiV1}/device-tags`, controller.v1.deviceTags.create);

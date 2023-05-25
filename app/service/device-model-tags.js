@@ -35,6 +35,11 @@ class DeviceModelTagsService extends Service {
     return await ctx.model.DeviceModelTags.create(payload);
   }
 
+  async bulkCreate(arr) {
+    const { ctx } = this;
+    return await ctx.model.DeviceModelTags.bulkCreate(arr);
+  }
+
   async update(payload) {
     const { ctx } = this;
     return await ctx.model.DeviceModelTags.update(payload, { where: { id: payload.id } });
