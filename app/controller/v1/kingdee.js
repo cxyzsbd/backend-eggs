@@ -118,11 +118,13 @@ class KingdeeController extends BaseController {
           // 更新登录时间
           await service.users.update({ id: user_id, last_login });
           await app.utils.tools.redisCacheUserinfo(user_id);
+          ctx.rotateCsrfSecret();
           this.SUCCESS({
             access_token: accessToken,
             refresh_token,
             is_super_user,
             expire_time: expires_in,
+            csrf_token: ctx.csrf,
             kingdee_access_token: access_token,
           });
           return false;
@@ -248,7 +250,7 @@ class KingdeeController extends BaseController {
         ctx.logger.error(err);
         return false;
       });
-      console.log('res===============', res);
+      ctx.logger.error('金蝶登出结果===============', res);
       this.SUCCESS(res);
     } catch (error) {
       ctx.logger.error(error);

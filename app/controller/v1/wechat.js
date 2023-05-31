@@ -37,9 +37,11 @@ class MiniProgramController extends BaseController {
     const last_login = app.utils.tools.dayjs().format('YYYY-MM-DD HH:mm:ss');
     // 更新登录时间
     await service.users.update({ id: wx_user.user_id, last_login });
+    ctx.rotateCsrfSecret();
     this.SUCCESS({
       access_token,
       refresh_token,
+      csrf_token: ctx.csrf,
       userinfo: {
         username,
         email,

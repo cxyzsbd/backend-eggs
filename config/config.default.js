@@ -20,6 +20,28 @@ module.exports = appInfo => {
    **/
   const config = (exports = {});
 
+  config.security = {
+    csrf: {
+      enable: false,
+      ignoreJSON: false, // 可选，设置是否忽略 JSON 请求，默认为 false
+      headName: 'x-csrf-token',
+      tokenMaxAge: 10,
+      ignore: [
+        '/api/v1/users/login',
+        // '/api/v1/users/refresh-token',
+        '/api/v1/wx-mini/login',
+        '/api/v1/wx-mini/bind',
+        '/api/v1/alarms',
+        '/api/v1/kingdee/validate-user',
+        '/api/v1/visual-shares/*/details',
+        '/api/v1/visual-shares/*/configs',
+        '/api/v1/visual-shares/*/data',
+        '/api/v1/device-tag-datas',
+        '/api/v1/event-work-orders',
+      ],
+    },
+  };
+
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1670465853068_2903';
 
@@ -109,7 +131,7 @@ module.exports = appInfo => {
       version: '2.0.0',
     },
     schemes: [ 'http' ],
-    enable: false,
+    enable: process.env.NODE_ENV === 'development',
     routerMap: false,
     securityDefinitions: {
       apikey: {

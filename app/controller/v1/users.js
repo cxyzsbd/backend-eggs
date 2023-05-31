@@ -194,7 +194,7 @@ class UsersController extends BaseController {
     ctx.validate(ctx.rule.userLoginBodyReq, ctx.request.body);
     // 判断用户是否存在
     const user = await service.users.findOne({ username }, []);
-    console.log('user=============', user);
+    // console.log('user=============', user);
     if (!user) {
       this.BAD_REQUEST({ message: '用户不存在' });
       return false;
@@ -228,6 +228,7 @@ class UsersController extends BaseController {
     // 更新登录时间
     await service.users.update({ id, last_login });
     await app.utils.tools.redisCacheUserinfo(id);
+    ctx.rotateCsrfSecret();
     // if (Number(is_configer) === 1) {
     //   defaultRedis.set(`${CONFIGER_PREFIX}${user.id}`, 1);
     //   defaultRedis.expire(`${CONFIGER_PREFIX}${user.id}`, CONFIGER_CHECK_TIME);
@@ -236,6 +237,7 @@ class UsersController extends BaseController {
       access_token,
       refresh_token,
       is_super_user,
+      csrf_token: ctx.csrf,
       expire_time: app.config.jwt.expire,
     });
   }
@@ -267,9 +269,11 @@ class UsersController extends BaseController {
         // 校验通过,下发新token
         const access_token = app.jwt.sign({ user_id: decoded.user_id, type: 'access_token', is_super_user: decoded.is_super_user, is_configer: decoded.is_configer }, secret, { expiresIn: expire });
         const refresh_token = app.jwt.sign({ user_id: decoded.user_id, type: 'refresh_token', is_super_user: decoded.is_super_user, is_configer: decoded.is_configer }, secret, { expiresIn: refresh_expire });
+        ctx.rotateCsrfSecret();
         this.SUCCESS({
           access_token,
           refresh_token,
+          csrf_token: ctx.csrf,
           is_super_user: decoded.is_super_user,
           expire_time: app.config.jwt.expire,
         });
