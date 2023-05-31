@@ -6,6 +6,9 @@
 module.exports = app => {
   const { router, controller } = app;
   const visualSharesVerify = app.middleware.visualSharesVerify();
+  const desensitize = options => {
+    return app.middleware.desensitize(options);
+  };
   const apiV1 = '/api/v1';
   router.get('/', controller.home.index);
   router.redirect('/doc', '/swagger-ui.html', 302);
@@ -19,7 +22,7 @@ module.exports = app => {
   router.post(`${apiV1}/users/update-psw`, controller.v1.users.updatePassword);
   router.delete(`${apiV1}/users/:id`, controller.v1.users.destroy);
   router.get(`${apiV1}/users/:id`, controller.v1.users.findOne);
-  router.get(`${apiV1}/users`, controller.v1.users.findAll);
+  router.get(`${apiV1}/users`, desensitize({ fields: [{ field: 'phone', rule: 'phone' }, { field: 'email', rule: 'email' }], res_name: 'data' }), controller.v1.users.findAll);
   router.get(`${apiV1}/user-info`, controller.v1.users.getInfo);
   router.get(`${apiV1}/user-menus`, controller.v1.users.getMenus);
   router.get(`${apiV1}/permissions/:id/users`, controller.v1.users.getUsersByPermission);
@@ -287,7 +290,7 @@ module.exports = app => {
   router.delete(`${apiV1}/user-screens/:id`, controller.v1.userScreens.destroy);
 
   // 操作记录
-  router.get(`${apiV1}/operation-records`, controller.v1.operationRecords.findAll);
+  router.get(`${apiV1}/operation-records`, desensitize({ fields: [{ field: 'phone', rule: 'phone', unit_name: 'request_body' }, { field: 'email', rule: 'email', unit_name: 'request_body' }, { field: 'share_pass', rule: 'all', unit_name: 'request_body' }], res_name: 'data' }), controller.v1.operationRecords.findAll);
   router.delete(`${apiV1}/operation-records/:id`, controller.v1.operationRecords.destroy);
 
   // 统计

@@ -29,6 +29,63 @@ module.exports = class Tools {
     this.XLSX = XLSX;
   }
 
+  /**
+   * 通用敏感数据脱敏函数
+   * @param {*} value 脱敏目标
+   * @param {*} type 脱敏类型
+   * @return 结果
+   */
+  async desensitize(value, type = 'str') {
+    // console.log(value, type);
+    // 脱敏手机号，保留前三位和后四位，中间用 * 替代
+    function desensitizePhone(phone) {
+      return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+    }
+
+    // 脱敏邮箱，将邮箱名部分替换为 *，保留域名
+    function desensitizeEmail(email) {
+      const atIndex = email.indexOf('@');
+      const name = email.substring(0, atIndex);
+      const domain = email.substring(atIndex + 1);
+      return `${desensitizeString(name)}@${domain}`;
+    }
+
+    // 脱敏字符串，保留首尾字符，中间用 * 替代
+    function desensitizeString(str) {
+      const len = str.length;
+      if (len <= 2) {
+        return str.replace(/./g, '*');
+      }
+      const firstChar = str.charAt(0);
+      const lastChar = str.charAt(len - 1);
+      const middleChars = '*'.repeat(len - 2);
+      return `${firstChar}${middleChars}${lastChar}`;
+    }
+
+    function desensitizeAll(value) {
+      return '*'.repeat(value.length);
+    }
+    let res = '';
+    switch (type) {
+      case 'str':
+        res = desensitizeString(value);
+        break;
+      case 'phone':
+        res = desensitizePhone(value);
+        break;
+      case 'email':
+        res = desensitizeEmail(value);
+        break;
+      case 'all':
+        res = desensitizeAll(value);
+        break;
+      default:
+        res = desensitizeString(value);
+        break;
+    }
+    return res;
+  }
+
   // 有智同步用户和角色
   async youzhi_async_users() {
     const { ctx, globalConfig: { YOUZHI_REQUEST_URL } } = this;
