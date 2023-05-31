@@ -7,22 +7,34 @@ class _objectName_Service extends Service {
   async findAll(payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
-    const Order = [];
+    let where = payload.where;
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.Permissions.count({ where });
-    const data = await ctx.model.Permissions.findAll({
-      limit: pageSize,
-      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+    let tempObj = {
       where,
       order: Order,
-    });
-    return {
+    };
+    if (pageSize > 0) {
+      tempObj = {
+        ...tempObj,
+        limit: pageSize,
+        offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+      };
+    }
+    const data = await ctx.model.Permissions.findAll(tempObj);
+    let resObj = {
       data,
-      pageNumber,
-      pageSize,
       total,
     };
+    if (pageSize > 0) {
+      resObj = {
+        ...resObj,
+        pageNumber,
+        pageSize,
+      };
+    }
+    return resObj;
   }
 
   async findOne(id) {

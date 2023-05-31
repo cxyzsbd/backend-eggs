@@ -12,6 +12,6 @@
 	"should be one of %s": "应该是%s",
 	"should be an array": "应该是数组",
 	"should be an object": "应该是对象",
-	"should be a string": "should be a string",
-	"should smaller than %s": "should smaller than %s"
+	"should be a string": "应该是字符串",
+	"should smaller than %s": "应该小于 %s"
 }

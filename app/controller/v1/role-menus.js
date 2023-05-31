@@ -19,11 +19,17 @@ class RoleMenusController extends BaseController {
    */
   async findAll() {
     const { ctx, service } = this;
+    const params = ctx.query;
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.role_menuPutBodyReq,
-      queryOrigin: ctx.query,
+      queryOrigin: params,
     });
     ctx.validate(allRule, query);
+    const { role_id, pageSize } = params;
+    if (!role_id && pageSize <= 0) {
+      this.BAD_REQUEST({ message: '分页参数错误' });
+      return false;
+    }
     const res = await service.roleMenus.findAll(query);
     this.SUCCESS(res);
   }

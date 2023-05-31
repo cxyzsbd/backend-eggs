@@ -19,11 +19,17 @@ class RolePermissionsController extends BaseController {
    */
   async findAll() {
     const { ctx, service } = this;
+    const params = ctx.query;
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.role_permissionPutBodyReq,
-      queryOrigin: ctx.query,
+      queryOrigin: params,
     });
     ctx.validate(allRule, query);
+    const { role_id, pageSize } = params;
+    if (!role_id && pageSize <= 0) {
+      this.BAD_REQUEST({ message: '分页参数错误' });
+      return false;
+    }
     const res = await service.rolePermissions.findAll(query);
     this.SUCCESS(res);
   }
@@ -54,8 +60,8 @@ class RolePermissionsController extends BaseController {
     // console.log(123123);
     ctx.validate(ctx.rule.role_permissionBodyReq, ctx.request.body);
     await service.rolePermissions.create(ctx.request.body);
-    //将所有权限数据缓存到redis
-    await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions')
+    // 将所有权限数据缓存到redis
+    await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
     this.CREATED();
   }
 
@@ -82,8 +88,8 @@ class RolePermissionsController extends BaseController {
       this[res._wrong_code]();
       return false;
     }
-    //将所有权限数据缓存到redis
-    await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions')
+    // 将所有权限数据缓存到redis
+    await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
     res && res[0] !== 0 ? this.SUCCESS() : this.NOT_FOUND();
   }
 
@@ -98,8 +104,8 @@ class RolePermissionsController extends BaseController {
     const { ctx, service, app } = this;
     ctx.validate(ctx.rule.role_permissionDelBodyReq, ctx.request.body);
     const res = await service.rolePermissions.destroy(ctx.request.body);
-    //将所有权限数据缓存到redis
-    await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions')
+    // 将所有权限数据缓存到redis
+    await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
@@ -113,7 +119,7 @@ class RolePermissionsController extends BaseController {
    * @request body string *type ex:"delete" 操作类型
    */
   async bulkPremissions() {
-    const {ctx, app} = this
+    const { ctx, app } = this;
     const rule = {
       role_id: ctx.rule.role_permissionBodyReq.role_id,
       permission_ids: {
@@ -135,13 +141,13 @@ class RolePermissionsController extends BaseController {
     switch (params.type) {
       case 'create':
         await ctx.service.rolePermissions.bulkCreatePremissions(params);
-        //将所有权限数据缓存到redis
+        // 将所有权限数据缓存到redis
         await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
         this.CREATED();
         break;
       case 'delete':
         await ctx.service.rolePermissions.bulkDeletePermissions(params);
-        //将所有权限数据缓存到redis
+        // 将所有权限数据缓存到redis
         await app.utils.tools.redisCachePublic('permissions', 0, 'permissions', 'Permissions');
         this.NO_CONTENT();
         break;

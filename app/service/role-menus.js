@@ -6,23 +6,33 @@ const { Op } = require('sequelize');
 class _objectName_Service extends Service {
   async findAll(payload) {
     const { ctx } = this;
-    const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
-    const Order = [];
+    const { pageSize, pageNumber, prop_order, order, role_id = null } = payload;
+    let where = payload.where;
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const total = await ctx.model.RoleMenus.count({ where });
-    const data = await ctx.model.RoleMenus.findAll({
-      // limit: pageSize,
-      // offset: (pageSize* (pageNumber - 1))>0?(pageSize* (pageNumber - 1)) : 0,
+    let tempObj = {
       where,
       order: Order,
-    });
-    return {
-      data,
-      // pageNumber,
-      // pageSize,
-      total,
+      limit: pageSize,
+      offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
     };
+    if (pageSize < 0 && role_id) {
+      delete tempObj.limit;
+      delete tempObj.offset;
+    }
+    const data = await ctx.model.RoleMenus.findAll(tempObj);
+    let resObj = {
+      data,
+      total,
+      pageNumber,
+      pageSize,
+    };
+    if (pageSize < 0 && role_id) {
+      delete resObj.pageNumber;
+      delete resObj.pageSize;
+    }
+    return resObj;
   }
 
   async findOne(id) {

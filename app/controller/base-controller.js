@@ -113,6 +113,7 @@ class BaseController extends Controller {
         type: 'number',
         required: false,
         default: 20,
+        max: 100,
       },
       pageNumber: {
         type: 'number',
