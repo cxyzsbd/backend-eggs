@@ -38,6 +38,10 @@ module.exports = appInfo => {
         '/api/v1/visual-shares/*/data',
         '/api/v1/device-tag-datas',
         '/api/v1/event-work-orders',
+        '/api/v1/cpp-forward/*',
+        '/api/v1/data-forward/*',
+        '/api/v1/box-data/*',
+        '/api/v1/event-work-orders',
       ],
     },
   };
