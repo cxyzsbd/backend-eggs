@@ -131,10 +131,22 @@ class devicesController extends BaseController {
       this.BAD_REQUEST({ message: '该站点下已存在同名设备，不能重复添加' });
       return false;
     }
-    const { id, company_id, creator, station_id, model_id } = await service.devices.modelToDevice(params);
+    let data = await service.devices.modelToDevice(params);
+    if (data) {
+      delete data.create_at;
+      delete data.update_at;
+    }
     await app.utils.tools.setAttrsRedisCache();
     await app.utils.tools.setDevicesCache();
-    this.CREATED({ data: { id, company_id, creator, station_id, model_id }, message: '成功' });
+    const stations = JSON.parse(await app.utils.tools.getStationsCache());
+    data = {
+      station_info: null,
+      ...data,
+    };
+    if (stations && stations.length) {
+      data.station_info = (stations.filter(item => Number(item.id) === Number(params.station_id)))[0];
+    }
+    this.CREATED({ data, message: '成功' });
   }
 }
 
