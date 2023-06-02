@@ -13,7 +13,6 @@ const quarterOfYear = require('dayjs/plugin/quarterOfYear');
 dayjs.extend(quarterOfYear);
 const globalConfig = require('../../global.config');
 const Excel = require('exceljs');
-const XLSX = require('xlsx');
 module.exports = class Tools {
   constructor(app) {
     this.app = app;
@@ -26,7 +25,6 @@ module.exports = class Tools {
     this.uuidv4 = uuidv4;
     this.globalConfig = globalConfig;
     this.Excel = Excel;
-    this.XLSX = XLSX;
   }
 
   /**
