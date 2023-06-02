@@ -22,13 +22,13 @@ module.exports = appInfo => {
 
   config.security = {
     csrf: {
-      enable: false,
+      enable: true,
       ignoreJSON: false, // 可选，设置是否忽略 JSON 请求，默认为 false
       headName: 'x-csrf-token',
       tokenMaxAge: 10,
       ignore: [
         '/api/v1/users/login',
-        // '/api/v1/users/refresh-token',
+        '/api/v1/users/refresh-token',
         '/api/v1/wx-mini/login',
         '/api/v1/wx-mini/bind',
         '/api/v1/alarms',
