@@ -235,6 +235,11 @@ module.exports = app => {
   router.get(`${apiV1}/stations/:id`, controller.v1.stations.findOne);
   router.delete(`${apiV1}/stations/:id`, controller.v1.stations.destroy);
 
+  // 站点流程图工程
+  router.get(`${apiV1}/station/:station_id/flow-folders`, controller.v1.stationFlowFolders.findOne);
+  router.post(`${apiV1}/station/:station_id/flow-folders`, controller.v1.stationFlowFolders.bind);
+  router.delete(`${apiV1}/station/:station_id/flow-folders`, controller.v1.stationFlowFolders.destroy);
+
   // 文件
   router.post(`${apiV1}/files`, controller.v1.files.upload);
 
