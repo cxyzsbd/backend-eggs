@@ -131,7 +131,8 @@ class devicesController extends BaseController {
       this.BAD_REQUEST({ message: '该站点下已存在同名设备，不能重复添加' });
       return false;
     }
-    let data = await service.devices.modelToDevice(params).get({ plain: true });
+    let data = await service.devices.modelToDevice(params);
+    data = data.toJSON();
     if (data) {
       delete data.create_at;
       delete data.update_at;
