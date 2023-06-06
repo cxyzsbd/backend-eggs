@@ -291,7 +291,6 @@ class UserService extends Service {
     });
     data = app.utils.tools.lodash.uniqWith(arr, (a, b) => a.id === b.id);
     data = data.sort((a, b) => b.sort - a.sort);
-    data = data.filter(item => item.id != 80 && item.parent_id != 80);
     return data;
   }
 
