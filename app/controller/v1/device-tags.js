@@ -201,12 +201,13 @@ class DeviceTagsController extends BaseController {
   }
 
   async importAttrs() {
-    const { ctx, app } = this;
+    const { ctx, app, service } = this;
     const { company_id } = ctx.request.header;
     const { device_id } = ctx.params;
+    const { is_cover = 1 } = ctx.query;
     const headerMap = {
       属性名: 'name',
-      '值类型(1:int;2:float;3:int;4:string)': 'type',
+      '值类型(1:int;2:float;4:string)': 'type',
       描述: 'desc',
       单位: 'unit',
       值范围: 'range',
@@ -216,26 +217,53 @@ class DeviceTagsController extends BaseController {
       点名: 'tag_name',
     };
     const fileStream = await ctx.getFileStream();
-    const buffer = await app.utils.tools.streamToBuffer(fileStream);
-    const workbook = app.utils.tools.XLSX.read(buffer);
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    let data = app.utils.tools.XLSX.utils.sheet_to_json(sheet);
+    const workbook = new app.utils.tools.Excel.Workbook();
+    await workbook.xlsx.read(fileStream);
+    const worksheet = workbook.getWorksheet(1); // 获取第一个工作表
+    let data = [];
+    worksheet.eachRow((row, rowNumber) => {
+      // 逐行读取数据
+      let rowData = {};
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        // 逐列读取数据
+        const cellValue = cell.value;
+        const cellKey = worksheet.getCell(1, colNumber).value; // 假设第一行是表头
+        rowData[cellKey] = cellValue;
+      });
+      // 将当前行的数据添加到JSON数组中
+      if (rowNumber !== 1) { // 跳过表头行
+        data.push(rowData);
+      }
+    });
+    console.log('data=====================', data);
     let failArr = [];
     let addArr = [];
     let names = [];
+    // 返回每条失败数据的失败原因
+    // 1：excel表内重复;2：属性已存在（is_cover=0）;3:服务端错误，插入失败
     data.forEach(item => {
-      if (!names.includes(item['属性名'])) {
-        names.push(item['属性名']);
-        addArr.push(item);
+      if (!item['属性名'] || !item['属性名'].length) {
+        failArr.push({
+          ...item,
+          fail_reason: '无属性名',
+        });
       } else {
-        failArr.push(item);
+        if (!names.includes(item['属性名'])) {
+          names.push(item['属性名']);
+          addArr.push(item);
+        } else {
+          failArr.push({
+            ...item,
+            fail_reason: '表内重复',
+          });
+        }
       }
     });
     let addnames = addArr.map(item => item['属性名']);
     const failDatas = await ctx.model.DeviceTags.findAll({
       where: {
-        device_id,
         company_id,
+        device_id,
         name: {
           [Op.in]: addnames,
         },
@@ -244,34 +272,101 @@ class DeviceTagsController extends BaseController {
     });
     const failDataNames = failDatas.map(item => item.name);
     let createArr = [];
+    let updateArr = [];
     addArr.forEach(item => {
       if (!failDataNames.includes(item['属性名'])) {
         if (item['属性名'].length > 20) {
-          failArr.push(item);
+          failArr.push({
+            ...item,
+            fail_reason: '属性名长度不符合规则',
+          });
         } else {
           createArr.push(item);
         }
       } else {
-        failArr.push(item);
+        if (Number(is_cover) === 1) {
+          const { id = null } = (failDatas.filter(f => f.name === item['属性名']))[0];
+          if (id) {
+            updateArr.push({
+              ...item,
+              id,
+            });
+          }
+        } else {
+          failArr.push({
+            ...item,
+            fail_reason: '属性已存在',
+          });
+        }
       }
     });
-    let rows = createArr.map(item => {
-      let temp = { device_id, company_id };
-      Object.keys(item).forEach(key => {
-        temp[headerMap[key]] = item[key];
-      });
-      if (item['通道'] && item['设备'] && item['点名']) {
+    console.log('updateArr============', updateArr);
+    let create_res = [];
+    let update_res = [];
+    if (createArr && createArr.length) {
+      let createRows = createArr.map(item => {
+        let temp = { device_id: Number(device_id), company_id: Number(company_id) };
+        Object.keys(item).forEach(key => {
+          temp[headerMap[key]] = item[key];
+        });
         delete temp.channel_name;
         delete temp.device_name;
         delete temp.tag_name;
-        temp.tagname = `${item['通道']}\\${item['设备']}\\${item['点名']}`;
-      }
-      return temp;
-    });
-    const res = await this.service.deviceTags.bulkCreate(rows);
-    console.log('rows=======', rows);
+        if (item['通道'] && item['设备'] && item['点名']) {
+          temp.tagname = `${item['通道']}\\${item['设备']}\\${item['点名']}`;
+        } else {
+          delete temp.tagname;
+        }
+        return temp;
+      });
+      create_res = await service.deviceTags.bulkCreate(createRows);
+    }
+    if (updateArr && updateArr.length) {
+      updateArr.forEach(async item => {
+        console.log('item', item);
+        let temp = { device_id: Number(device_id), id: Number(item.id), company_id: Number(company_id) };
+        Object.keys(item).forEach(key => {
+          console.log('key', key);
+          console.log('headerMap[key]', headerMap[key]);
+          if (headerMap[key]) {
+            temp[headerMap[key]] = item[key];
+          }
+        });
+        let tempArr = [];
+        if (item['通道']) {
+          tempArr.push(item['通道']);
+        }
+        if (item['设备']) {
+          tempArr.push(item['设备']);
+        }
+        if (item['点名']) {
+          tempArr.push(item['点名']);
+        }
+        delete temp.channel_name;
+        delete temp.device_name;
+        delete temp.tag_name;
+        temp.tagname = tempArr.join('\\');
+        console.log('temp===============', temp);
+        // 对比更新数据和已存在的数据是否相同
+        const d = (failDatas.filter(f => f.id === temp.id))[0];
+        delete d.tag;
+        console.log('d============', d);
+        if (app.utils.tools.lodash.isEqual(d, temp)) {
+          console.log(2);
+          failArr.push({
+            ...item,
+            fail_reason: '没有更改',
+          });
+        } else {
+          console.log(1);
+          update_res.push(item);
+        }
+        await service.deviceTags.update(temp);
+      });
+    }
     this.SUCCESS({
-      success: res,
+      create_res,
+      update_res,
       fail: failArr,
     });
   }
