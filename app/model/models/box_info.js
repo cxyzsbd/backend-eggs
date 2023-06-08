@@ -96,6 +96,15 @@ module.exports = app => {
       comment: '网关程序版本号',
       field: 'version',
     },
+    use_status: {
+      type: DataTypes.INTEGER(1),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '使用状态0：禁用 1：启用',
+      field: 'use_status',
+    },
     req_time: {
       type: DataTypes.DATE,
       allowNull: false,

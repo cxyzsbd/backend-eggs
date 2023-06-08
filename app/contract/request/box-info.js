@@ -50,6 +50,11 @@ const body = {
       type: 'number',
       required: false,
     },
+    use_status: {
+      type: 'number',
+      required: false,
+      description: '使用状态0：禁用 1：启用;2:所有',
+    },
   },
 };
 

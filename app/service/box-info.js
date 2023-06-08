@@ -9,7 +9,13 @@ class BoxInfoService extends Service {
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where.department = company_id;
-    const Order = [];
+    if (!where.use_status && where.use_status !== '0') {
+      where.use_status = 1;
+    }
+    if (Number(where.use_status) === 2) {
+      delete where.use_status;
+    }
+    let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.models.BoxInfo.count({ where });
     let tempObj = {
