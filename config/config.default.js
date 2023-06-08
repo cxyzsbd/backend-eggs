@@ -22,7 +22,7 @@ module.exports = appInfo => {
 
   config.security = {
     csrf: {
-      enable: true,
+      enable: false,
       ignoreJSON: false, // 可选，设置是否忽略 JSON 请求，默认为 false
       headName: 'x-csrf-token',
       tokenMaxAge: 10,
