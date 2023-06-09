@@ -13,6 +13,9 @@ module.exports = app => {
   router.get('/', controller.home.index);
   router.redirect('/doc', '/swagger-ui.html', 302);
 
+  // 系统
+  router.get(`${apiV1}/captcha`, controller.v1.systerm.getcaptcha);
+
   // 用户
   router.post(`${apiV1}/users/login`, controller.v1.users.login);
   router.post(`${apiV1}/users/refresh-token`, controller.v1.users.refreshToken);

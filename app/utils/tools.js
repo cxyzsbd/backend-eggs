@@ -27,6 +27,18 @@ module.exports = class Tools {
     this.Excel = Excel;
   }
 
+  // 解析token
+  async decodeTokenInfo(token, type) {
+    const { ctx } = this;
+    const secret = ctx.app.config.jwt.secret;
+    const decoded = ctx.app.jwt.verify(token, secret) || 'false';
+    let user = null;
+    if (decoded !== 'false' && decoded.type === type) {
+      user = await ctx.app.utils.tools.getRedisCacheUserinfo(decoded.user_id);
+    }
+    return user;
+  }
+
   /**
    * 通用敏感数据脱敏函数
    * @param {*} value 脱敏目标

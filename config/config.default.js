@@ -25,7 +25,6 @@ module.exports = appInfo => {
       enable: false,
       ignoreJSON: false, // 可选，设置是否忽略 JSON 请求，默认为 false
       headName: 'x-csrf-token',
-      tokenMaxAge: 10,
       ignore: [
         '/api/v1/users/login',
         '/api/v1/users/refresh-token',
@@ -41,7 +40,6 @@ module.exports = appInfo => {
         '/api/v1/cpp-forward/*',
         '/api/v1/data-forward/*',
         '/api/v1/box-data/*',
-        '/api/v1/event-work-orders',
       ],
     },
   };
@@ -76,6 +74,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/data',
       '/api/v1/device-tag-datas',
       '/api/v1/event-work-orders',
+      '/api/v1/captcha',
     ],
   };
   config.auth = {
@@ -87,6 +86,7 @@ module.exports = appInfo => {
       '/api/v1/visual-shares/*/data',
       '/api/v1/device-tag-datas',
       '/api/v1/event-work-orders',
+      '/api/v1/captcha',
     ],
   };
   config.validateSuperUser = {
@@ -115,6 +115,7 @@ module.exports = appInfo => {
       '/api/v1/box-data/his-data',
       '/api/v1/box-data/original-his-data',
       '/api/v1/event-work-orders',
+      '/api/v1/captcha',
     ],
   };
 

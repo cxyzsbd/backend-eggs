@@ -20,6 +20,9 @@ class AppBootHook {
   async willReady() {
     const { app } = this;
     // 所有的插件都已启动完毕，但是应用整体还未 ready
+    // 加载所有的校验规则
+    const directory = path.join(app.config.baseDir, 'app/validator');
+    app.loader.loadToApp(directory, 'validate');
     // 可以做一些数据初始化等操作，这些操作成功才会启动应用
     // const { IORedisUserKeyPrefix } = app.config;
     // const IORedis = app.redis.clients.get('io');
