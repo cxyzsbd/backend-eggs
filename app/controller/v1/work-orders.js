@@ -35,6 +35,11 @@ class WorkOrdersController extends BaseController {
         required: false,
         description: '创建人',
       },
+      create_at: {
+        type: 'string',
+        required: false,
+        description: '创建时间',
+      },
       approver: {
         type: 'number',
         required: false,
