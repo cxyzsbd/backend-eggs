@@ -307,6 +307,8 @@ module.exports = app => {
 
   // 报警
   router.post(`${apiV1}/alarms`, controller.v1.alarms.create);
+  // 事件推送
+  router.post(`${apiV1}/report-events`, controller.v1.alarms.reportEvents);
 
   // 校验金蝶用户
   router.get(`${apiV1}/kingdee/validate-user`, controller.v1.kingdee.validateUser);

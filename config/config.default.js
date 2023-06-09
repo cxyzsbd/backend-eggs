@@ -1,7 +1,6 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
-const { v4: uuidv4 } = require('uuid');
 const I18n = require('i18n');
 const {
   REDIS_CONFIG,
@@ -31,6 +30,7 @@ module.exports = appInfo => {
         '/api/v1/wx-mini/login',
         '/api/v1/wx-mini/bind',
         '/api/v1/alarms',
+        '/api/v1/report-events',
         '/api/v1/kingdee/validate-user',
         '/api/v1/visual-shares/*/details',
         '/api/v1/visual-shares/*/configs',
@@ -69,6 +69,7 @@ module.exports = appInfo => {
       '/api/v1/wx-mini/bind',
       '/api/v1/alarms',
       '/api/v1/kingdee/validate-user',
+      '/api/v1/report-events',
       '/api/v1/visual-shares/*/details',
       '/api/v1/visual-shares/*/configs',
       '/api/v1/visual-shares/*/data',
@@ -351,6 +352,7 @@ module.exports = appInfo => {
     socketUserPrefix: 'SOCKET_USER_ROOM_', // 单个用户房间
     IORedisUserKeyPrefix: 'SOCKET_USER_', // redis存用户socketId前缀
     ALARM_PUSH_EVENT_NAME: 'alarms', // 报警推送事件名
+    ATTR_EVENT_PUSH_NAME: 'attr_events', // 属性事件推送事件名
     NOTICE_PUSH_EVENT_NAME: 'notification', // 消息推送事件名
     CONFIGER_PREFIX: 'configer_', // 配置端用户前缀
     CONFIGER_CHECK_TIME: 90, // 配置端登录态校验存储时间
