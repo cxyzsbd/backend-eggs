@@ -98,6 +98,7 @@ class DataForwardController extends BaseController {
         data,
       }).catch(err => {
         console.log(err);
+        ctx.logger.error('CPP服务转发错误==============', err);
         return false;
       });
       // console.log('res==================', res);

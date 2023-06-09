@@ -34,8 +34,8 @@ const REDIS_CONFIG = {
   PASSWORD: process.env.LKYS_REDIS_PASSWORD,
 };
 const DATA_FORWARD_URL = `http://${process.env.LKYS_JAVAMQTT_HOST}:${process.env.LKYS_JAVAMQTT_PORT}/`;
-const CPP_FORWARD_URL = 'http://172.17.16.3:9999/';
-const YOUZHI_REQUEST_URL = 'http://124.222.168.174:28080/';
+const CPP_FORWARD_URL = `http://${process.env.LKYS_CALCENGINE_IP}:${process.env.LKYS_CALCENGINE_PORT}/`;
+const YOUZHI_REQUEST_URL = `http://${process.env.LKYS_YOUZHI_IP}:${process.env.LKYS_YOUZHI_PORT}/`;
 
 // const DB_CONFIG = {
 //   DATABASE1: 'lkys_new',
@@ -51,8 +51,8 @@ const YOUZHI_REQUEST_URL = 'http://124.222.168.174:28080/';
 //   PASSWORD: '',
 // };
 
-// // const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
-// const DATA_FORWARD_URL = 'http://192.168.20.222/';
+// const DATA_FORWARD_URL = 'http://42.192.189.220:30530/';
+// // const DATA_FORWARD_URL = 'http://192.168.20.222/';
 // const CPP_FORWARD_URL = 'http://192.168.1.107:9999/';
 // const YOUZHI_REQUEST_URL = 'http://124.222.168.174:28080/';
 
