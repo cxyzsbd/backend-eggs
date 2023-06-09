@@ -86,6 +86,7 @@ class DataForwardController extends BaseController {
       data.company_id = company_id;
       // console.log('departmentIds=============', departmentIds);
     }
+    ctx.logger.error('CPP服务转发==============', requestBaseUrl);
     try {
       const res = await ctx.curl(`${requestBaseUrl}api/v1/${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method,
@@ -101,6 +102,7 @@ class DataForwardController extends BaseController {
         ctx.logger.error('CPP服务转发错误==============', err);
         return false;
       });
+      ctx.logger.error('CPP服务转发结果==============', res);
       // console.log('res==================', res);
       if (!res) {
         this.SERVER_ERROR();
