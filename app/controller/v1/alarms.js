@@ -170,14 +170,15 @@ class alarmsController extends BaseController {
       ATTR_EVENT_PUSH_NAME,
     } = app.config;
     const rule = {
-      device_id: {
+      deviceId: {
         type: 'number',
         required: true,
       },
     };
     const params = { ...ctx.query, ...ctx.request.body };
     ctx.validate(rule, params);
-    const { device_id } = params;
+    const { deviceId } = params;
+    const device_id = deviceId;
     const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const allDevices = JSON.parse(await app.utils.tools.getDevicesCache());
     // 按照设备列表找到站点列表
