@@ -16,7 +16,7 @@ module.exports = () => {
     }
     const prefix = user.id || ip;
     let key = `captcha_count_vsv_${prefix}_${id}`;
-    const captchaCount = await commonRedis.get(key) || 0;
+    let captchaCount = await commonRedis.get(key) || 0;
     if (!id) {
       ctx.body = { message: '分享不存在' };
       ctx.status = 404;
@@ -60,6 +60,7 @@ module.exports = () => {
       // 校验通过时
       await commonRedis.del(captchakey);
       await commonRedis.del(key);
+      captchaCount = 0;
     }
     // 校验密码
     console.log('url===========', ctx.request.url);
