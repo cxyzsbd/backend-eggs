@@ -1,8 +1,22 @@
 {
   "extends": "eslint-config-egg",
   "root": true,
+  "env": {
+    "node": true,
+    "es6": true
+  },
   "rules": {
-    "prefer-const":0
+    "prefer-const": 0,
+    "no-unused-vars": "error", // 开启没有用过的变量检测
+    "semi": ["warn", "always"],
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "ignore",
+        "named": "always",
+        "asyncArrow": "always"
+      }
+    ]
     // "no-compare-neg-zero": "error",
     // "no-cond-assign": "error",
     // "no-constant-condition": "error",
