@@ -143,6 +143,7 @@ class MiniProgramController extends BaseController {
     const data = await XML2JSON.parseStringPromise(body.toString());
     const event = data.xml.Event[0];
     const FromUserName = data.xml.FromUserName[0];
+    // 关注事件（subscribe）：用户关注公众号触发的事件。
     if (event === 'subscribe') {
       // 关注
       const wx_user_info_res = await app.utils.wx.wxUserInfoByOpenid(FromUserName);
@@ -163,12 +164,20 @@ class MiniProgramController extends BaseController {
           unionid: wx_user_info.unionid,
         });
       }
-    } else {
+    }
+    // 取消关注事件（unsubscribe）：用户取消关注公众号触发的事件。
+    if (event === 'unsubscribe') {
+      ctx.logger.error('unsubscribe================', event);
       // 取消关注
       // console.log('openid2', FromUserName);
       await service.wechat.gh_unsubscribe(FromUserName);
     }
-
+    // 扫描带参二维码事件（SCAN）：用户扫描带有参数的二维码触发的事件。
+    // 上报地理位置事件（LOCATION）：用户上报地理位置信息触发的事件。
+    // 自定义菜单点击事件（CLICK）：用户点击自定义菜单触发的事件。
+    // 模板消息发送完成事件（TEMPLATESENDJOBFINISH）：模板消息发送完成后触发的事件。
+    // 点击菜单跳转链接事件（VIEW）：用户点击菜单跳转链接触发的事件。
+    // 群发消息发送完成事件（MASSSENDJOBFINISH）：群发消息发送完成后触发的事件
     ctx.body = 'success';
   }
 }
