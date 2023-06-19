@@ -136,7 +136,7 @@ module.exports = appInfo => {
       version: '2.0.0',
     },
     schemes: [ 'http' ],
-    enable: process.env.NODE_ENV === 'development',
+    enable: true,
     routerMap: false,
     securityDefinitions: {
       apikey: {
