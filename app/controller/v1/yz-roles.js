@@ -16,7 +16,7 @@ class YzRolesController extends BaseController {
   * @request query number pageNumber
   * @router get yz-roles
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.yzRolesPutBodyReq,
@@ -35,7 +35,7 @@ class YzRolesController extends BaseController {
   * @request query number pageNumber
   * @router get users/:user_id/yz-roles
   */
-  async findUserYzRoles() {
+  async findUserYzRoles () {
     const { ctx, service } = this;
     const params = ctx.params;
     const rule = {
@@ -56,7 +56,7 @@ class YzRolesController extends BaseController {
   * @router post users/:id/yz-roles
   * @request body saveUserYzRolesBodyReq
   */
-  async save() {
+  async save () {
     const { ctx, app } = this;
     const params = {
       ...ctx.params,

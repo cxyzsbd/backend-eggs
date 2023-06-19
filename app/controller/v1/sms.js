@@ -3,7 +3,7 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller sms sms
+* @--controller sms sms
 */
 
 class SMSController extends BaseController {
@@ -14,7 +14,7 @@ class SMSController extends BaseController {
   * @router post sms
   * @request body smsBodyReq
   */
-  async send() {
+  async send () {
     const { ctx, app } = this;
     const { portmapping_smscode_verify } = app.config;
     if (!portmapping_smscode_verify) {

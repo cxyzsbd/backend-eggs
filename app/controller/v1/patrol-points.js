@@ -3,7 +3,7 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller 巡点 patrol-points
+* @--controller 巡点 patrol-points
 */
 
 class PatrolPointsController extends BaseController {
@@ -16,7 +16,7 @@ class PatrolPointsController extends BaseController {
   * @request query number pageNumber
   * @router get patrol-points
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.patrolPointsPutBodyReq,
@@ -35,7 +35,7 @@ class PatrolPointsController extends BaseController {
   * @router get patrol-points/:sn
   * @request path string *sn eg:1
   */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.patrolPointsId, ctx.params);
     const res = await service.patrolPoints.findOne(ctx.params);
@@ -49,7 +49,7 @@ class PatrolPointsController extends BaseController {
   * @router post patrol-points
   * @request body patrolPointsBodyReq
   */
-  async create() {
+  async create () {
     const { ctx } = this;
     ctx.validate(ctx.rule.patrolPointsBodyReq, ctx.request.body);
     await ctx.service.patrolPoints.create(ctx.request.body);
@@ -64,7 +64,7 @@ class PatrolPointsController extends BaseController {
   * @request path string *sn eg:1
   * @request body patrolPointsPutBodyReq
   */
-  async update() {
+  async update () {
     const { ctx, service } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.patrolPointsPutBodyReq, params);
@@ -79,7 +79,7 @@ class PatrolPointsController extends BaseController {
   * @router delete patrol-points/:sn
   * @request path string *sn eg:1
   */
-  async destroy() {
+  async destroy () {
     const { ctx, service } = this;
     let params = ctx.params;
     ctx.validate(ctx.rule.patrolPointsId, params);

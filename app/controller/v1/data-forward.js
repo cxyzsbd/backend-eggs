@@ -3,7 +3,7 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller 数据转发接口 data-forward
+* @--controller 数据转发接口 data-forward
 */
 
 class DataForwardController extends BaseController {
@@ -14,7 +14,7 @@ class DataForwardController extends BaseController {
   * @router get data-forward/:url
   * @request path string *url eg:getboxlist
   */
-  async dataForward() {
+  async dataForward () {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     const requestBaseUrl = app.config.dataForwardBaseUrl;
@@ -68,7 +68,7 @@ class DataForwardController extends BaseController {
   * @router get cpp-forward/:url
   * @request path string *url eg:getboxlist
   */
-  async cppForward() {
+  async cppForward () {
     const { ctx, app } = this;
     const requestBaseUrl = app.config.cppForwardBaseUrl;
     const { method, url, header, body } = ctx.request;
@@ -125,7 +125,7 @@ class DataForwardController extends BaseController {
   * @router get api-forward/:url
   * @request path string *url eg:getboxlist
   */
-  async apiForward() {
+  async apiForward () {
     const { ctx, app } = this;
     const requestBaseUrl = app.config.dataForwardBaseUrl;
     const { method, url, header, body } = ctx.request;

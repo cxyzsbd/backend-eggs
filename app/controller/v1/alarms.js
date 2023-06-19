@@ -3,7 +3,7 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller 报警 alarms
+* @--controller 报警 alarms
 */
 
 class alarmsController extends BaseController {
@@ -14,7 +14,7 @@ class alarmsController extends BaseController {
   * @description 创建 对象
   * @router post alarms
   */
-  async create() {
+  async create () {
     const { ctx, app, service } = this;
     const { array_uniq } = app.utils.tools;
     const nsp = app.io.of('/');

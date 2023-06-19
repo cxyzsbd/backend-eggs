@@ -3,7 +3,7 @@
 const BaseController = require('../base-controller');
 
 /**
-* @controller 金蝶对接 kingdee
+* @--controller 金蝶对接 kingdee
 */
 
 class KingdeeController extends BaseController {
@@ -15,7 +15,7 @@ class KingdeeController extends BaseController {
   * @request query string *ch
   * @request query string *domain
   */
-  async validateUser() {
+  async validateUser () {
     const { ctx, app, service } = this;
     ctx.logger.warn('金蝶校验用户', ctx.request);
     ctx.logger.warn('金蝶校验用户body', ctx.request.body);
@@ -181,7 +181,7 @@ class KingdeeController extends BaseController {
   * @router post kingdee/synchronize-user
   * @request body kingdeeAddUserBodyReq
   */
-  async synchronizeUser() {
+  async synchronizeUser () {
     const { ctx, app, service } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.kingdeeAddUserBodyReq, params);
@@ -206,7 +206,7 @@ class KingdeeController extends BaseController {
   * @request query string *ch
   * @request query string *domain
   */
-  async logout() {
+  async logout () {
     const { ctx, app, service } = this;
     ctx.logger.warn('金蝶用户登出', ctx.request);
     ctx.logger.warn('金蝶用户登出query', ctx.query);

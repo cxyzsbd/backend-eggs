@@ -6,7 +6,7 @@ const XML2JSON = require('xml2js');
  * @controller 微信小程序
  */
 class MiniProgramController extends BaseController {
-  async getAccessToken() {
+  async getAccessToken () {
     const { app } = this;
     const res = await app.utils.wx.getWxAccessToken();
     this.SUCCESS(res);
@@ -18,7 +18,7 @@ class MiniProgramController extends BaseController {
    * @router post wx-mini/login
    * @request body wxLoginCodeReq
    */
-  async login() {
+  async login () {
     const { ctx, app, service } = this;
     ctx.validate(ctx.rule.wxLoginCodeReq, ctx.request.body);
     // 获取openid和unionid
@@ -61,7 +61,7 @@ class MiniProgramController extends BaseController {
    * @router post wx-mini/bind
    * @request body wxBindBodyReq
    */
-  async bind() {
+  async bind () {
     const { ctx, app, service } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.wxBindBodyReq, params);
@@ -121,7 +121,7 @@ class MiniProgramController extends BaseController {
    *    }
    *  }
    */
-  async subscribe() {
+  async subscribe () {
     const { ctx, app, service } = this;
     const params = ctx.request.query;
     const TOKEN = 'linhoon';

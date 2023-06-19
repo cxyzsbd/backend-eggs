@@ -66,7 +66,7 @@ class BoxDataController extends BaseController {
   * @request query number user_id "用户id，如果无token方式下必传"
   * @request body boxDataBodyReq
   */
-  async dataAndAlarm() {
+  async dataAndAlarm () {
     // console.time('dataAndAlarm');
     const { ctx, app } = this;
     const downloadDataBodyReq = {
