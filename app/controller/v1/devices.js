@@ -221,7 +221,7 @@ class devicesController extends BaseController {
     let failArr = [];
     let addArr = [];
     params.forEach(item => {
-      if (deviceNames.includes(item.name)) {
+      if (!deviceNames.includes(item.name)) {
         addArr.push(item);
       } else {
         failArr.push({
