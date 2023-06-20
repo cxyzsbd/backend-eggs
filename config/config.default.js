@@ -184,7 +184,7 @@ module.exports = appInfo => {
   config.validate = {
     convert: true,
     // widelyUndefined:true,
-    translate() {
+    translate () {
       const args = Array.prototype.slice.call(arguments);
       return I18n.__.apply(I18n, args);
     },
