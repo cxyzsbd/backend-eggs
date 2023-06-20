@@ -65,13 +65,14 @@ class StationsService extends Service {
   }
 
   async create(payload) {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const { company_id, request_user } = ctx.request.header;
     payload = {
       ...payload,
       creator: request_user,
       company_id,
     };
+    payload.id = await app.utils.tools.SnowFlake();
     return await ctx.model.Stations.create(payload);
   }
 
@@ -92,7 +93,7 @@ class StationsService extends Service {
         where: { id }, transaction,
       });
       if (res) {
-        const devices = allDevices.filter(item => Number(item.station_id) === Number(id));
+        const devices = allDevices.filter(item => item.station_id == id);
         const deviceIds = devices.map(item => item.id);
         if (deviceIds && deviceIds.length) {
           await ctx.model.Devices.destroy({

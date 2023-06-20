@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 const { Op, Sequelize } = require('sequelize');
 
 class EquipmentAccountsService extends Service {
-  async findAll(payload, queryOrigin) {
+  async findAll (payload, queryOrigin) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
     const { st, et } = queryOrigin;
@@ -38,12 +38,12 @@ class EquipmentAccountsService extends Service {
     };
   }
 
-  async findOne(payload) {
+  async findOne (payload) {
     const { ctx } = this;
     return await ctx.model.EquipmentAccounts.findOne({ where: payload });
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     payload.id = await app.utils.tools.SnowFlake();
@@ -52,17 +52,17 @@ class EquipmentAccountsService extends Service {
     return await ctx.model.EquipmentAccounts.create(payload);
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     return await ctx.model.EquipmentAccounts.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     return await ctx.model.EquipmentAccounts.destroy({ where: { id: payload.id } });
   }
 
-  async operationRecords(payload, queryOrigin) {
+  async operationRecords (payload, queryOrigin) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order, id } = payload;
     const { st, et } = queryOrigin;

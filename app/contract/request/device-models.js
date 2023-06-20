@@ -2,7 +2,7 @@
 
 const body = {
   deviceModelsId: {
-    id: { type: 'number', required: true, description: 'id' },
+    id: { type: 'string', max: 20, required: true, description: 'id' },
   },
   deviceModelsBodyReq: {
     name: {

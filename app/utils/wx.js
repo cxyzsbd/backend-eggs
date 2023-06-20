@@ -1,43 +1,60 @@
 const dayjs = require('dayjs');
 const envConfig = require('../../global.config');
 module.exports = class wxTools {
-  constructor(app) {
+  constructor (app) {
     this.app = app;
     this.ctx = app.createAnonymousContext();
   }
 
-  async getWxAccessToken(invalid_token = false) {
+  async getWxAccessToken (invalid_token = false, type = 'xcx') {
+    console.log('type==============================', type);
     const { ctx, app } = this;
-    const { APPID, APP_SECRET } = envConfig.WX_XCX_CONFIG;
+    // ctx.logger.error('type==============================', type);
+    const ioRedis = app.redis.clients.get('io');
+    const config =
+      type === 'xcx' ? envConfig.WX_XCX_CONFIG : envConfig.WX_GZH_CONFIG;
+    const { APPID, APP_SECRET, REDIS_ACCESS_TOKEN_KEY } = config;
+    // ctx.logger.error('config==============================', config);
     if (!APPID || !APP_SECRET) {
       return false;
     }
-    const { REDIS_ACCESS_TOKEN_KEY } = envConfig.WX_GZH_CONFIG;
     if (!invalid_token) {
       // 先从redis拿
-      const access_token = await app.redis.get(REDIS_ACCESS_TOKEN_KEY);
+      const access_token = await ioRedis.get(REDIS_ACCESS_TOKEN_KEY);
+      // ctx.logger.error('access_token======================', access_token);
       // redis有则直接返回，没有就请求微信接口
       if (access_token) {
         return { access_token };
       }
+      return this.getWxAccessToken(true, type);
     }
-    const res = await ctx.curl(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APP_SECRET}`, {
-      dataType: 'json',
-    });
+    const res = await ctx.curl(
+      `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APP_SECRET}`,
+      {
+        dataType: 'json',
+      }
+    );
+    // ctx.logger.error('access_token接口返回-==================', res);
     // 将access_token存到redis
     if (res.data && res.data.access_token && res.data.expires_in) {
-      await app.redis.set(REDIS_ACCESS_TOKEN_KEY, res.data.access_token);
-      await app.redis.expire(REDIS_ACCESS_TOKEN_KEY, Number(res.data.expires_in) - 5 * 60);// 存储时间按返回时间减5分钟
+      await ioRedis.set(REDIS_ACCESS_TOKEN_KEY, res.data.access_token);
+      await ioRedis.expire(
+        REDIS_ACCESS_TOKEN_KEY,
+        Number(res.data.expires_in) - 5 * 60
+      ); // 存储时间按返回时间减5分钟
     }
     return res.data || null;
   }
 
-  async jscode2session(code) {
+  async jscode2session (code) {
     const { ctx } = this;
     const { APPID, APP_SECRET } = envConfig.WX_XCX_CONFIG;
-    const wx_info = await ctx.curl(`https://api.weixin.qq.com/sns/jscode2session?grant_type=authorization_code&appid=${APPID}&secret=${APP_SECRET}&js_code=${code}`, {
-      dataType: 'json',
-    });
+    const wx_info = await ctx.curl(
+      `https://api.weixin.qq.com/sns/jscode2session?grant_type=authorization_code&appid=${APPID}&secret=${APP_SECRET}&js_code=${code}`,
+      {
+        dataType: 'json',
+      }
+    );
     return wx_info;
   }
   // 公众号openid换unionid
@@ -55,17 +72,20 @@ module.exports = class wxTools {
   //   "qr_scene": 98765,
   //   "qr_scene_str": ""
   // }
-  async wxUserInfoByOpenid(openid, invalid_token = false) {
+  async wxUserInfoByOpenid (openid, invalid_token = false) {
     const { ctx } = this;
-    const access_token_res = await this.getWxAccessToken(invalid_token);
+    const access_token_res = await this.getWxAccessToken(invalid_token, 'gzh');
     if (!access_token_res) {
       return false;
     }
-    const user_info = await ctx.curl(`https://api.weixin.qq.com/cgi-bin/user/info?access_token=${access_token_res.access_token}&openid=${openid}&lang=zh_CN`, {
-      dataType: 'json',
-      method: 'GET',
-      contentType: 'json',
-    });
+    const user_info = await ctx.curl(
+      `https://api.weixin.qq.com/cgi-bin/user/info?access_token=${access_token_res.access_token}&openid=${openid}&lang=zh_CN`,
+      {
+        dataType: 'json',
+        method: 'GET',
+        contentType: 'json',
+      }
+    );
     // 全局只有一处获取token的情况可以不考虑失效，可能会无限回调
     // const verify = await this.access_token_invalid_verify(user_info)
     // if(verify) {
@@ -83,7 +103,7 @@ module.exports = class wxTools {
    * @param {*} res
    * @return
    */
-  async access_token_invalid_verify(res) {
+  async access_token_invalid_verify (res) {
     const invalid_codes = [ 40001, 40014, 42001, 42007 ];
     return invalid_codes.includes(res.data.errcode);
   }
@@ -95,24 +115,29 @@ module.exports = class wxTools {
    * @param callback
    * @return
    */
-  async sendMessageBase(data = null, invalid_token = false, callback = null) {
+  async sendMessageBase (data = null, invalid_token = false, callback = null) {
     const { ctx } = this;
     if (!data) {
       return false;
     }
-    const access_token_res = await this.getWxAccessToken(invalid_token);
+    const access_token_res = await this.getWxAccessToken(invalid_token, 'gzh');
+    console.log('access_token_res=================', access_token_res);
     if (!access_token_res) {
       return false;
     }
-    const message_res = await ctx.curl(`https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${access_token_res.access_token}`, {
-      method: 'POST',
-      rejectUnauthorized: false,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      dataType: 'json',
-      data,
-    });
+    const message_res = await ctx.curl(
+      `https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${access_token_res.access_token}`,
+      {
+        method: 'POST',
+        rejectUnauthorized: false,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        dataType: 'json',
+        data,
+      }
+    );
+    console.log('模板消息推送结果============================', message_res);
     // 全局只有一处获取token的情况可以不考虑失效，可能会无限回调
     // const verify = await this.access_token_invalid_verify(message_res)
     // if(verify) {
@@ -129,44 +154,35 @@ module.exports = class wxTools {
    * @param {*} openid
    * @param {*} workOrder
    */
-  async sendWorkOrderMessage(openid = null, workOrder = null) {
+  async sendWorkOrderMessage (openid = null, workOrder = null) {
+    const { ctx, app } = this;
     if (!openid || !workOrder) {
       return false;
     }
-    // 解决工单描述过长导致备注文字隐藏的问题(最多只显示80个字),微信规定总内容最多200字
-    // 先计算除描述外其他字段长度
-    let reduceLength = 15 + workOrder.order_no.length + 19 + workOrder.order_name.length + 13;
-    let order_desc = workOrder.order_desc || '';
-    let descLength = 200 - reduceLength - 3;
-    if (order_desc.length > descLength) {
-      order_desc = `${order_desc.slice(0, descLength)}...`;
-    }
+    ctx.logger.error('新工单提醒模板消息=============', workOrder);
+    const { name, desc, id, create_at } = workOrder;
     const data = {
       touser: openid,
       template_id: envConfig.WX_GZH_CONFIG.WORK_ORDER_TEMPLATE_ID,
-      miniprogram: {
-        appid: 'wx0b37bb94242747ae',
-        pagepath: 'pagesOp/pages/maintain/patrolMessage/patrolMessage?active=0',
-      },
       data: {
         first: {
           value: '您有一个新的工单，请及时处理!!',
           color: '#333',
         },
         keyword1: {
-          value: workOrder.order_no,
+          value: id,
           color: '#333',
         },
         keyword2: {
-          value: dayjs(workOrder.create_at).format('YYYY-MM-DD HH:mm:ss'),
+          value: app.utils.tools.dayjs(create_at).format('YYYY-MM-DD HH:mm:ss'),
           color: '#333',
         },
         keyword3: {
-          value: workOrder.order_name || '',
+          value: name || '',
           color: '#333',
         },
         keyword4: {
-          value: order_desc,
+          value: desc || '',
           color: '#333',
         },
         remark: {
@@ -184,7 +200,7 @@ module.exports = class wxTools {
    * @param {*} inspection
    * @param {*} targetCount
    */
-  async sendInspectionMessage(openid = null, inspection = null, targetCount) {
+  async sendInspectionMessage (openid = null, inspection = null, targetCount) {
     if (!openid || !inspection) {
       return false;
     }
@@ -201,7 +217,9 @@ module.exports = class wxTools {
           color: '#333',
         },
         keyword2: {
-          value: `${dayjs(inspection.firsttime_date).format('YYYY-MM-DD')}~${dayjs(inspection.end_time).format('YYYY-MM-DD')}`,
+          value: `${dayjs(inspection.firsttime_date).format(
+            'YYYY-MM-DD'
+          )}~${dayjs(inspection.end_time).format('YYYY-MM-DD')}`,
           color: '#333',
         },
         remark: {
@@ -218,7 +236,7 @@ module.exports = class wxTools {
    * @param {*} openid
    * @param {*} orderinfo
    */
-  async approverMessage(openid = null, orderinfo = null) {
+  async approverMessage (openid = null, orderinfo = null) {
     if (!openid || !orderinfo) {
       return false;
     }
@@ -257,16 +275,17 @@ module.exports = class wxTools {
    * @param {*} orderinfo
    * @return
    */
-  async approverResultMessage(openid = null, orderinfo = null) {
+  async approverResultMessage (openid = null, orderinfo = null) {
     if (!openid || !orderinfo) {
       return false;
     }
+    const { name } = orderinfo;
     const data = {
       touser: openid,
       template_id: envConfig.WX_GZH_CONFIG.WORK_ORDER_APPROVER_RESULT_ID,
       data: {
         first: {
-          value: `您创建的工单《${orderinfo.order_name}》已被审批!`,
+          value: `您创建的工单《${name}》已被审批!`,
           color: '#333',
         },
         keyword1: {
@@ -282,7 +301,12 @@ module.exports = class wxTools {
           color: '#333',
         },
         remark: {
-          value: orderinfo.approval_result == 2 ? (orderinfo.not_pass_reason ? `审批不通过原因：${orderinfo.not_pass_reason}` : '') : '',
+          value:
+            orderinfo.approval_result == 2
+              ? orderinfo.not_pass_reason
+                ? `审批不通过原因：${orderinfo.not_pass_reason}`
+                : ''
+              : '',
           color: '#333',
         },
       },
@@ -290,36 +314,53 @@ module.exports = class wxTools {
     await this.sendMessageBase(data);
   }
 
-  async newTaskMessage(info = null, callback = null) {
-    if (!info) {
+  // 新任务提醒(巡检/保养)
+  async newTaskMessage ({
+    openid = null,
+    plan = null,
+    task = null,
+    type = '巡检',
+    callback = null,
+  }) {
+    const { app } = this;
+    const { NEW_TASK_TEMPLATE_ID } = envConfig.WX_GZH_CONFIG;
+    if (!NEW_TASK_TEMPLATE_ID) {
       return false;
     }
+    const dayjs = app.utils.tools.dayjs;
+    if (!plan || !task || !openid) {
+      return false;
+    }
+    const { name, start_time, end_time } = task;
+    const { desc, name: plan_name } = plan;
     const data = {
-      touser: info[4],
-      template_id: envConfig.WX_GZH_CONFIG.NEW_TASK_TEMPLATE_ID,
+      touser: openid,
+      template_id: NEW_TASK_TEMPLATE_ID,
       data: {
         first: {
-          value: `您有一个新的${info[0] == 'inspection' ? '巡检' : '保养'}任务，请及时处理!`,
+          value: `您有一个新的${type}任务，请及时处理!`,
           color: '#333',
         },
         keyword1: {
-          value: info[2],
+          value: name,
           color: '#333',
         },
         keyword2: {
-          value: info[3],
+          value: dayjs
+            .duration(dayjs(end_time).diff(dayjs(start_time)))
+            .as('hours'),
           color: '#333',
         },
         keyword3: {
-          value: info[7],
+          value: desc || '',
           color: '#333',
         },
         keyword4: {
-          value: `截止时间:${dayjs(Number(info[6])).format('YYYY-MM-DD HH:mm:ss')}`,
+          value: `截止时间:${dayjs(end_time).format('YYYY-MM-DD HH:mm:ss')}`,
           color: '#333',
         },
         keyword5: {
-          value: info[5],
+          value: plan_name,
           color: '#333',
         },
         remark: {
@@ -331,40 +372,35 @@ module.exports = class wxTools {
     await this.sendMessageBase(data, false, callback);
   }
 
-  async systermAlarmMessage(info = null, callback = null) {
+  async systermAlarmMessage (info = null, callback = null) {
+    const { app } = this;
+    // console.log('进入推送逻辑==================', info);
     if (!info) {
       return false;
     }
+    const { gh_openid, station, device, attr, starttime, content } = info;
     const data = {
-      touser: info[4],
+      touser: gh_openid,
       template_id: envConfig.WX_GZH_CONFIG.SYSTERM_ALARM_TEMPLATE_ID,
       data: {
         first: {
-          value: `您有一个新的${info[0] == 'inspection' ? '巡检' : '保养'}任务，请及时处理!`,
+          value: `站点【${station}】发生报警`,
           color: '#333',
         },
         keyword1: {
-          value: info[2],
+          value: `${device}--${attr}`,
           color: '#333',
         },
         keyword2: {
-          value: info[3],
+          value: app.utils.tools.dayjs(starttime).format('YYYY-MM-DD HH:mm:ss'),
           color: '#333',
         },
         keyword3: {
-          value: info[7],
-          color: '#333',
-        },
-        keyword4: {
-          value: `截止时间:${dayjs(Number(info[6])).format('YYYY-MM-DD HH:mm:ss')}`,
-          color: '#333',
-        },
-        keyword5: {
-          value: info[5],
+          value: content,
           color: '#333',
         },
         remark: {
-          value: '请前往小程序查看任务详情！',
+          value: '更多详情请进入小程序查看',
           color: '#333',
         },
       },

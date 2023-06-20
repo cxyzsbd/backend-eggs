@@ -5,11 +5,11 @@ module.exports = app => {
   const sequelize = app.model;
   const attributes = {
     id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: false,
       comment: null,
       field: 'id',
     },

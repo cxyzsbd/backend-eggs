@@ -82,17 +82,32 @@ module.exports = app => {
     comment: '',
     indexes: [],
   };
-  const InspectionTasksModel = sequelize.define('inspection_tasks_model', attributes, options);
+  const InspectionTasksModel = sequelize.define(
+    'inspection_tasks_model',
+    attributes,
+    options
+  );
   InspectionTasksModel.associate = function() {
-    InspectionTasksModel.hasOne(app.model.Inspections, { foreignKey: 'id', sourceKey: 'inspection_id', as: 'inspection_info' });
+    InspectionTasksModel.hasOne(app.model.Inspections, {
+      foreignKey: 'id',
+      sourceKey: 'inspection_id',
+      as: 'inspection_info',
+    });
     InspectionTasksModel.belongsToMany(app.model.Users, {
       as: 'handlers',
       through: app.model.InspectionTaskHandlers,
       foreignKey: 'task_id',
       otherKey: 'handler',
     });
-    InspectionTasksModel.hasMany(app.model.InspectionTaskHandlers, { foreignKey: 'task_id', sourceKey: 'id' });
-    InspectionTasksModel.hasMany(app.model.InspectionResults, { foreignKey: 'task_id', sourceKey: 'id', as: 'inspection_results' });
+    InspectionTasksModel.hasMany(app.model.InspectionTaskHandlers, {
+      foreignKey: 'task_id',
+      sourceKey: 'id',
+    });
+    InspectionTasksModel.hasMany(app.model.InspectionResults, {
+      foreignKey: 'task_id',
+      sourceKey: 'id',
+      as: 'inspection_results',
+    });
   };
   return InspectionTasksModel;
 };

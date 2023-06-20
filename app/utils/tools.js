@@ -195,7 +195,6 @@ module.exports = class Tools {
    */
   async SnowFlake() {
     return intformat((new FlakeId({ epoch: 1300000000000 })).next(), 'dec');
-    // return intformat((new FlakeId()).next(), 'dec');
   }
   /**
    * 生成唯一编号

@@ -32,7 +32,7 @@ module.exports = app => {
       field: 'component',
     },
     station_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,

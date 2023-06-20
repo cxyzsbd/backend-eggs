@@ -6,8 +6,8 @@ const body = {
   },
   deviceTagsBodyReq: {
     device_id: {
-      type: 'number',
-      min: 1,
+      type: 'string',
+      max: 20,
       required: true,
       description: '设备id',
     },
@@ -57,7 +57,8 @@ const body = {
   },
   deviceTagsDataReq: {
     device_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: true,
       description: '设备id',
     },

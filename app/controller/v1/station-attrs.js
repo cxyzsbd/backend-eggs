@@ -17,7 +17,8 @@ class stationAttrsController extends BaseController {
     const { ctx, service } = this;
     const rule = {
       station_id: {
-        type: 'number',
+        type: 'string',
+        max: 20,
         required: true,
         description: '站点id',
       },

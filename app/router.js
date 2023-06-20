@@ -182,6 +182,9 @@ module.exports = app => {
   router.get(`${apiV1}/device-models`, controller.v1.deviceModels.findAll);
   router.get(`${apiV1}/device-models/:id`, controller.v1.deviceModels.findOne);
   router.delete(`${apiV1}/device-models/:id`, controller.v1.deviceModels.destroy);
+  // router.get(`${apiV1}/device-models/:id/attrs`, controller.v1.deviceModels.getDetailAndAttrs);
+  router.get(`${apiV1}/export-device-models`, controller.v1.deviceModels.getModelsWithAttrs);
+  router.post(`${apiV1}/import-device-models`, controller.v1.deviceModels.importModelAndAttrs);
 
   // 设备
   // router.post(`${apiV1}/devices`, controller.v1.devices.create);
@@ -190,6 +193,9 @@ module.exports = app => {
   router.get(`${apiV1}/devices/:id`, controller.v1.devices.findOne);
   router.delete(`${apiV1}/devices/:id`, controller.v1.devices.destroy);
   router.post(`${apiV1}/model-to-device`, controller.v1.devices.modelToDevice);
+  // router.get(`${apiV1}/devices/:id/attrs`, controller.v1.devices.getDetailAndAttrs);
+  router.get(`${apiV1}/export-devices`, controller.v1.devices.getDevicesWithAttrs);
+  router.post(`${apiV1}/import-devices`, controller.v1.devices.importDeviceAndAttrs);
 
   // 设备模型绑定点位
   router.post(`${apiV1}/device-model-tags`, controller.v1.deviceModelTags.create);

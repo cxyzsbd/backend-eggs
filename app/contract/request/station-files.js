@@ -29,7 +29,8 @@ const body = {
       description: '后缀名',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: true,
       description: '站点id',
     },

@@ -41,7 +41,7 @@ module.exports = app => {
       field: 'type',
     },
     station_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
@@ -52,11 +52,11 @@ module.exports = app => {
     url: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      defaultValue: null,
+      defaultValue: '',
       primaryKey: false,
       autoIncrement: false,
       comment: '文件地址',
-      field: 'desc',
+      field: 'url',
     },
     creator: {
       type: DataTypes.INTEGER(11),

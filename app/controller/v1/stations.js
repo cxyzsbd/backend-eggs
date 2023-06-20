@@ -33,7 +33,7 @@ class StationsController extends BaseController {
   * @summary 获取某个 站点
   * @description 获取某个 站点
   * @router get stations/:id
-  * @request path number *id eg:1
+  * @request path string *id eg:1
   */
   async findOne() {
     const { ctx, service } = this;
@@ -70,14 +70,13 @@ class StationsController extends BaseController {
   * @summary 更新 站点
   * @description 更新 站点
   * @router put stations/:id
-  * @request path number *id eg:1
+  * @request path string *id eg:1
   * @request body stationsPutBodyReq
   */
   async update() {
     const { ctx, service, app } = this;
     const { company_id } = ctx.request.header;
     let params = { ...ctx.params, ...ctx.request.body };
-    params.id = Number(params.id);
     ctx.validate(ctx.rule.stationsPutBodyReq, params);
     // 忽略大小写查询
     const station = await service.stations.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), company_id, id: { [Op.not]: params.id } }, false);
@@ -97,12 +96,11 @@ class StationsController extends BaseController {
   * @summary 删除 站点
   * @description 删除 站点
   * @router delete stations/:id
-  * @request path number *id eg:1
+  * @request path string *id eg:1
   */
   async destroy() {
     const { ctx, service, app } = this;
     let params = ctx.params;
-    params.id = Number(params.id);
     ctx.validate(ctx.rule.stationsId, params);
     const res = await service.stations.destroy(params);
     await app.utils.tools.setStationsCache();

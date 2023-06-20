@@ -4,54 +4,45 @@ module.exports = app => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
-    id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+    station_id: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
-      autoIncrement: true,
-      comment: null,
-      field: 'id',
-    },
-    name: {
-      type: DataTypes.STRING(60),
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
-      autoIncrement: false,
-      comment: '摄像头名称',
-      field: 'name',
-    },
-    station_id: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      defaultValue: null,
-      primaryKey: false,
       autoIncrement: false,
       comment: '站点id',
       field: 'station_id',
     },
-    deviceSerial: {
-      type: DataTypes.STRING(30),
+    visual_id: {
+      type: DataTypes.STRING(20),
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '设备序列号',
-      field: 'deviceSerial',
+      comment: '可视化工程id',
+      field: 'visual_id',
     },
-    photo_interval: {
-      type: DataTypes.INTEGER(11),
+    visual_name: {
+      type: DataTypes.STRING(255),
       allowNull: true,
-      defaultValue: '0',
+      defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '抓拍间隔',
-      field: 'photo_interval',
+      comment: '可视化名称',
+      field: 'visual_name',
+    },
+    thumbnail: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '可视化缩略图',
+      field: 'thumbnail',
     },
     creator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
@@ -64,24 +55,33 @@ module.exports = app => {
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       primaryKey: false,
       autoIncrement: false,
-      comment: null,
+      comment: '创建时间',
       field: 'create_at',
     },
-    company_id: {
+    updator: {
       type: DataTypes.INTEGER(11).UNSIGNED,
-      allowNull: false,
+      allowNull: true,
       defaultValue: null,
       primaryKey: false,
       autoIncrement: false,
-      comment: '公司id',
-      field: 'company_id',
+      comment: '更新人',
+      field: 'updator',
+    },
+    update_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '更新时间',
+      field: 'update_at',
     },
   };
   const options = {
-    tableName: 'station_cameras',
+    tableName: 'station_yz_visuals',
     comment: '',
     indexes: [],
   };
-  const StationCamerasModel = sequelize.define('station_cameras_model', attributes, options);
-  return StationCamerasModel;
+  const StationYzVisualsModel = sequelize.define('station_yz_visuals_model', attributes, options);
+  return StationYzVisualsModel;
 };

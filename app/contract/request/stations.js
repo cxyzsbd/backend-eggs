@@ -2,7 +2,7 @@
 
 const body = {
   stationsId: {
-    id: { type: 'number', required: true, description: 'id' },
+    id: { type: 'string', max: 20, required: true, description: 'id' },
   },
   stationsBodyReq: {
     name: {

@@ -5,11 +5,11 @@ module.exports = app => {
   const sequelize = app.model;
   const attributes = {
     id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: false,
       comment: 'id',
       field: 'id',
     },
@@ -68,7 +68,7 @@ module.exports = app => {
       field: 'img',
     },
     station_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
@@ -113,7 +113,7 @@ module.exports = app => {
       field: 'update_at',
     },
     model_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
@@ -128,5 +128,8 @@ module.exports = app => {
     indexes: [],
   };
   const DevicesModel = sequelize.define('devices_model', attributes, options);
+  DevicesModel.associate = () => {
+    DevicesModel.hasMany(app.model.DeviceTags, { foreignKey: 'device_id', sourceKey: 'id', as: 'attrs' });
+  };
   return DevicesModel;
 };

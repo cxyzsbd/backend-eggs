@@ -14,7 +14,7 @@ module.exports = app => {
       field: 'id',
     },
     station_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,

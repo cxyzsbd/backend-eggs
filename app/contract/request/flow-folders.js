@@ -23,7 +23,8 @@ const body = {
       description: '0:图纸；1：组件',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: false,
       description: '站点id',
     },

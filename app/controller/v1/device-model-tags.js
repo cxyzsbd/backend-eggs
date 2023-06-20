@@ -94,7 +94,7 @@ class DeviceModelTagsController extends BaseController {
     // 查询数据
     const results = await ctx.model.DeviceModelTags.findAll({
       where: {
-        model_id: Number(model_id),
+        model_id,
       },
     });
     console.log('results=================', results);
@@ -219,7 +219,7 @@ class DeviceModelTagsController extends BaseController {
     }
     if (updateArr && updateArr.length) {
       updateArr.forEach(async item => {
-        let temp = { model_id: Number(model_id), id: Number(item.id) };
+        let temp = { model_id, id: Number(item.id) };
         Object.keys(item).forEach(key => {
           if (headerMap[key]) {
             temp[headerMap[key]] = item[key];

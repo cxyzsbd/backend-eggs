@@ -12,7 +12,8 @@ const body = {
       description: '设备名称',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: true,
       description: '站点id',
     },
@@ -41,7 +42,8 @@ module.exports = {
       description: '设备名称',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: false,
       description: '盒子访问码',
     },

@@ -6,9 +6,9 @@ const body = {
   },
   deviceModelTagsBodyReq: {
     model_id: {
-      type: 'number',
+      type: 'string',
       required: true,
-      min: 1,
+      max: 20,
       description: '模型id',
     },
     name: {

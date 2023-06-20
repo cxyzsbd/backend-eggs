@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   const DataTypes = app.Sequelize;
   const sequelize = app.model;
   const attributes = {
@@ -46,6 +46,10 @@ module.exports = app => {
     comment: '',
     indexes: [],
   };
-  const CameraPhotosModel = sequelize.define('camera_photos_model', attributes, options);
+  const CameraPhotosModel = sequelize.define(
+    'camera_photos_model',
+    attributes,
+    options,
+  );
   return CameraPhotosModel;
 };

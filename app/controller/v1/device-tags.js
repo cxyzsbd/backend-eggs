@@ -17,12 +17,13 @@ class DeviceTagsController extends BaseController {
   * @request query number pageNumber
   * @router get device-tags
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const rule = {
       device_id: {
         required: true,
-        type: 'number',
+        max: 20,
+        type: 'string',
       },
     };
     ctx.validate(rule, ctx.query);
@@ -42,7 +43,7 @@ class DeviceTagsController extends BaseController {
   * @router post device-tags
   * @request body deviceTagsBodyReq
   */
-  async create() {
+  async create () {
     const { ctx, service, app } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.deviceTagsBodyReq, params);
@@ -65,7 +66,7 @@ class DeviceTagsController extends BaseController {
   * @request path number *id eg:1
   * @request body deviceTagsPutBodyReq
   */
-  async update() {
+  async update () {
     const { ctx, service, app } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
@@ -88,7 +89,7 @@ class DeviceTagsController extends BaseController {
   * @router delete device-tags/:id
   * @request path number *id eg:1
   */
-  async destroy() {
+  async destroy () {
     const { ctx, service, app } = this;
     let params = ctx.params;
     params.id = Number(params.id);
@@ -104,7 +105,7 @@ class DeviceTagsController extends BaseController {
   * post device-tag-datas
   * body deviceTagsDataReq
   */
-  async getTagDatas() {
+  async getTagDatas () {
     const { ctx, service, app } = this;
     const requestBaseUrl = app.config.dataForwardBaseUrl;
     const params = { ...ctx.request.body, ...ctx.query };
@@ -151,7 +152,7 @@ class DeviceTagsController extends BaseController {
     }
   }
 
-  async exportAttrs() {
+  async exportAttrs () {
     const { ctx, app } = this;
     const { device_id } = ctx.params;
     // 查询数据
@@ -200,7 +201,7 @@ class DeviceTagsController extends BaseController {
     ctx.body = buffer;
   }
 
-  async importAttrs() {
+  async importAttrs () {
     const { ctx, app, service } = this;
     const { company_id } = ctx.request.header;
     const { device_id } = ctx.params;
@@ -305,7 +306,7 @@ class DeviceTagsController extends BaseController {
     let update_res = [];
     if (createArr && createArr.length) {
       let createRows = createArr.map(item => {
-        let temp = { device_id: Number(device_id), company_id: Number(company_id) };
+        let temp = { device_id, company_id: Number(company_id) };
         Object.keys(item).forEach(key => {
           temp[headerMap[key]] = item[key];
         });
@@ -324,7 +325,7 @@ class DeviceTagsController extends BaseController {
     if (updateArr && updateArr.length) {
       updateArr.forEach(async item => {
         console.log('item', item);
-        let temp = { device_id: Number(device_id), id: Number(item.id), company_id: Number(company_id) };
+        let temp = { device_id, id: Number(item.id), company_id: Number(company_id) };
         Object.keys(item).forEach(key => {
           console.log('key', key);
           console.log('headerMap[key]', headerMap[key]);

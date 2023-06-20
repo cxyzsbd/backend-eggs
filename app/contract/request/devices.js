@@ -2,7 +2,7 @@
 
 const body = {
   devicesId: {
-    id: { type: 'number', required: true, description: 'id' },
+    id: { type: 'string', max: 20, required: true, description: 'id' },
   },
   devicesBodyReq: {
     name: {
@@ -42,19 +42,22 @@ const body = {
       description: '照片url',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: true,
       description: '站点id',
     },
   },
   modelToDeviceBodyReq: {
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: true,
       description: '站点id',
     },
     model_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: true,
       description: '模型id',
     },

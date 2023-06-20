@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class SparePartsService extends Service {
-  async findAll(payload, queryOrigin) {
+  async findAll (payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
@@ -12,7 +12,7 @@ class SparePartsService extends Service {
     let where = payload.where;
     where = {
       ...where,
-      company_id,
+      company_id
     };
     if (st && et) {
       where = {
@@ -48,7 +48,7 @@ class SparePartsService extends Service {
     };
   }
 
-  async findOne(payload) {
+  async findOne (payload) {
     const { ctx } = this;
     return await ctx.model.SpareParts.findOne({
       where: payload,
@@ -63,7 +63,7 @@ class SparePartsService extends Service {
     });
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     payload.id = await app.utils.tools.SnowFlake();
@@ -72,18 +72,18 @@ class SparePartsService extends Service {
     return await ctx.model.SpareParts.create(payload);
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     return await ctx.model.SpareParts.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     return await ctx.model.SpareParts.destroy({ where: { id: payload.id } });
   }
 
   // 库存操作
-  async inventory(payload) {
+  async inventory (payload) {
     const { ctx } = this;
     const { request_user, company_id } = ctx.request.header;
     payload.creator = request_user;
@@ -119,7 +119,7 @@ class SparePartsService extends Service {
     }
   }
 
-  async inventoryRecords(payload, queryOrigin) {
+  async inventoryRecords (payload, queryOrigin) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
     const { st, et } = queryOrigin;

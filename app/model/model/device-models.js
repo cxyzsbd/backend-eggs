@@ -5,11 +5,11 @@ module.exports = app => {
   const sequelize = app.model;
   const attributes = {
     id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: false,
       defaultValue: null,
       primaryKey: true,
-      autoIncrement: true,
+      autoIncrement: false,
       comment: 'id',
       field: 'id',
     },
@@ -77,7 +77,7 @@ module.exports = app => {
       field: 'department_id',
     },
     company_id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+      type: DataTypes.INTEGER(11).UNSIGNED,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
@@ -119,5 +119,8 @@ module.exports = app => {
     indexes: [],
   };
   const DeviceModelsModel = sequelize.define('device_models_model', attributes, options);
+  DeviceModelsModel.associate = () => {
+    DeviceModelsModel.hasMany(app.model.DeviceModelTags, { foreignKey: 'model_id', sourceKey: 'id', as: 'attrs' });
+  };
   return DeviceModelsModel;
 };

@@ -14,7 +14,7 @@ module.exports = app => {
       field: 'id',
     },
     device_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: false,
       defaultValue: null,
       primaryKey: false,

@@ -140,7 +140,7 @@ module.exports = app => {
       field: 'company_id',
     },
     device_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
@@ -149,7 +149,7 @@ module.exports = app => {
       field: 'device_id',
     },
     station_id: {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.BIGINT,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,

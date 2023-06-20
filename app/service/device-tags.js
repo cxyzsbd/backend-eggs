@@ -3,7 +3,7 @@
 const Service = require('egg').Service;
 
 class DeviceTagsService extends Service {
-  async findAll(payload) {
+  async findAll (payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order } = payload;
     const where = payload.where;
@@ -36,12 +36,12 @@ class DeviceTagsService extends Service {
     return resObj;
   }
 
-  async findOne(payload) {
+  async findOne (payload) {
     const { ctx } = this;
     return await ctx.model.DeviceTags.findOne({ where: payload });
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     payload.company_id = company_id;
@@ -51,22 +51,22 @@ class DeviceTagsService extends Service {
     return await ctx.model.DeviceTags.create(payload);
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     return await ctx.model.DeviceTags.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     return await ctx.model.DeviceTags.destroy({ where: { id: payload.id } });
   }
 
-  async bulkCreate(arr) {
+  async bulkCreate (arr) {
     const { ctx } = this;
     return await ctx.model.DeviceTags.bulkCreate(arr);
   }
 
-  async getTagDatas(payload) {
+  async getTagDatas (payload) {
     const { ctx, app } = this;
     const { device_id, attr_ids = [] } = payload;
     const attr_tags = JSON.parse(await app.utils.tools.getAttrsCache());

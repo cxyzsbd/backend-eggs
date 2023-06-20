@@ -9,17 +9,16 @@ const awaitWriteStream = require('await-stream-ready').write;
 const sendToWormhole = require('stream-wormhole');
 
 /**
-* @controller 文件 files
-*/
+ * @controller 文件 files
+ */
 
 class FilesController extends BaseController {
-
   /**
-  * @apikey
-  * @summary 上传文件
-  * @description 上传文件
-  * @router post files
-  */
+   * @apikey
+   * @summary 上传文件
+   * @description 上传文件
+   * @router post files
+   */
   async upload() {
     const { ctx, app } = this;
     const { company_id } = ctx.request.header;
@@ -27,15 +26,26 @@ class FilesController extends BaseController {
     const stream = await ctx.getFileStream();
     const { fileSize } = app.config.multipart;
     if (size > fileSize) {
-      this.INVALID_REQUEST({ message: `文件大小不可超过${fileSize / 1024 / 1024}Mb` });
+      this.INVALID_REQUEST({
+        message: `文件大小不可超过${fileSize / 1024 / 1024}Mb`,
+      });
       return false;
     }
-    const filename = `${app.utils.tools.uuidv4()}${path.extname(stream.filename)}`;
+    const filename = `${app.utils.tools.uuidv4()}${path.extname(
+      stream.filename,
+    )}`;
     const pathfix = company_id ? `/${company_id}` : '';
-    const targetPath = path.join(this.config.baseDir, `../files${pathfix}/others`);
+    const targetPath = path.join(
+      this.config.baseDir,
+      `../files${pathfix}/others`,
+    );
     // 判断路径是否存在
     await app.utils.tools.dirExists(targetPath);
-    const target = path.join(this.config.baseDir, `../files${pathfix}/others`, filename);
+    const target = path.join(
+      this.config.baseDir,
+      `../files${pathfix}/others`,
+      filename,
+    );
     // 生成一个文件写入 文件流
     const writeStream = fs.createWriteStream(target);
     try {

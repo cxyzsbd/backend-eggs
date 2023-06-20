@@ -64,12 +64,14 @@ const body = {
       description: '描述',
     },
     device_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: false,
       description: '设备id，当台账是由设备生成是必有',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: false,
       description: '关联站点id',
     },

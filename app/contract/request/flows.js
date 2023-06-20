@@ -47,7 +47,8 @@ const body = {
       description: '是否发布:0：不发布；1：发布',
     },
     station_id: {
-      type: 'number',
+      type: 'string',
+      max: 20,
       required: false,
       description: '站点id',
     },
