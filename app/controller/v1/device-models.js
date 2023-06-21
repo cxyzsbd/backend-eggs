@@ -168,6 +168,7 @@ class DeviceModelsController extends BaseController {
     params.forEach(item => {
       if (!modelNames.includes(item.name)) {
         addArr.push(item);
+        modelNames.push(item.name);
       } else {
         failArr.push({
           ...item,
