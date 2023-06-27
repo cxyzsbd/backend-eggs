@@ -26,6 +26,7 @@ const body = {
     type: {
       type: 'number',
       required: false,
+      enum: [ 1, 2, 3, 4 ],
       description: '类型(1:int;2:float;3:int;4:string)',
     },
     range: {
