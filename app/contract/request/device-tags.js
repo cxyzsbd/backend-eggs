@@ -19,7 +19,8 @@ const body = {
     },
     type: {
       type: 'number',
-      enum: [ 1, 2, 3, 4 ],
+      min: 1,
+      max: 4,
       required: false,
       description: '类型',
     },
