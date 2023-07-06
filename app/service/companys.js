@@ -1,6 +1,7 @@
 'use strict';
 
 const Service = require('egg').Service;
+const { QueryTypes } = require('sequelize');
 
 class CompanysService extends Service {
   async findAll(payload) {
@@ -8,7 +9,7 @@ class CompanysService extends Service {
     const { pageSize, pageNumber, prop_order, order } = payload;
     const where = payload.where;
     const Order = [];
-    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    prop_order && order ? Order.push([prop_order, order]) : null;
     const total = await ctx.model.Companys.count({ where });
     const data = await ctx.model.Companys.findAll({
       limit: pageSize,
@@ -19,7 +20,7 @@ class CompanysService extends Service {
         {
           as: 'admin_info',
           model: ctx.model.Users,
-          attributes: { exclude: [ 'password' ] },
+          attributes: { exclude: ['password'] },
         },
       ],
     });
@@ -39,7 +40,7 @@ class CompanysService extends Service {
         {
           as: 'admin_info',
           model: ctx.model.Users,
-          attributes: { exclude: [ 'password' ] },
+          attributes: { exclude: ['password'] },
         },
       ],
     });
@@ -58,6 +59,14 @@ class CompanysService extends Service {
     !payload.time_limit && delete payload.time_limit;
     return await ctx.model.Companys.update(payload, { where: { id: payload.id } });
   }
+
+
+  async companyCount() {
+    const { ctx, app } = this;
+    return await ctx.model.query('select c.id,c.name,count(s.id) as num from  companys as c left join stations as s  on c.id = s.company_id group by c.id', { type: QueryTypes.SELECT });
+  }
+
+
 }
 
 module.exports = CompanysService;

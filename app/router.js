@@ -216,6 +216,7 @@ module.exports = app => {
 
   // 超管管理公司
   router.post(`${apiV1}/super-user/companys`, controller.v1.companys.create);
+  router.get(`${apiV1}/super-user/company-count`, controller.v1.companys.companyCount);
   router.put(`${apiV1}/super-user/companys/:id`, controller.v1.companys.update);
   router.get(`${apiV1}/super-user/companys`, controller.v1.companys.findAll);
   router.get(`${apiV1}/super-user/companys/:id`, controller.v1.companys.findOne);
@@ -384,4 +385,16 @@ module.exports = app => {
   router.get(`${apiV1}/yz-roles`, controller.v1.yzRoles.findAll);
   router.get(`${apiV1}/users/:user_id/yz-roles`, controller.v1.yzRoles.findUserYzRoles);
   router.post(`${apiV1}/users/:user_id/yz-roles`, controller.v1.yzRoles.save);
+
+
+  // 流程图
+  router.post(`${apiV1}/template`, controller.v1.template.create);
+  router.post(`${apiV1}/template/:id/files`, controller.v1.template.uploadFile);
+  router.put(`${apiV1}/template/:id`, controller.v1.template.update);
+  router.get(`${apiV1}/template`, controller.v1.template.findAll);
+  router.get(`${apiV1}/template/:id`, controller.v1.template.findOne);
+  router.delete(`${apiV1}/template/:id`, controller.v1.template.destroy);
+  router.delete(`${apiV1}/recovery-template/:id`, controller.v1.template.forceDelete);
+  router.patch(`${apiV1}/recovery-template/:id`, controller.v1.template.recoveryTemplate);
+  router.get(`${apiV1}/recovery-template`, controller.v1.template.recoveryTemplateList);
 };

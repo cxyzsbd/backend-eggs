@@ -103,6 +103,21 @@ class CompanysController extends BaseController {
     app.utils.tools.redisCachePublic('companys', 0, 'companys', 'Companys');
     this.CREATED();
   }
+
+
+  /**
+   * @apikey
+   * @summary 公司站点统计
+   * @description 公司站点统计
+   * @router get super-user/companyCount
+   */
+  async companyCount() {
+    const { service } = this;
+    const res = await service.companys.companyCount();
+    this.
+      SUCCESS(res);
+  }
+
 }
 
 module.exports = CompanysController;
