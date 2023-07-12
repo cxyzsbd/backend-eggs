@@ -7,6 +7,7 @@ const {
   DB_CONFIG,
   DATA_FORWARD_URL,
   CPP_FORWARD_URL,
+  REST_FORWARD_URL,
 } = require('../global.config');
 
 /**
@@ -314,6 +315,7 @@ module.exports = appInfo => {
 
   // 数据转发基础路径
   config.dataForwardBaseUrl = DATA_FORWARD_URL;
+  config.restForwardBaseUrl = REST_FORWARD_URL;
   config.cppForwardBaseUrl = CPP_FORWARD_URL;
 
   // 是否金蝶平台

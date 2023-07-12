@@ -61,6 +61,35 @@ class DataForwardController extends BaseController {
       throw error;
     }
   }
+  async restForward () {
+    const { ctx, app } = this;
+    const requestBaseUrl = app.config.restForwardBaseUrl;
+    const { method, url, header, body } = ctx.request;
+    const data = body || {};
+    const apiUrl = url.indexOf('?') !== -1 ? url.slice(21, url.indexOf('?')) : url.slice(21);
+    try {
+      const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
+        method,
+        rejectUnauthorized: false,
+        timeout: 30000,
+        headers: {
+          ...header,
+        },
+        dataType: 'json',
+        data,
+      }).catch(err => {
+        ctx.logger.error('rest转发错误====================', err);
+        return false;
+      });
+      if (!res) {
+        this.SERVER_ERROR();
+        return false;
+      }
+      this.SUCCESS(res.data.error ? { ...res.data } : res.data);
+    } catch (error) {
+      throw error;
+    }
+  }
   /**
   * @apikey
   * @summary CPP服务转发接口

@@ -164,6 +164,10 @@ module.exports = app => {
   router.post(/^\/api\/v1\/box-data\/([\w-.\/]+)$/, controller.v1.boxData.dataAndAlarm);
   router.get(/^\/api\/v1\/box-data\/([\w-.\/]+)$/, controller.v1.boxData.dataAndAlarm);
 
+  // rest转发接口路由
+  router.post(/^\/api\/v1\/rest-forward\/([\w-.\/]+)$/, controller.v1.dataForward.restForward);
+  router.get(/^\/api\/v1\/rest-forward\/([\w-.\/]+)$/, controller.v1.dataForward.restForward);
+
   // 通用转发接口路由
   router.post(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);
   router.get(/^\/api\/v1\/data-forward\/([\w-.\/]+)$/, controller.v1.dataForward.dataForward);

@@ -34,6 +34,7 @@ const REDIS_CONFIG = {
   PASSWORD: process.env.LKYS_REDIS_PASSWORD,
 };
 const DATA_FORWARD_URL = `http://${process.env.LKYS_JAVAMQTT_HOST}:${process.env.LKYS_JAVAMQTT_PORT}/`;
+const REST_FORWARD_URL = `http://${process.env.LKYS_REST_IP}:${process.env.LKYS_REST_PORT}/`;
 const CPP_FORWARD_URL = `http://${process.env.LKYS_CALCENGINE_IP}:${process.env.LKYS_CALCENGINE_PORT}/`;
 const YOUZHI_REQUEST_URL = `http://${process.env.LKYS_YOUZHI_IP}:${process.env.LKYS_YOUZHI_PORT}/`;
 
@@ -71,4 +72,5 @@ module.exports = {
   YS_APP_KEY,
   CPP_FORWARD_URL,
   YOUZHI_REQUEST_URL,
+  REST_FORWARD_URL,
 };
