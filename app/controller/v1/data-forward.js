@@ -64,9 +64,11 @@ class DataForwardController extends BaseController {
   async restForward () {
     const { ctx, app } = this;
     const requestBaseUrl = app.config.restForwardBaseUrl;
+    ctx.logger.error('rest转发地址================', requestBaseUrl);
     const { method, url, header, body } = ctx.request;
     const data = body || {};
     const apiUrl = url.indexOf('?') !== -1 ? url.slice(21, url.indexOf('?')) : url.slice(21);
+    ctx.logger.error('rest请求================', ctx.request);
     try {
       const res = await ctx.curl(`${requestBaseUrl}${apiUrl}${url.indexOf('?') !== -1 ? url.slice(url.indexOf('?')) : ''}`, {
         method,
