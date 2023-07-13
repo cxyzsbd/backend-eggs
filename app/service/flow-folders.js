@@ -4,17 +4,17 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class FlowFoldersService extends Service {
-  async findAll(payload, queryOrigin) {
+  async findAll (payload, queryOrigin) {
     const { ctx, app } = this;
     // const redisAttr = app.redis.clients.get('attrs');
     const { company_id } = ctx.request.header;
     const { st, et, component = 0 } = queryOrigin;
     // const allStations = JSON.parse(await redisAttr.get('stations'));
-    const allStations = JSON.parse(await app.utils.tools.getStationsCache());
+    // const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
-    const stations = allStations.filter(item => departmentIds.includes(item.department_id));
-    const station_ids = stations.map(item => item.id);
+    // const stations = allStations.filter(item => departmentIds.includes(item.department_id));
+    // const station_ids = stations.map(item => item.id);
     // console.log('ids=============', departmentIds);
     let { pageSize, pageNumber, prop_order, order } = payload;
     if (pageSize < 0 && Number(component) !== 1) {
@@ -30,44 +30,51 @@ class FlowFoldersService extends Service {
         },
       };
     }
-    where = { ...where, company_id, component: Number(component) };
-    if (Number(component) !== 1) {
-      if (where[Op.or]) {
-        where[Op.or].map(item => {
-          return {
-            ...item,
-            [Op.or]: [
-              {
-                department_id: {
-                  [Op.in]: departmentIds,
-                },
-              },
-              {
-                station_id: {
-                  [Op.in]: station_ids,
-                },
-              },
-            ],
-          };
-        });
-      } else {
-        where = {
-          ...where,
-          [Op.or]: [
-            {
-              department_id: {
-                [Op.in]: departmentIds,
-              },
-            },
-            {
-              station_id: {
-                [Op.in]: station_ids,
-              },
-            },
-          ],
-        };
-      }
-    }
+    where = {
+      ...where,
+      company_id,
+      component: Number(component),
+      department_id: {
+        [Op.in]: departmentIds,
+      },
+    };
+    // if (Number(component) !== 1) {
+    //   if (where[Op.or]) {
+    //     where[Op.or].map(item => {
+    //       return {
+    //         ...item,
+    //         [Op.or]: [
+    //           {
+    //             department_id: {
+    //               [Op.in]: departmentIds,
+    //             },
+    //           },
+    //           {
+    //             station_id: {
+    //               [Op.in]: station_ids,
+    //             },
+    //           },
+    //         ],
+    //       };
+    //     });
+    //   } else {
+    //     where = {
+    //       ...where,
+    //       [Op.or]: [
+    //         {
+    //           department_id: {
+    //             [Op.in]: departmentIds,
+    //           },
+    //         },
+    //         {
+    //           station_id: {
+    //             [Op.in]: station_ids,
+    //           },
+    //         },
+    //       ],
+    //     };
+    //   }
+    // }
 
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
@@ -109,7 +116,7 @@ class FlowFoldersService extends Service {
     return resObj;
   }
 
-  async findOne(payload) {
+  async findOne (payload) {
     const { ctx } = this;
     let { department_id } = ctx.request.header;
     if (department_id || department_id == 0) {
@@ -130,7 +137,7 @@ class FlowFoldersService extends Service {
     });
   }
 
-  async findAllComponents(id) {
+  async findAllComponents (id) {
     const { ctx } = this;
     const folder = await ctx.model.FlowFolders.findOne({
       where: { id },
@@ -144,19 +151,19 @@ class FlowFoldersService extends Service {
     return folder;
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx } = this;
     const { request_user, company_id, department_id } = ctx.request.header;
     payload = { ...payload, creator: request_user, company_id, department_id };
     return await ctx.model.FlowFolders.create(payload);
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     return await ctx.model.FlowFolders.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     const { id } = payload;
     const transaction = await ctx.model.transaction();
@@ -180,7 +187,7 @@ class FlowFoldersService extends Service {
     }
   }
 
-  async bind(payload) {
+  async bind (payload) {
     const { ctx } = this;
     const { id, flow_ids } = payload;
     let tempArr = flow_ids.map(flow_id => {
@@ -210,7 +217,7 @@ class FlowFoldersService extends Service {
     return res;
   }
 
-  async unbind(payload) {
+  async unbind (payload) {
     const { ctx } = this;
     const { id, flow_ids } = payload;
     return await ctx.model.FlowFolders.destroy({ where: {
@@ -221,7 +228,7 @@ class FlowFoldersService extends Service {
     } });
   }
 
-  async setDefaultFlow(payload) {
+  async setDefaultFlow (payload) {
     const { ctx } = this;
     const { id, flow_id } = payload;
     const transaction = await ctx.model.transaction();
