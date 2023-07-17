@@ -13,6 +13,7 @@ class DeviceTagsController extends BaseController {
   * @summary 设备绑定点位列表
   * @description 获取所有设备绑定点位
   * @request query string name
+  * @request query number kind 1:设备属性；2：目录属性；3：站点属性
   * @request query number pageSize
   * @request query number pageNumber
   * @router get device-tags
@@ -24,6 +25,11 @@ class DeviceTagsController extends BaseController {
         required: true,
         max: 20,
         type: 'string',
+      },
+      kind: {
+        required: false,
+        type: 'number',
+        enum: [ 1, 2, 3 ],
       },
     };
     ctx.validate(rule, ctx.query);
@@ -45,10 +51,13 @@ class DeviceTagsController extends BaseController {
   */
   async create () {
     const { ctx, service, app } = this;
-    const params = ctx.request.body;
+    let params = ctx.request.body;
     ctx.validate(ctx.rule.deviceTagsBodyReq, params);
+    if (!params.kind) {
+      params.kind = 1;
+    }
     // 忽略大小写查询
-    const attr = await service.deviceTags.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), device_id: params.device_id });
+    const attr = await service.deviceTags.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), device_id: params.device_id, kind: params.kind });
     if (attr) {
       this.BAD_REQUEST({ message: '该属性已存在' });
       return false;
@@ -68,11 +77,16 @@ class DeviceTagsController extends BaseController {
   */
   async update () {
     const { ctx, service, app } = this;
-    let params = { ...ctx.params, ...ctx.request.body };
+    const params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
     ctx.validate(ctx.rule.deviceTagsPutBodyReq, params);
+    const data = await service.deviceTags.findOne({ id: params.id }, { raw: true });
+    if (!data) {
+      this.BAD_REQUEST({ message: '属性不存在' });
+      return false;
+    }
     // 忽略大小写查询
-    const attr = await service.deviceTags.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), device_id: params.device_id, id: { [Op.not]: params.id } });
+    const attr = await service.deviceTags.findOne({ name: Sequelize.where(Sequelize.fn('LOWER', Sequelize.col('name')), '=', params.name.toLowerCase()), device_id: params.device_id, id: { [Op.not]: params.id }, kind: data.kind });
     if (attr) {
       this.BAD_REQUEST({ message: '该属性已存在' });
       return false;

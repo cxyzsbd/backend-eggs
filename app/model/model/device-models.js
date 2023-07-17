@@ -112,6 +112,15 @@ module.exports = app => {
       comment: null,
       field: 'update_at',
     },
+    kind: {
+      type: DataTypes.INTEGER(1),
+      allowNull: true,
+      defaultValue: "1",
+      primaryKey: false,
+      autoIncrement: false,
+      comment: "模型类型（1：设备模型；2：目录模型）",
+      field: "kind"
+    }
   };
   const options = {
     tableName: 'device_models',

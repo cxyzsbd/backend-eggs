@@ -5,8 +5,15 @@ const Service = require('egg').Service;
 class DeviceTagsService extends Service {
   async findAll (payload) {
     const { ctx } = this;
+    console.log('payload================', payload);
     const { pageSize, pageNumber, prop_order, order } = payload;
-    const where = payload.where;
+    let where = payload.where;
+    if (!where.kind) {
+      where = {
+        ...where,
+        kind: 1,
+      };
+    }
     let Order = [];
     prop_order && order ? Order.push([ prop_order, order ]) : null;
     const count = await ctx.model.DeviceTags.count({ where });
@@ -36,9 +43,9 @@ class DeviceTagsService extends Service {
     return resObj;
   }
 
-  async findOne (payload) {
+  async findOne (payload, options = {}) {
     const { ctx } = this;
-    return await ctx.model.DeviceTags.findOne({ where: payload });
+    return await ctx.model.DeviceTags.findOne({ where: payload, ...options });
   }
 
   async create (payload) {
@@ -47,6 +54,9 @@ class DeviceTagsService extends Service {
     payload.company_id = company_id;
     if (!payload.type && payload.type != 0) {
       payload.type = null;
+    }
+    if (!payload.kind) {
+      payload.kind = 1;
     }
     return await ctx.model.DeviceTags.create(payload);
   }

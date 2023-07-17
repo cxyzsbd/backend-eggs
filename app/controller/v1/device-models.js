@@ -177,6 +177,12 @@ class DeviceModelsController extends BaseController {
       }
     });
     addArr.forEach(async data => {
+      if (!data.kind) {
+        data = {
+          ...data,
+          kind: 1,
+        };
+      }
       let res = await this.resolveUpsertModel(data, is_cover);
       if (!res) {
         failArr.push({
@@ -202,6 +208,34 @@ class DeviceModelsController extends BaseController {
       }
     }
     return await service.deviceModels.createModelAndAttrs(params, ctx.query);
+  }
+
+  /**
+  * @apikey
+  * @summary 模型属性导入目录
+  * @description 模型属性导入目录
+  * @router post model-to-directory
+  * @request body modelToDirectoryBodyReq
+  */
+  async modelToDirectory () {
+    const { ctx, service, app } = this;
+    const params = ctx.request.body;
+    console.log('params====================', params);
+    ctx.validate(ctx.rule.modelToDirectoryBodyReq, params);
+    const model = await service.deviceModels.findOne({ id: params.model_id });
+    if (!model) {
+      this.BAD_REQUEST({ message: '模型不存在' });
+      return false;
+    }
+    const { directory_id, kind } = params;
+    let directoryModelName = Number(kind) === 2 ? 'Departments' : 'Stations';
+    const directory = await ctx.model[directoryModelName].findOne({ where: { id: directory_id }, raw: true });
+    if (!directory || !directory.id) {
+      this.BAD_REQUEST({ message: '目录不存在' });
+      return false;
+    }
+    let data = await service.deviceModels.modelToDirectory(params, directory);
+    this.CREATED({ data, message: '成功' });
   }
 }
 

@@ -54,6 +54,13 @@ const body = {
       required: false,
       description: '关联实际点位长点名',
     },
+    kind: {
+      type: 'number',
+      required: false,
+      min: 1,
+      max: 3,
+      description: '属性类型（1：设备属性；2：目录属性；3：站点属性）,默认1',
+    },
   },
   deviceTagsDataReq: {
     device_id: {
@@ -67,6 +74,13 @@ const body = {
       itemType: 'number',
       required: false,
       description: '属性id集合，不传查设备下所有属性',
+    },
+    kind: {
+      type: 'number',
+      required: false,
+      min: 1,
+      max: 3,
+      description: '属性类型（1：设备属性；2：目录属性；3：站点属性）,默认1',
     },
   },
 };

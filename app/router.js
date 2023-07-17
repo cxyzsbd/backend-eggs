@@ -189,6 +189,8 @@ module.exports = app => {
   // router.get(`${apiV1}/device-models/:id/attrs`, controller.v1.deviceModels.getDetailAndAttrs);
   router.get(`${apiV1}/export-device-models`, controller.v1.deviceModels.getModelsWithAttrs);
   router.post(`${apiV1}/import-device-models`, controller.v1.deviceModels.importModelAndAttrs);
+  router.post(`${apiV1}/model-to-directory`, controller.v1.deviceModels.modelToDirectory);
+
 
   // 设备
   // router.post(`${apiV1}/devices`, controller.v1.devices.create);
@@ -389,6 +391,12 @@ module.exports = app => {
   router.get(`${apiV1}/yz-roles`, controller.v1.yzRoles.findAll);
   router.get(`${apiV1}/users/:user_id/yz-roles`, controller.v1.yzRoles.findUserYzRoles);
   router.post(`${apiV1}/users/:user_id/yz-roles`, controller.v1.yzRoles.save);
+
+  // 站点绑定有智可视化工程
+
+  router.get(`${apiV1}/station/:station_id/visuals`, controller.v1.stationYzVisuals.findOne);
+  router.post(`${apiV1}/station/:station_id/visuals`, controller.v1.stationYzVisuals.bind);
+  router.delete(`${apiV1}/station/:station_id/visuals`, controller.v1.stationYzVisuals.destroy);
 
 
   // 流程图

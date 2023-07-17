@@ -103,6 +103,15 @@ module.exports = app => {
       comment: null,
       field: 'company_id',
     },
+    kind: {
+      type: DataTypes.INTEGER(1).UNSIGNED,
+      allowNull: true,
+      defaultValue: '1',
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '属性类型(1：设备属性；2：目录属性;3:站点属性)',
+      field: 'kind',
+    },
   };
   const options = {
     tableName: 'device_tags',
