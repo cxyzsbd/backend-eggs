@@ -231,16 +231,23 @@ class devicesController extends BaseController {
         });
       }
     });
-    addArr.forEach(async data => {
-      let res = await this.resolveUpsertModel(data, is_cover);
-      if (!res) {
+    let promises = [];
+    addArr.forEach(data => {
+      promises.push(this.resolveUpsertModel(data, is_cover));
+    });
+    const ress = await Promise.all(promises);
+    let success_res = [];
+    ress.forEach(r => {
+      if (r.is_fail && r.is_fail === 1) {
         failArr.push({
-          ...data,
+          ...r,
           fail_reason: '设备名称已存在',
         });
+      } else {
+        success_res.push(r);
       }
     });
-    this.SUCCESS({ fail_res: failArr });
+    this.SUCCESS({ fail_res: failArr, success_res });
   }
 
   async resolveUpsertModel (params, is_cover) {
@@ -252,7 +259,10 @@ class devicesController extends BaseController {
         params.id = device.id;
       } else {
       // 不覆盖的情况下，直接返回错误
-        return false;
+        return {
+          ...params,
+          is_fail: 1,
+        };
       }
     }
     return await service.devices.createDeviceAndAttrs(params, ctx.query);
