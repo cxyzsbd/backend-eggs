@@ -92,7 +92,13 @@ module.exports = appInfo => {
     ],
   };
   config.validateSuperUser = {
-    match: '/api/v1/super-user',
+    match: [
+      '/api/v1/super-user',
+      '/api/v1/permissions',
+      '/api/v1/permissions/*',
+      '/api/v1/menus',
+      '/api/v1/menus/*',
+    ],
   };
   config.operationRecords = {
     ignore: [
@@ -366,18 +372,18 @@ module.exports = appInfo => {
       'get:/api/v1/roles/{id}',
       // 'put:/api/v1/roles/{id}',
       // 'delete:/api/v1/roles/{id}',
-      // 'post:/api/v1/permissions',
+      'post:/api/v1/permissions',
       'get:/api/v1/permissions',
       'get:/api/v1/permissions/{id}',
-      // 'put:/api/v1/permissions/{id}',
-      // 'delete:/api/v1/permissions/{id}',
-      // 'post:/api/v1/menus',
+      'put:/api/v1/permissions/{id}',
+      'delete:/api/v1/permissions/{id}',
+      'post:/api/v1/menus',
       'post:/api/v1/role-menus',
       'post:/api/v1/role-permissions',
       'get:/api/v1/menus',
       'get:/api/v1/menus/{id}',
-      // 'put:/api/v1/menus/{id}',
-      // 'delete:/api/v1/menus/{id}',
+      'put:/api/v1/menus/{id}',
+      'delete:/api/v1/menus/{id}',
       'put:/api/v1/users/{id}',
     ],
   };
