@@ -41,8 +41,8 @@ class StationFlowFoldersService extends Service {
     const departments = await ctx.service.departments.getUserDepartments();
     const departmentIds = departments.map(item => item.id);
     const stations = allStations.filter(item => departmentIds.includes(item.department_id));
-    const station_ids = stations.map(item => item.id);
-    return station_ids.includes(Number(station_id));
+    const station_ids = stations.map(item => `${item.id}`);
+    return station_ids.includes(`${station_id}`);
   }
 }
 
