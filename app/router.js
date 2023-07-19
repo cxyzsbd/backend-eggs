@@ -6,6 +6,7 @@
 module.exports = app => {
   const { router, controller } = app;
   const visualSharesVerify = app.middleware.visualSharesVerify();
+  const validateSuperUser = app.middleware.validateSuperUser();
   const desensitize = options => {
     return app.middleware.desensitize(options);
   };
@@ -43,19 +44,19 @@ module.exports = app => {
   router.post(`${apiV1}/user/:user_id/roles`, controller.v1.userRoles.bulkRoles);// 批量增删用户角色
 
   // 菜单
-  router.post(`${apiV1}/menus`, controller.v1.menus.create);
-  router.put(`${apiV1}/menus/:id`, controller.v1.menus.update);
+  router.post(`${apiV1}/menus`, validateSuperUser, controller.v1.menus.create);
+  router.put(`${apiV1}/menus/:id`, validateSuperUser, controller.v1.menus.update);
   router.get(`${apiV1}/menus`, controller.v1.menus.findAll);
   router.get(`${apiV1}/menus/:id`, controller.v1.menus.findOne);
-  router.delete(`${apiV1}/menus/:id`, controller.v1.menus.destroy);
+  router.delete(`${apiV1}/menus/:id`, validateSuperUser, controller.v1.menus.destroy);
   router.get(`${apiV1}/users/:id/menus`, controller.v1.menus.userMenus);// 没测试
 
   // 资源
-  router.post(`${apiV1}/permissions`, controller.v1.permissions.create);
-  router.put(`${apiV1}/permissions/:id`, controller.v1.permissions.update);
+  router.post(`${apiV1}/permissions`, validateSuperUser, controller.v1.permissions.create);
+  router.put(`${apiV1}/permissions/:id`, validateSuperUser, controller.v1.permissions.update);
   router.get(`${apiV1}/permissions`, controller.v1.permissions.findAll);
   router.get(`${apiV1}/permissions/:id`, controller.v1.permissions.findOne);
-  router.delete(`${apiV1}/permissions/:id`, controller.v1.permissions.destroy);
+  router.delete(`${apiV1}/permissions/:id`, validateSuperUser, controller.v1.permissions.destroy);
 
   // 角色-菜单关系
   router.post(`${apiV1}/role-menus`, controller.v1.roleMenus.create);
@@ -221,12 +222,12 @@ module.exports = app => {
   router.post(`${apiV1}/devices/:device_id/import-attrs`, controller.v1.deviceTags.importAttrs);
 
   // 超管管理公司
-  router.post(`${apiV1}/super-user/companys`, controller.v1.companys.create);
-  router.get(`${apiV1}/super-user/company-count`, controller.v1.companys.companyCount);
-  router.put(`${apiV1}/super-user/companys/:id`, controller.v1.companys.update);
-  router.get(`${apiV1}/super-user/companys`, controller.v1.companys.findAll);
-  router.get(`${apiV1}/super-user/companys/:id`, controller.v1.companys.findOne);
-  router.post(`${apiV1}/super-user/add-admin`, controller.v1.companys.addAdmin);
+  router.post(`${apiV1}/super-user/companys`, validateSuperUser, controller.v1.companys.create);
+  router.get(`${apiV1}/super-user/company-count`, validateSuperUser, controller.v1.companys.companyCount);
+  router.put(`${apiV1}/super-user/companys/:id`, validateSuperUser, controller.v1.companys.update);
+  router.get(`${apiV1}/super-user/companys`, validateSuperUser, controller.v1.companys.findAll);
+  router.get(`${apiV1}/super-user/companys/:id`, validateSuperUser, controller.v1.companys.findOne);
+  router.post(`${apiV1}/super-user/add-admin`, validateSuperUser, controller.v1.companys.addAdmin);
 
   // 站点
   router.post(`${apiV1}/stations`, controller.v1.stations.create);

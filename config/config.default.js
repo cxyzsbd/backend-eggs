@@ -49,7 +49,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'jwtVerify', 'auth', 'validateSuperUser', 'operationRecords', 'errorHandler' ];
+  config.middleware = [ 'common', 'jwtVerify', 'auth', 'operationRecords', 'errorHandler' ];
   // 只对 /api/v1 前缀的 url 路径生效
   config.errorHandler = {
     ignore: [
@@ -91,15 +91,15 @@ module.exports = appInfo => {
       '/api/v1/captcha',
     ],
   };
-  config.validateSuperUser = {
-    match: [
-      '/api/v1/super-user',
-      '/api/v1/permissions',
-      '/api/v1/permissions/*',
-      '/api/v1/menus',
-      '/api/v1/menus/*',
-    ],
-  };
+  // config.validateSuperUser = {
+  //   match: [
+  //     '/api/v1/super-user',
+  //     '/api/v1/permissions',
+  //     '/api/v1/permissions/*',
+  //     '/api/v1/menus',
+  //     '/api/v1/menus/*',
+  //   ],
+  // };
   config.operationRecords = {
     ignore: [
       '/doc',
