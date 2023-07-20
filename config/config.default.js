@@ -49,7 +49,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1670465853068_2903';
 
   // add your middleware config here
-  config.middleware = [ 'common', 'jwtVerify', 'auth', 'operationRecords', 'errorHandler' ];
+  config.middleware = [ 'jwtVerify', 'auth', 'operationRecords', 'errorHandler' ];
   // 只对 /api/v1 前缀的 url 路径生效
   config.errorHandler = {
     ignore: [
