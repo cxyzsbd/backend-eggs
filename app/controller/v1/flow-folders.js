@@ -17,7 +17,7 @@ class flowFoldersController extends BaseController {
   * @request query number pageNumber
   * @router get flow-folders
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     let params = ctx.query;
     if (!params.component) {
@@ -39,7 +39,7 @@ class flowFoldersController extends BaseController {
   * @router get flow-folders/:id
   * @request path number *id eg:1
   */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.flowFoldersId, ctx.params);
     const res = await service.flowFolders.findOne(ctx.params);
@@ -53,7 +53,7 @@ class flowFoldersController extends BaseController {
   * @router get flow-folders/:id/components
   * @request path number *id eg:1
   */
-  async findAllComponents() {
+  async findAllComponents () {
     const { ctx, service } = this;
     const { company_id } = ctx.request.header;
     ctx.validate(ctx.rule.flowFoldersId, ctx.params);
@@ -80,7 +80,7 @@ class flowFoldersController extends BaseController {
   * @router post flow-folders
   * @request body flowFoldersBodyReq
   */
-  async create() {
+  async create () {
     const { ctx } = this;
     ctx.validate(ctx.rule.flowFoldersBodyReq, ctx.request.body);
     let res = await ctx.service.flowFolders.create(ctx.request.body);
@@ -95,7 +95,7 @@ class flowFoldersController extends BaseController {
   * @request path number *id eg:1
   * @request body flowFoldersPutBodyReq
   */
-  async update() {
+  async update () {
     const { ctx, service } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
@@ -111,7 +111,7 @@ class flowFoldersController extends BaseController {
   * @router delete flow-folders/:id
   * @request path number *id eg:1
   */
-  async destroy() {
+  async destroy () {
     const { ctx, service } = this;
     let params = ctx.params;
     params.id = Number(params.id);
@@ -128,7 +128,7 @@ class flowFoldersController extends BaseController {
   * @request path number *id eg:1
   * @request body bindOrUnbindFlowsReq
   */
-  async bind() {
+  async bind () {
     const { ctx, service } = this;
     let params = { ...ctx.request.body, ...ctx.params };
     params.id = Number(params.id);
@@ -145,7 +145,7 @@ class flowFoldersController extends BaseController {
   * @request path number *id eg:1
   * @request body bindOrUnbindFlowsReq
   */
-  async unbind() {
+  async unbind () {
     const { ctx, service } = this;
     let params = { ...ctx.request.body, ...ctx.params };
     params.id = Number(params.id);
@@ -161,7 +161,7 @@ class flowFoldersController extends BaseController {
   * @request path number *id eg:1
   * @request body flowFoldersSetDefaultFlowBodyReq
   */
-  async setDefaultFlow() {
+  async setDefaultFlow () {
     const { ctx, service } = this;
     let params = { ...ctx.request.body, ...ctx.params };
     params.id = Number(params.id);
