@@ -6,9 +6,13 @@ const { Op, Sequelize } = require('sequelize');
 class EquipmentAccountsService extends Service {
   async findAll (payload, queryOrigin) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
     const { st, et } = queryOrigin;
-    let where = payload.where;
+    let where = {
+      ...payload.where,
+      company_id
+    };
     if (st && et) {
       where.create_at = {
         [Op.between]: [ st, et ],
