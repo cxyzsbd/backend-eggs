@@ -3,12 +3,12 @@
 const Service = require('egg').Service;
 
 class StationFlowFoldersService extends Service {
-  async findOne(payload) {
+  async findOne (payload) {
     const { ctx } = this;
     return await ctx.model.StationFlowFolders.findOne({ where: payload });
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     payload = {
@@ -18,7 +18,7 @@ class StationFlowFoldersService extends Service {
     return await ctx.model.StationFlowFolders.create(payload);
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     const { station_id } = payload;
     const { request_user } = ctx.request.header;
@@ -29,13 +29,13 @@ class StationFlowFoldersService extends Service {
     return await ctx.model.StationFlowFolders.update(payload, { where: { station_id } });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     const { station_id } = payload;
     return await ctx.model.StationFlowFolders.destroy({ where: { station_id } });
   }
 
-  async checkStationPermission(station_id) {
+  async checkStationPermission (station_id) {
     const { ctx, app } = this;
     const allStations = JSON.parse(await app.utils.tools.getStationsCache());
     const departments = await ctx.service.departments.getUserDepartments();

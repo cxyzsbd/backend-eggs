@@ -15,7 +15,7 @@ class StationFlowFoldersController extends BaseController {
   * @router get station/:station_id/flow-folders
   * @request path number *station_id eg:1
   */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.stationFlowFoldersId, ctx.params);
     const res = await service.stationFlowFolders.findOne(ctx.params);
@@ -29,7 +29,7 @@ class StationFlowFoldersController extends BaseController {
   * @router post station/:station_id/flow-folders
   * @request body stationFlowFoldersBodyReq
   */
-  async bind() {
+  async bind () {
     const { ctx, service } = this;
     const params = { ...ctx.request.body, ...ctx.params };
     const { station_id } = params;
@@ -56,7 +56,7 @@ class StationFlowFoldersController extends BaseController {
   * @router delete station/:station_id/flow-folders
   * @request path number *station_id eg:1
   */
-  async destroy() {
+  async destroy () {
     const { ctx, service } = this;
     let params = ctx.params;
     const checkRes = await service.stationFlowFolders.checkStationPermission(params.station_id);
