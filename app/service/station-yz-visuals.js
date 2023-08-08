@@ -23,7 +23,7 @@ class StationYzVisualsService extends Service {
     const { station_id } = payload;
     const { request_user } = ctx.request.header;
     payload = {
-      creator: request_user,
+      updator: request_user,
       ...payload,
     };
     return await ctx.model.StationYzVisuals.update(payload, { where: { station_id } });

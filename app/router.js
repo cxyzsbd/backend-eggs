@@ -410,6 +410,11 @@ module.exports = app => {
   router.post(`${apiV1}/station/:station_id/visuals`, controller.v1.stationYzVisuals.bind);
   router.delete(`${apiV1}/station/:station_id/visuals`, controller.v1.stationYzVisuals.destroy);
 
+  // 站点跟数据绑定关系
+  router.post(`${apiV1}/station-bind-relations`, controller.v1.stationBindRelations.bind);
+  router.get(`${apiV1}/station-bind-relations`, controller.v1.stationBindRelations.findAll);
+  router.delete(`${apiV1}/station-bind-relations/:id`, controller.v1.stationBindRelations.destroy);
+
 
   // 流程图
   router.post(`${apiV1}/template`, controller.v1.template.create);
