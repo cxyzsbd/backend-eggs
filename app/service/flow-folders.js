@@ -118,6 +118,11 @@ class FlowFoldersService extends Service {
 
   async findOne (payload) {
     const { ctx } = this;
+    const { company_id } = ctx.request.header;
+    let where = {
+      ...payload,
+      company_id,
+    };
     // let { department_id } = ctx.request.header;
     // if (department_id || department_id == 0) {
     //   const departments = await ctx.service.departments.getUserDepartments();
@@ -127,7 +132,7 @@ class FlowFoldersService extends Service {
     //   };
     // }
     return await ctx.model.FlowFolders.findOne({
-      where: payload,
+      where,
       include: [
         {
           model: ctx.model.Flows,
