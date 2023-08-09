@@ -118,14 +118,14 @@ class FlowFoldersService extends Service {
 
   async findOne (payload) {
     const { ctx } = this;
-    let { department_id } = ctx.request.header;
-    if (department_id || department_id == 0) {
-      const departments = await ctx.service.departments.getUserDepartments();
-      const departmentIds = departments.map(item => item.id);
-      payload.department_id = {
-        [Op.in]: departmentIds,
-      };
-    }
+    // let { department_id } = ctx.request.header;
+    // if (department_id || department_id == 0) {
+    //   const departments = await ctx.service.departments.getUserDepartments();
+    //   const departmentIds = departments.map(item => item.id);
+    //   payload.department_id = {
+    //     [Op.in]: departmentIds,
+    //   };
+    // }
     return await ctx.model.FlowFolders.findOne({
       where: payload,
       include: [
