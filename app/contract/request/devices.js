@@ -11,7 +11,7 @@ const body = {
     name: {
       type: 'string',
       required: true,
-      max: 60,
+      max: 100,
       description: '名称',
     },
     type: {
@@ -67,7 +67,7 @@ const body = {
     name: {
       type: 'string',
       required: true,
-      max: 60,
+      max: 100,
       description: '名称',
     },
     type: {

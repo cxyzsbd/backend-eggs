@@ -32,7 +32,7 @@ module.exports = app => {
       field: 'tag',
     },
     name: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(100),
       allowNull: false,
       defaultValue: null,
       primaryKey: false,
