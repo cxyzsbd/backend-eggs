@@ -186,6 +186,7 @@ module.exports = app => {
   router.put(`${apiV1}/device-models/:id`, controller.v1.deviceModels.update);
   router.get(`${apiV1}/device-models`, controller.v1.deviceModels.findAll);
   router.get(`${apiV1}/device-models/:id`, controller.v1.deviceModels.findOne);
+  router.delete(`${apiV1}/device-models`, controller.v1.deviceModels.destroyMore);
   router.delete(`${apiV1}/device-models/:id`, controller.v1.deviceModels.destroy);
   // router.get(`${apiV1}/device-models/:id/attrs`, controller.v1.deviceModels.getDetailAndAttrs);
   router.get(`${apiV1}/export-device-models`, controller.v1.deviceModels.getModelsWithAttrs);
@@ -199,6 +200,7 @@ module.exports = app => {
   router.get(`${apiV1}/devices`, controller.v1.devices.findAll);
   router.get(`${apiV1}/devices/:id`, controller.v1.devices.findOne);
   router.delete(`${apiV1}/devices/:id`, controller.v1.devices.destroy);
+  router.delete(`${apiV1}/devices`, controller.v1.devices.destroyMore);
   router.post(`${apiV1}/model-to-device`, controller.v1.devices.modelToDevice);
   // router.get(`${apiV1}/devices/:id/attrs`, controller.v1.devices.getDetailAndAttrs);
   router.get(`${apiV1}/export-devices`, controller.v1.devices.getDevicesWithAttrs);
@@ -209,6 +211,7 @@ module.exports = app => {
   router.put(`${apiV1}/device-model-tags/:id`, controller.v1.deviceModelTags.update);
   router.get(`${apiV1}/device-model-tags`, controller.v1.deviceModelTags.findAll);
   router.delete(`${apiV1}/device-model-tags/:id`, controller.v1.deviceModelTags.destroy);
+  router.delete(`${apiV1}/device-model-tags`, controller.v1.deviceModelTags.destroyMore);
   router.get(`${apiV1}/device-models/:model_id/export-attrs`, controller.v1.deviceModelTags.exportAttrs);
   router.post(`${apiV1}/device-models/:model_id/import-attrs`, controller.v1.deviceModelTags.importAttrs);
 
@@ -217,6 +220,7 @@ module.exports = app => {
   router.put(`${apiV1}/device-tags/:id`, controller.v1.deviceTags.update);
   router.get(`${apiV1}/device-tags`, controller.v1.deviceTags.findAll);
   router.delete(`${apiV1}/device-tags/:id`, controller.v1.deviceTags.destroy);
+  router.delete(`${apiV1}/device-tags`, controller.v1.deviceTags.destroyMore);
   router.post(`${apiV1}/device-tag-datas`, controller.v1.deviceTags.getTagDatas);
   router.get(`${apiV1}/devices/:device_id/export-attrs`, controller.v1.deviceTags.exportAttrs);
   router.post(`${apiV1}/devices/:device_id/import-attrs`, controller.v1.deviceTags.importAttrs);

@@ -4,6 +4,9 @@ const body = {
   deviceModelTagsId: {
     id: { type: 'number', required: true, description: 'id' },
   },
+  deviceModelTagsIds: {
+    ids: { type: 'array', itemType: 'string', required: true, description: 'ids' },
+  },
   deviceModelTagsBodyReq: {
     model_id: {
       type: 'string',

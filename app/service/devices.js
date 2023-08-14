@@ -4,14 +4,14 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class DevicesService extends Service {
-  async findAll (payload) {
+  async findAll(payload) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order } = payload;
     let where = payload.where;
     where.company_id = company_id;
     let Order = [];
-    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    prop_order && order ? Order.push([prop_order, order]) : null;
     const count = await ctx.model.Devices.count({ where });
     let tempObj = {
       where,
@@ -39,12 +39,12 @@ class DevicesService extends Service {
     return resObj;
   }
 
-  async findOne (payload, options = {}) {
+  async findOne(payload, options = {}) {
     const { ctx } = this;
     return await ctx.model.Devices.findOne({ where: payload, ...options });
   }
 
-  async create (payload) {
+  async create(payload) {
     const { ctx, app } = this;
     const { request_user, department_id, company_id } = ctx.request.header;
     payload = { ...payload, creator: request_user, department_id, company_id };
@@ -52,13 +52,13 @@ class DevicesService extends Service {
     return await ctx.model.Devices.create(payload);
   }
 
-  async update (payload) {
+  async update(payload) {
     const { ctx } = this;
     delete payload.model_id;
     return await ctx.model.Devices.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy (payload) {
+  async destroy(payload) {
     const { ctx } = this;
     const transaction = await ctx.model.transaction();
     try {
@@ -75,7 +75,25 @@ class DevicesService extends Service {
     }
   }
 
-  async modelToDevice (payload) {
+
+  async destroyMore(payload) {
+    const { ctx } = this;
+    const transaction = await ctx.model.transaction();
+    try {
+      // 删除模型
+      const res = await ctx.model.Devices.destroy({ where: { id: payload.ids }, transaction });
+      // 删除属性
+      await ctx.model.DeviceTags.destroy({ where: { device_id: payload.ids }, transaction });
+      await transaction.commit();
+      return res;
+    } catch (e) {
+      // 异常情况回滚数据库
+      await transaction.rollback();
+      ctx.logger.error(e);
+    }
+  }
+
+  async modelToDevice(payload) {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     const { model_id, station_id, name, type, brand, model, desc, img } = payload;
@@ -121,7 +139,7 @@ class DevicesService extends Service {
     }
   }
 
-  async getDetailAndAttrs (payload) {
+  async getDetailAndAttrs(payload) {
     const { ctx } = this;
     return await ctx.model.Devices.findOne({
       where: payload,
@@ -134,7 +152,7 @@ class DevicesService extends Service {
     });
   }
 
-  async getDevicesWithAttrs (payload, queryOrigin) {
+  async getDevicesWithAttrs(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { prop_order, order } = payload;
@@ -145,11 +163,11 @@ class DevicesService extends Service {
     };
     if (st && et) {
       where.create_at = {
-        [Op.between]: [ st, et ],
+        [Op.between]: [st, et],
       };
     }
     let Order = [];
-    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    prop_order && order ? Order.push([prop_order, order]) : null;
     return await ctx.model.Devices.findAll({
       where,
       order: Order,
@@ -162,7 +180,7 @@ class DevicesService extends Service {
     });
   }
 
-  async createDeviceAndAttrs (payload, query) {
+  async createDeviceAndAttrs(payload, query) {
     const { ctx, app } = this;
     let { id = null, attrs = [] } = payload;
     const { is_cover = 0 } = query;

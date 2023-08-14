@@ -18,7 +18,7 @@ class DeviceTagsController extends BaseController {
   * @request query number pageNumber
   * @router get device-tags
   */
-  async findAll () {
+  async findAll() {
     const { ctx, service } = this;
     const rule = {
       device_id: {
@@ -29,7 +29,7 @@ class DeviceTagsController extends BaseController {
       kind: {
         required: false,
         type: 'number',
-        enum: [ 1, 2, 3 ],
+        enum: [1, 2, 3],
       },
     };
     ctx.validate(rule, ctx.query);
@@ -49,7 +49,7 @@ class DeviceTagsController extends BaseController {
   * @router post device-tags
   * @request body deviceTagsBodyReq
   */
-  async create () {
+  async create() {
     const { ctx, service, app } = this;
     let params = ctx.request.body;
     ctx.validate(ctx.rule.deviceTagsBodyReq, params);
@@ -75,7 +75,7 @@ class DeviceTagsController extends BaseController {
   * @request path number *id eg:1
   * @request body deviceTagsPutBodyReq
   */
-  async update () {
+  async update() {
     const { ctx, service, app } = this;
     const params = { ...ctx.params, ...ctx.request.body };
     params.id = Number(params.id);
@@ -103,7 +103,7 @@ class DeviceTagsController extends BaseController {
   * @router delete device-tags/:id
   * @request path number *id eg:1
   */
-  async destroy () {
+  async destroy() {
     const { ctx, service, app } = this;
     let params = ctx.params;
     params.id = Number(params.id);
@@ -113,13 +113,32 @@ class DeviceTagsController extends BaseController {
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
+
+  /**
+   * @apikey
+   * @summary 删除 设备绑定点位
+   * @description 删除 设备绑定点位
+   * @router delete device-tags
+     * @request body deviceTagsIds
+   */
+  async destroyMore() {
+    const { ctx, service, app } = this;
+    let params = ctx.request.body;
+    params.id = Number(params.id);
+    ctx.validate(ctx.rule.deviceTagsIds, params);
+    const res = await service.deviceTags.destroyMore(params);
+    await app.utils.tools.setAttrsRedisCache();
+    res ? this.NO_CONTENT() : this.NOT_FOUND();
+  }
+
+
   /**
    * 获取属性及其实时数据
   * 获取属性及其实时数据
   * post device-tag-datas
   * body deviceTagsDataReq
   */
-  async getTagDatas () {
+  async getTagDatas() {
     const { ctx, service, app } = this;
     const requestBaseUrl = app.config.dataForwardBaseUrl;
     const params = { ...ctx.request.body, ...ctx.query };
@@ -133,7 +152,7 @@ class DeviceTagsController extends BaseController {
           item.value = attr_values[item.id] || null;
           return item;
         });
-        resData = [ ...resData, ...noTagAttrs ];
+        resData = [...resData, ...noTagAttrs];
       }
       // 如果data为空数组，直接返回
       if ((!data || !data.length) && (noTagAttrs && noTagAttrs.length)) {
@@ -158,7 +177,7 @@ class DeviceTagsController extends BaseController {
         return false;
       }
       if (res && res.data && res.data.length) {
-        resData = [ ...resData, ...res.data ];
+        resData = [...resData, ...res.data];
       }
       this.SUCCESS(resData);
     } catch (error) {
@@ -166,7 +185,7 @@ class DeviceTagsController extends BaseController {
     }
   }
 
-  async exportAttrs () {
+  async exportAttrs() {
     const { ctx, app } = this;
     const { device_id } = ctx.params;
     // 查询数据
@@ -195,7 +214,7 @@ class DeviceTagsController extends BaseController {
     for (const row of results) {
       let data = row.toJSON();
       // console.log('row=======================', row);
-      let tagnameArr = [ '', '', '' ];
+      let tagnameArr = ['', '', ''];
       if (data.tagname) {
         tagnameArr = data.tagname.split('\\');
       }
@@ -215,7 +234,7 @@ class DeviceTagsController extends BaseController {
     ctx.body = buffer;
   }
 
-  async importAttrs () {
+  async importAttrs() {
     const { ctx, app, service } = this;
     const { company_id } = ctx.request.header;
     const { device_id } = ctx.params;

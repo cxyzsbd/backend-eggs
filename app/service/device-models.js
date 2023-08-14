@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class DeviceModelsService extends Service {
-  async findAll (payload, queryOrigin) {
+  async findAll(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order, kind = 1 } = payload;
@@ -16,11 +16,11 @@ class DeviceModelsService extends Service {
     };
     if (st && et) {
       where.create_at = {
-        [Op.between]: [ st, et ],
+        [Op.between]: [st, et],
       };
     }
     let Order = [];
-    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    prop_order && order ? Order.push([prop_order, order]) : null;
     const count = await ctx.model.DeviceModels.count({ where });
     const data = await ctx.model.DeviceModels.findAll({
       limit: pageSize,
@@ -37,12 +37,12 @@ class DeviceModelsService extends Service {
     };
   }
 
-  async findOne (payload, options = {}) {
+  async findOne(payload, options = {}) {
     const { ctx } = this;
     return await ctx.model.DeviceModels.findOne({ where: payload, ...options });
   }
 
-  async create (payload) {
+  async create(payload) {
     const { ctx, app } = this;
     const { kind = 1 } = payload;
     const { request_user, department_id, company_id } = ctx.request.header;
@@ -51,12 +51,12 @@ class DeviceModelsService extends Service {
     return await ctx.model.DeviceModels.create(payload);
   }
 
-  async update (payload) {
+  async update(payload) {
     const { ctx } = this;
     return await ctx.model.DeviceModels.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy (payload) {
+  async destroy(payload) {
     const { ctx } = this;
     const transaction = await ctx.model.transaction();
     try {
@@ -72,7 +72,26 @@ class DeviceModelsService extends Service {
       await transaction.rollback();
     }
   }
-  async getDetailAndAttrs (payload) {
+
+
+  async destroyMore(payload) {
+    const { ctx } = this;
+    const transaction = await ctx.model.transaction();
+    try {
+      // 删除模型
+      const res = await ctx.model.DeviceModels.destroy({ where: { id: payload.ids }, transaction });
+      // 删除属性
+      await ctx.model.DeviceModelTags.destroy({ where: { model_id: payload.ids }, transaction });
+      await transaction.commit();
+      return res;
+    } catch (e) {
+      ctx.logger.error(e);
+      // 异常情况回滚数据库
+      await transaction.rollback();
+    }
+  }
+
+  async getDetailAndAttrs(payload) {
     const { ctx } = this;
     return await ctx.model.DeviceModels.findOne({
       where: payload,
@@ -84,7 +103,7 @@ class DeviceModelsService extends Service {
       ],
     });
   }
-  async getModelsWithAttrs (payload, queryOrigin) {
+  async getModelsWithAttrs(payload, queryOrigin) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     const { prop_order, order } = payload;
@@ -95,11 +114,11 @@ class DeviceModelsService extends Service {
     };
     if (st && et) {
       where.create_at = {
-        [Op.between]: [ st, et ],
+        [Op.between]: [st, et],
       };
     }
     let Order = [];
-    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    prop_order && order ? Order.push([prop_order, order]) : null;
     return await ctx.model.DeviceModels.findAll({
       where,
       order: Order,
@@ -112,7 +131,7 @@ class DeviceModelsService extends Service {
     });
   }
 
-  async createModelAndAttrs (payload, query) {
+  async createModelAndAttrs(payload, query) {
     const { ctx, app } = this;
     let { id = null, attrs = [], kind = 1 } = payload;
     const { is_cover = 0 } = query;
@@ -228,7 +247,7 @@ class DeviceModelsService extends Service {
     return res;
   }
 
-  async modelToDirectory (payload, directory) {
+  async modelToDirectory(payload, directory) {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     const { model_id, directory_id, is_cover = 0, kind } = payload;
@@ -249,9 +268,13 @@ class DeviceModelsService extends Service {
         // 处理覆盖问题
         const addNames = tags.map(item => item.name);
         // 看看当前目录下的点是否已经在的
-        const hasTags = await ctx.model.DeviceTags.findAll({ where: { kind, device_id: directory_id, name: {
-          [Op.in]: addNames,
-        } }, transaction, raw: true });
+        const hasTags = await ctx.model.DeviceTags.findAll({
+          where: {
+            kind, device_id: directory_id, name: {
+              [Op.in]: addNames,
+            }
+          }, transaction, raw: true
+        });
         const hasTagNames = hasTags.map(item => item.name);
         let createDatas = [],
           updateDatas = [];

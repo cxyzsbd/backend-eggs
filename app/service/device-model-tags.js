@@ -8,7 +8,7 @@ class DeviceModelTagsService extends Service {
     const { pageSize, pageNumber, prop_order, order } = payload;
     const where = payload.where;
     const Order = [];
-    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    prop_order && order ? Order.push([prop_order, order]) : null;
     const count = await ctx.model.DeviceModelTags.count({ where });
     const data = await ctx.model.DeviceModelTags.findAll({
       limit: pageSize,
@@ -49,6 +49,11 @@ class DeviceModelTagsService extends Service {
     const { ctx } = this;
     return await ctx.model.DeviceModelTags.destroy({ where: { id: payload.id } });
   }
+  async destroyMore(payload) {
+    const { ctx } = this;
+    return await ctx.model.DeviceModelTags.destroy({ where: { id: payload.ids } });
+  }
+
 }
 
 module.exports = DeviceModelTagsService;

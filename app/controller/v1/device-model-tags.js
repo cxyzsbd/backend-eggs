@@ -88,6 +88,23 @@ class DeviceModelTagsController extends BaseController {
     res ? this.NO_CONTENT() : this.NOT_FOUND();
   }
 
+
+  /**
+    * @apikey
+    * @summary 删除 设备模型属性
+    * @description 删除 设备模型属性
+    * @router delete device-model-tag
+    * @request body deviceModelTagsIds
+    */
+  async destroyMore() {
+    const { ctx, service } = this;
+    let params = ctx.request.body;
+    params.id = Number(params.id);
+    ctx.validate(ctx.rule.deviceModelTagsIds, params);
+    const res = await service.deviceModelTags.destroyMore(params);
+    res ? this.NO_CONTENT() : this.NOT_FOUND();
+  }
+
   async exportAttrs() {
     const { ctx, app } = this;
     const { model_id } = ctx.params;
