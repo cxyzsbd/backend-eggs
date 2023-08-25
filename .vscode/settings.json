@@ -1,0 +1,48 @@
+{
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.statusBar.visible": true,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "scm.alwaysShowActions": true,
+  "scm.providerCountBadge": "visible",
+  "vsicons.dontShowNewVersionMessage": true,
+  "bracketPairColorizer.consecutivePairColors": [
+    "()",
+    "[]",
+    "{}",
+    [
+      "Gold",
+      "Orchid",
+      "LightSkyBlue"
+    ],
+    "Red"
+  ],
+  /*
+   * editor 相关
+   */
+  "editor.formatOnSave": false, // #每次保存的时候自动格式化
+  "editor.formatOnPaste": false, // #每次粘贴的时候自动格式化
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "powermode.enabled": true,
+  "powermode.presets": "simple-rift",
+  "explorer.confirmDragAndDrop": false,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "bracketPairColorizer.depreciation-notice": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "powermode.shake.intensity": 0,
+  "editor.guides.indentation": false,
+  "editor.quickSuggestionsDelay": 100,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "markdown-preview-enhanced.previewTheme": "atom-light.css",
+  "editor.accessibilitySupport": "on",
+  "editor.fontVariations": false,
+  "editor.fontLigatures": false,
+  "gitlens.currentLine.dateFormat": "",
+  "workbench.editorAssociations": {
+    "*.pdf": "default"
+  },
+}
