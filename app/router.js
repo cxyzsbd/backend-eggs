@@ -330,6 +330,8 @@ module.exports = app => {
 
   // 报警
   router.post(`${apiV1}/alarms`, controller.v1.alarms.create);
+  router.get(`${apiV1}/realtime-alarms`, controller.v1.alarms.getAlarms);
+  router.get(`${apiV1}/his-alarms`, controller.v1.alarms.getHisAlarms);
   // 事件推送
   router.post(`${apiV1}/report-events`, controller.v1.alarms.reportEvents);
 

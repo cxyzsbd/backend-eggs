@@ -219,6 +219,156 @@ class alarmsController extends BaseController {
     });
     this.SUCCESS();
   }
+
+  /**
+  * @apikey
+  * @summary 实时报警
+  * @description 实时报警列表
+  * @router get realtime-alarms
+  * @request query string station_id '站点id'
+  * @request query string device_id '设备id'
+  * @request query string attr_id '属性id'
+  * @request query string getinfo 'getinfo,0为只获取报警条数，1为获取全部详细信息'
+  */
+  async getAlarms () {
+    const { ctx, app } = this;
+    const requestBaseUrl = app.config.dataForwardBaseUrl;
+    const { station_id = null, device_id = null, attr_id = null, getinfo = 1 } = ctx.query;
+    const allAttrs = JSON.parse(await app.utils.tools.getAttrsCache());
+    const allStations = JSON.parse(await app.utils.tools.getStationsCache());
+    const allDevices = JSON.parse(await app.utils.tools.getDevicesCache());
+    // 获取部门、站点、设备、属性
+    // 获取用户下面的部门
+    const departments = await ctx.service.departments.getUserDepartments();
+    const departmentIds = departments.map(item => item.id);
+    console.log('departmentIds==========', departmentIds);
+    // 获取站点
+    const stations = station_id !== null ? allStations.filter(item => departmentIds.includes(item.department_id) && `${item.id}` === `${station_id}`) : allStations.filter(item => departmentIds.includes(item.department_id));
+    if (!stations || !stations.length) {
+      this.NOT_FOUND({
+        message: '无站点或无权限',
+      });
+      return false;
+    }
+    const station_ids = stations.map(item => `${item.id}`);
+    // 获取设备
+    const devices = device_id !== null ? allDevices.filter(item => station_ids.includes(`${item.station_id}`) && `${item.id}` === `${device_id}`) : allDevices.filter(item => station_ids.includes(`${item.station_id}`));
+    if (!devices || !devices.length) {
+      this.NOT_FOUND({
+        message: '无设备或无权限',
+      });
+      return false;
+    }
+    const device_ids = devices.map(item => `${item.id}`);
+    // 获取属性
+    const attrs = attr_id !== null ? allAttrs.filter(item => device_ids.includes(`${item.device_id}`) && `${item.id}` === `${attr_id}`) : allAttrs.filter(item => device_ids.includes(`${item.device_id}`));
+    if (!attrs || !attrs.length) {
+      this.NOT_FOUND({
+        message: '属性不存在或无权限',
+      });
+      return false;
+    }
+    let alarmAttrs = attrs.filter(item => item.boxcode?.length && item.tagname?.length);
+    const res = await ctx.curl(`${requestBaseUrl}box-data/alarm?getinfo=${getinfo}`, {
+      method: 'POST',
+      rejectUnauthorized: false,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      dataType: 'json',
+      data: alarmAttrs,
+    }).catch(err => {
+      ctx.logger.error('实时报警请求返回错误==============', err);
+      return false;
+    });
+    if (!res) {
+      this.SERVER_ERROR();
+      return false;
+    }
+    this.SUCCESS(res.data || []);
+  }
+
+  /**
+  * @apikey
+  * @summary 历史报警
+  * @description 历史报警列表
+  * @router get his-alarms
+  * @request query string station_id '站点id'
+  * @request query string device_id '设备id'
+  * @request query string attr_id '属性id'
+  * @request query string *st '开始时间'
+  * @request query string *et '结束时间'
+  * @request query string max '条数,不传默认500'
+  */
+  async getHisAlarms () {
+    const { ctx, app } = this;
+    const requestBaseUrl = app.config.dataForwardBaseUrl;
+    const rule = {
+      st: {
+        type: 'string',
+        required: true,
+      },
+      et: {
+        type: 'string',
+        required: true,
+      },
+    };
+    ctx.validate(rule, ctx.query);
+    const { station_id = null, device_id = null, attr_id = null, st = null, et = null, max = 500 } = ctx.query;
+    const allAttrs = JSON.parse(await app.utils.tools.getAttrsCache());
+    const allStations = JSON.parse(await app.utils.tools.getStationsCache());
+    const allDevices = JSON.parse(await app.utils.tools.getDevicesCache());
+    // 获取部门、站点、设备、属性
+    // 获取用户下面的部门
+    const departments = await ctx.service.departments.getUserDepartments();
+    const departmentIds = departments.map(item => item.id);
+    // 获取站点
+    const stations = station_id !== null ? allStations.filter(item => departmentIds.includes(item.department_id) && `${item.id}` === `${station_id}`) : allStations.filter(item => departmentIds.includes(item.department_id));
+    if (!stations || !stations.length) {
+      this.NOT_FOUND({
+        message: '无站点或无权限',
+      });
+      return false;
+    }
+    const station_ids = stations.map(item => `${item.id}`);
+    // 获取设备
+    const devices = device_id !== null ? allDevices.filter(item => station_ids.includes(`${item.station_id}`) && `${item.id}` === `${device_id}`) : allDevices.filter(item => station_ids.includes(`${item.station_id}`));
+    if (!devices || !devices.length) {
+      this.NOT_FOUND({
+        message: '无设备或无权限',
+      });
+      return false;
+    }
+    const device_ids = devices.map(item => `${item.id}`);
+    // 获取属性
+    const attrs = attr_id !== null ? allAttrs.filter(item => device_ids.includes(`${item.device_id}`) && `${item.id}` === `${attr_id}`) : allAttrs.filter(item => device_ids.includes(`${item.device_id}`));
+    if (!attrs || !attrs.length) {
+      this.NOT_FOUND({
+        message: '属性不存在或无权限',
+      });
+      return false;
+    }
+    let alarmAttrs = attrs.filter(item => item.boxcode?.length && item.tagname?.length);
+    const res = await ctx.curl(`${requestBaseUrl}box-data/his-alarm?st=${st}&et=${et}&max=${max}`, {
+      method: 'POST',
+      rejectUnauthorized: false,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      dataType: 'json',
+      data: alarmAttrs,
+    }).catch(err => {
+      ctx.logger.error('历史报警请求返回错误==============', err);
+      return false;
+    });
+    if (!res) {
+      this.SERVER_ERROR();
+      return false;
+    }
+    this.SUCCESS(res.data || []);
+  }
 }
 
 module.exports = alarmsController;
