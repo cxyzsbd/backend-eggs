@@ -17,7 +17,7 @@ class devicesController extends BaseController {
   * @request query number pageNumber
   * @router get devices
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const rule = {
       station_id: {
@@ -43,7 +43,7 @@ class devicesController extends BaseController {
   * @router get devices/:id
   * @request path string *id eg:1
   */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.devicesId, ctx.params);
     const res = await service.devices.findOne(ctx.params);
@@ -57,7 +57,7 @@ class devicesController extends BaseController {
   * @router post devices
   * @request body devicesBodyReq
   */
-  async create() {
+  async create () {
     const { ctx, app, service } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.devicesBodyReq, params);
@@ -81,7 +81,7 @@ class devicesController extends BaseController {
   * @request path string *id eg:1
   * @request body devicesPutBodyReq
   */
-  async update() {
+  async update () {
     const { ctx, service, app } = this;
     let params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(ctx.rule.devicesPutBodyReq, params);
@@ -104,7 +104,7 @@ class devicesController extends BaseController {
   * @router delete devices/:id
   * @request path string *id eg:1
   */
-  async destroy() {
+  async destroy () {
     const { ctx, service, app } = this;
     let params = ctx.params;
     ctx.validate(ctx.rule.devicesId, params);
@@ -122,7 +122,7 @@ class devicesController extends BaseController {
   * @router delete devices
   * @request body devicesIds
   */
-  async destroyMore() {
+  async destroyMore () {
     const { ctx, service, app } = this;
     let params = ctx.request.body;
     ctx.validate(ctx.rule.devicesIds, params);
@@ -139,7 +139,7 @@ class devicesController extends BaseController {
   * @router post model-to-device
   * @request body modelToDeviceBodyReq
   */
-  async modelToDevice() {
+  async modelToDevice () {
     const { ctx, service, app } = this;
     const params = ctx.request.body;
     ctx.validate(ctx.rule.modelToDeviceBodyReq, params);
@@ -180,7 +180,7 @@ class devicesController extends BaseController {
   * @router get devices/:id/attrs
   * @request path number *id eg:1
   */
-  async getDetailAndAttrs() {
+  async getDetailAndAttrs () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.devicesId, ctx.params);
     const res = await service.devices.getDetailAndAttrs(ctx.params);
@@ -193,7 +193,7 @@ class devicesController extends BaseController {
   * @description 获取设备及属性
   * @router get export-devices
   */
-  async getDevicesWithAttrs() {
+  async getDevicesWithAttrs () {
     const { ctx, service } = this;
     const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.devicesPutBodyReq,
@@ -212,8 +212,8 @@ class devicesController extends BaseController {
   * @request query string is_cover '遇到数据库已存在的数据是否覆盖，默认不覆盖，1：覆盖'
   * @request body devicesBodyReq
   */
-  async importDeviceAndAttrs() {
-    const { ctx } = this;
+  async importDeviceAndAttrs () {
+    const { ctx, app } = this;
     const { is_cover = 0 } = ctx.query;
     let params = ctx.request.body;
     let attrRule = ctx.rule.deviceTagsBodyReq;
@@ -265,10 +265,12 @@ class devicesController extends BaseController {
         success_res.push(r);
       }
     });
+    await app.utils.tools.setAttrsRedisCache();
+    await app.utils.tools.setDevicesCache();
     this.SUCCESS({ fail_res: failArr, success_res });
   }
 
-  async resolveUpsertModel(params, is_cover) {
+  async resolveUpsertModel (params, is_cover) {
     const { ctx, service } = this;
     // 查询是否有重名
     const device = await service.devices.findOne({ name: params.name, station_id: params.station_id }, { raw: true });

@@ -16,7 +16,7 @@ class DeviceModelsController extends BaseController {
   * @request query number pageNumber
   * @router get device-models
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.deviceModelsPutBodyReq,
@@ -34,7 +34,7 @@ class DeviceModelsController extends BaseController {
   * @router get device-models/:id
   * @request path number *id eg:1
   */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.deviceModelsId, ctx.params);
     const res = await service.deviceModels.findOne(ctx.params);
@@ -48,7 +48,7 @@ class DeviceModelsController extends BaseController {
   * @router post device-models
   * @request body deviceModelsBodyReq
   */
-  async create() {
+  async create () {
     const { ctx, service } = this;
     const params = ctx.request.body;
     const { company_id } = ctx.request.header;
@@ -71,7 +71,7 @@ class DeviceModelsController extends BaseController {
   * @request path number *id eg:1
   * @request body deviceModelsPutBodyReq
   */
-  async update() {
+  async update () {
     const { ctx, service } = this;
     const { company_id } = ctx.request.header;
     let params = { ...ctx.params, ...ctx.request.body };
@@ -93,7 +93,7 @@ class DeviceModelsController extends BaseController {
   * @router delete device-models/:id
   * @request path string *id eg:1
   */
-  async destroy() {
+  async destroy () {
     const { ctx, service } = this;
     let params = ctx.params;
     ctx.validate(ctx.rule.deviceModelsId, params);
@@ -109,7 +109,7 @@ class DeviceModelsController extends BaseController {
   * @router delete device-models
   * @request body deviceModelsIds
   */
-  async destroyMore() {
+  async destroyMore () {
     const { ctx, service } = this;
     let params = ctx.request.body;
     ctx.validate(ctx.rule.deviceModelsIds, params);
@@ -125,7 +125,7 @@ class DeviceModelsController extends BaseController {
   * @router get device-models/:id/attrs
   * @request path number *id eg:1
   */
-  async getDetailAndAttrs() {
+  async getDetailAndAttrs () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.deviceModelsId, ctx.params);
     const res = await service.deviceModels.getDetailAndAttrs(ctx.params);
@@ -137,7 +137,7 @@ class DeviceModelsController extends BaseController {
   * @description 获取模型及属性
   * @router get export-device-models
   */
-  async getModelsWithAttrs() {
+  async getModelsWithAttrs () {
     const { ctx, service } = this;
     const { allRule, query, queryOrigin } = this.findAllParamsDeal({
       rule: ctx.rule.deviceModelsPutBodyReq,
@@ -156,7 +156,7 @@ class DeviceModelsController extends BaseController {
   * @request query string is_cover '遇到数据库已存在的数据是否覆盖，默认不覆盖，1：覆盖'
   * @request body deviceModelsBodyReq
   */
-  async importModelAndAttrs() {
+  async importModelAndAttrs () {
     const { ctx } = this;
     const { is_cover = 0 } = ctx.query;
     let params = ctx.request.body;
@@ -210,7 +210,7 @@ class DeviceModelsController extends BaseController {
     });
     this.SUCCESS({ fail_res: failArr });
   }
-  async resolveUpsertModel(params, is_cover) {
+  async resolveUpsertModel (params, is_cover) {
     const { ctx, service } = this;
     const { company_id } = ctx.request.header;
     // 查询是否有重名模型
@@ -234,7 +234,7 @@ class DeviceModelsController extends BaseController {
   * @router post model-to-directory
   * @request body modelToDirectoryBodyReq
   */
-  async modelToDirectory() {
+  async modelToDirectory () {
     const { ctx, service, app } = this;
     const params = ctx.request.body;
     console.log('params====================', params);
