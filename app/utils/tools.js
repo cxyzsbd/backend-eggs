@@ -13,8 +13,13 @@ const quarterOfYear = require('dayjs/plugin/quarterOfYear');
 dayjs.extend(quarterOfYear);
 const globalConfig = require('../../global.config');
 const Excel = require('exceljs');
+
+
+const algorithm = 'aes-256-ctr';
+const ENCRYPTION_KEY = Buffer.from('FoCKvdLslUuB4y3EZlKate7XGottHski1LmyqJHvUhs=', 'base64');
+const IV_LENGTH = 16;
 module.exports = class Tools {
-  constructor(app) {
+  constructor (app) {
     this.app = app;
     this.ctx = app.createAnonymousContext();
     this.config = app.config;
@@ -28,7 +33,7 @@ module.exports = class Tools {
   }
 
   // 解析token
-  async decodeTokenInfo(token, type) {
+  async decodeTokenInfo (token, type) {
     const { ctx } = this;
     const secret = ctx.app.config.jwt.secret;
     const decoded = ctx.app.jwt.verify(token, secret) || 'false';
@@ -45,15 +50,15 @@ module.exports = class Tools {
    * @param {*} type 脱敏类型
    * @return 结果
    */
-  async desensitize(value, type = 'str') {
+  async desensitize (value, type = 'str') {
     // console.log(value, type);
     // 脱敏手机号，保留前三位和后四位，中间用 * 替代
-    function desensitizePhone(phone) {
+    function desensitizePhone (phone) {
       return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
     }
 
     // 脱敏邮箱，将邮箱名部分替换为 *，保留域名
-    function desensitizeEmail(email) {
+    function desensitizeEmail (email) {
       const atIndex = email.indexOf('@');
       const name = email.substring(0, atIndex);
       const domain = email.substring(atIndex + 1);
@@ -61,7 +66,7 @@ module.exports = class Tools {
     }
 
     // 脱敏字符串，保留首尾字符，中间用 * 替代
-    function desensitizeString(str) {
+    function desensitizeString (str) {
       const len = str.length;
       if (len <= 2) {
         return str.replace(/./g, '*');
@@ -72,7 +77,7 @@ module.exports = class Tools {
       return `${firstChar}${middleChars}${lastChar}`;
     }
 
-    function desensitizeAll(value) {
+    function desensitizeAll (value) {
       return '*'.repeat(value.length);
     }
     let res = '';
@@ -97,7 +102,7 @@ module.exports = class Tools {
   }
 
   // 有智同步用户和角色
-  async youzhi_async_users() {
+  async youzhi_async_users () {
     const { ctx, globalConfig: { YOUZHI_REQUEST_URL } } = this;
     const res = await ctx.curl(`${YOUZHI_REQUEST_URL}system/syncUserInfo`, {
       method: 'POST',
@@ -113,7 +118,7 @@ module.exports = class Tools {
   }
 
   // 将文件流转换成 buffer
-  async streamToBuffer(stream) {
+  async streamToBuffer (stream) {
     return new Promise((resolve, reject) => {
       const chunks = [];
       stream.on('data', chunk => {
@@ -129,7 +134,7 @@ module.exports = class Tools {
   }
 
   // 工单推送
-  socketWorkOrderPush(type = 1, data) {
+  socketWorkOrderPush (type = 1, data) {
     const { app } = this;
     const nsp = app.io.of('/');
     const {
@@ -140,7 +145,7 @@ module.exports = class Tools {
   }
 
   // 推送
-  socketPush(target_id = null, type = 'all', event, data) {
+  socketPush (target_id = null, type = 'all', event, data) {
     const { app } = this;
     const nsp = app.io.of('/');
     const {
@@ -168,23 +173,34 @@ module.exports = class Tools {
     nsp.to(`${prefix}${target_id}`).emit(event, data);
   }
 
+
   // AES加密
-  async aesEncrypt(data, secretKey, iv = null) {
-    const cipher = crypto.createCipheriv('aes-128-ecb', secretKey, iv);
-    let encrypted = cipher.update(data, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
+  aesEncrypt (text) {
+    if (!text) {
+      return text;
+    }
+    let iv = crypto.randomBytes(IV_LENGTH);
+    let cipher = crypto.createCipheriv(algorithm, Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([ encrypted, cipher.final() ]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
   }
   // AES解密
-  async aesDecrypt(data, secretKey, iv = null) {
-    const decipher = crypto.createDecipheriv('aes-128-ecb', secretKey, iv);
-    let decrypted = decipher.update(data, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+  aesDecrypt (text) {
+    if (!text) {
+      return text;
+    }
+    let textParts = text.split(':');
+    let iv = Buffer.from(textParts.shift(), 'hex');
+    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    let decipher = crypto.createDecipheriv(algorithm, Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([ decrypted, decipher.final() ]);
+    return decrypted.toString();
   }
 
   // sha1加密
-  async sha1Encrypt(str) {
+  async sha1Encrypt (str) {
     const sha1 = crypto.createHash('sha1');
     sha1.update(str);
     return sha1.digest('hex');
@@ -193,7 +209,7 @@ module.exports = class Tools {
   /**
    * 雪花算法生成id
    */
-  async SnowFlake() {
+  async SnowFlake () {
     return intformat((new FlakeId({ epoch: 1300000000000 })).next(), 'dec');
   }
   /**
@@ -201,7 +217,7 @@ module.exports = class Tools {
    * @param {前缀} prefix
    * 年月日时分秒+毫秒+随机数（毫秒三位，不足前补0，随机数两位，不足前补0，保持单位位数一致）
    */
-  async generateSn(prefix) {
+  async generateSn (prefix) {
     return `${prefix}${this.dayjs().format('YYMMDDHHmmss')}${('000' + Math.floor(Math.random() * 100)).slice(-2)}`;
   }
 
@@ -211,7 +227,7 @@ module.exports = class Tools {
    * @param modelName
    * @param snName
    */
-  async generateOrderNo(prefix, modelName, snName) {
+  async generateOrderNo (prefix, modelName, snName) {
     const { ctx } = this;
     const id = await this.generateSn(prefix);
     // 校验是否已存在
@@ -235,7 +251,7 @@ module.exports = class Tools {
    * @param db
    * @param modelName
    */
-  async redisCachePublic(key, expire = 0, db, modelName) {
+  async redisCachePublic (key, expire = 0, db, modelName) {
     const { ctx } = this;
     const data = await ctx.model[modelName].findAll();
     if (key === 'permissions') {
@@ -255,7 +271,7 @@ module.exports = class Tools {
    * 登录获取用户基本信息缓存到redis
    * @param id
    */
-  async redisCacheUserinfo(id) {
+  async redisCacheUserinfo (id) {
     const { ctx, app } = this;
     const userinfo = await ctx.service.users.userInfo(id);
     // const userinfo = await ctx.model.Users.findOne({
@@ -273,7 +289,7 @@ module.exports = class Tools {
    * 获取redis中公共数据，不存在及执行存储
    * @param key
    */
-  async getRedisCachePublic(key) {
+  async getRedisCachePublic (key) {
     const { ctx } = this;
     if (![ 'permissions', 'departments', 'companys' ].includes(key)) {
       return false;
@@ -297,7 +313,7 @@ module.exports = class Tools {
    * 从redis中获取用户信息，不存在就查找后存储
    * @param id
    */
-  async getRedisCacheUserinfo(id) {
+  async getRedisCacheUserinfo (id) {
     const { ctx } = this;
     const data = await ctx.service.cache.get(`userinfo_${id}`, 'default');
     if (!data) {
@@ -310,7 +326,50 @@ module.exports = class Tools {
     return data;
   }
 
-  async setAttrsRedisCache() {
+  /**
+    * 从redis中获取公司信息，不存在就查找后存储
+    * @param id
+    */
+  async getRedisCacheCompany (id) {
+    const { ctx } = this;
+    const data = await ctx.service.cache.get(`company_${id}`, 'default');
+    if (!data) {
+      const info = await this.redisCacheCompany(id);
+      if (!info) {
+        return null;
+      }
+      return await this.getRedisCacheCompany(id);
+    }
+    return data;
+  }
+
+  /**
+   * 获取公司信息缓存到redis
+   * @param id
+   */
+  async redisCacheCompany (id) {
+    const { ctx, app } = this;
+    const data = await ctx.service.companys.findOne({ id });
+    await ctx.service.cache.set(`company_${id}`, data, app.config.jwt.expire, 'default');
+    return data;
+  }
+
+  /**
+   * 从redis中获取用户公司，不存在就查找后存储
+   * @param id
+   */
+  async getRedisCacheUserCompany (id) {
+    const { ctx } = this;
+    const data = await ctx.service.cache.get(`userinfo_company_${id}`, 'default');
+    return data;
+  }
+
+  async setRedisCacheUserCompany (id, val) {
+    const { ctx } = this;
+    return await ctx.service.cache.set(`userinfo_company_${id}`, val);
+  }
+
+  async setAttrsRedisCache () {
     const { ctx } = this;
     // 获取所有的公司、站点、设备、属性
     const companys = await ctx.model.Companys.findAll({ raw: true });
@@ -350,7 +409,7 @@ module.exports = class Tools {
     // console.log('companys========', newCompanysObj);
   }
 
-  async getAttrsCache() {
+  async getAttrsCache () {
     const { app } = this;
     const redisAttr = app.redis.clients.get('attrs');
     const data = await redisAttr.get('attr_tags');
@@ -365,14 +424,14 @@ module.exports = class Tools {
   }
 
   // 设置站点缓存
-  async setStationsCache() {
+  async setStationsCache () {
     const { ctx } = this;
     const stations = await ctx.model.Stations.findAll({ raw: true });
     await ctx.service.cache.set('stations', stations, 2 * 60 * 60, 'attrs');
     return stations;
   }
 
-  async getStationsCache() {
+  async getStationsCache () {
     const { app } = this;
     const redisAttr = app.redis.clients.get('attrs');
     const data = await redisAttr.get('stations');
@@ -387,7 +446,7 @@ module.exports = class Tools {
   }
 
   // 下载远程文件保存到本地
-  async downloadFileToLocal(fileUrl, targetUrl) {
+  async downloadFileToLocal (fileUrl, targetUrl) {
     const protocol = fileUrl.startsWith('https://') ? https : http;
     return new Promise((resolve, reject) => {
       protocol.get(fileUrl, response => {
@@ -404,14 +463,14 @@ module.exports = class Tools {
   }
 
   // 设置设备缓存
-  async setDevicesCache() {
+  async setDevicesCache () {
     const { ctx } = this;
     const devices = await ctx.model.Devices.findAll({ raw: true });
     await ctx.service.cache.set('devices', devices, 2 * 60 * 60, 'attrs');
     return devices;
   }
 
-  async getDevicesCache() {
+  async getDevicesCache () {
     const { app } = this;
     const redisAttr = app.redis.clients.get('attrs');
     const data = await redisAttr.get('devices');
@@ -425,8 +484,36 @@ module.exports = class Tools {
     return data;
   }
 
+  // 设置用户关注报警属性缓存
+  async setUserSubAlarmAttrs () {
+    const { ctx } = this;
+    const userSubAlarmAttrs = await ctx.model.UserSubAttrs.findAll({
+      where: {
+        type: 4,
+      },
+      raw: true,
+    });
+    await ctx.service.cache.set('USER_SUB_ALARM_ATTRS', userSubAlarmAttrs, 2 * 60 * 60, 'attrs');
+    return userSubAlarmAttrs;
+  }
+
+  // 获取用户关注报警属性缓存
+  async getUserSubAlarmAttrs () {
+    const { app } = this;
+    const redisAttr = app.redis.clients.get('attrs');
+    const data = await redisAttr.get('USER_SUB_ALARM_ATTRS');
+    if (!data) {
+      const res = await this.setUserSubAlarmAttrs();
+      if (!res) {
+        return null;
+      }
+      return await this.getUserSubAlarmAttrs();
+    }
+    return data;
+  }
+
   // 设置可视化分享缓存
-  async setVisualSharesCache() {
+  async setVisualSharesCache () {
     const { ctx } = this;
     const visualShares = await ctx.model.VisualShares.findAll({ raw: true });
     // console.log('visualShares', visualShares);
@@ -434,7 +521,7 @@ module.exports = class Tools {
   }
 
   // 数组去重
-  async array_uniq(arr) {
+  async array_uniq (arr) {
     if (!Array.isArray(arr)) {
       return arr;
     }
@@ -446,7 +533,7 @@ module.exports = class Tools {
    * 读取路径信息
    * @param {string} path 路径
    */
-  getStat(path) {
+  getStat (path) {
     return new Promise((resolve, reject) => {
       fs.stat(path, (err, stats) => {
         if (err) {
@@ -457,7 +544,7 @@ module.exports = class Tools {
       });
     });
   }
-  async checkHasDir(target) {
+  async checkHasDir (target) {
     const isExists = await this.getStat(target);
     if (isExists) {
       return true;
@@ -470,7 +557,7 @@ module.exports = class Tools {
   * 创建路径
   * @param {string} dir 路径
   */
-  mkdir(dir) {
+  mkdir (dir) {
     return new Promise((resolve, reject) => {
       fs.mkdir(dir, err => {
         if (err) {
@@ -486,7 +573,7 @@ module.exports = class Tools {
   * 路径是否存在，不存在则创建
   * @param {string} dir 路径
   */
-  async dirExists(dir) {
+  async dirExists (dir) {
     const isExists = await this.getStat(dir);
     // 如果该路径且不是文件，返回true
     if (isExists && isExists.isDirectory()) {
@@ -505,7 +592,7 @@ module.exports = class Tools {
     return mkdirStatus;
   }
 
-  async isParam(param) {
+  async isParam (param) {
     return !param && param !== 0;
   }
 
@@ -514,7 +601,7 @@ module.exports = class Tools {
   // 2.再将数组按照正序1-9|a-z排序，
   // 3.再用&连接成新的字符串str，
   // 4.最后str拼接秘钥，`str+&secret=sss`的形式再通过md5加密字符串得到签名
-  async getSign(params) {
+  async getSign (params) {
     const secret = this.config.signSecret;
     if (typeof params === 'string') {
       return this.paramsStrSort(params, secret);
@@ -528,7 +615,7 @@ module.exports = class Tools {
     }
   }
 
-  async paramsStrSort(paramsStr, secret) {
+  async paramsStrSort (paramsStr, secret) {
     let urlStr = paramsStr.split('&').sort().join('&');
     let newUrl = `${urlStr}&secret=${secret}`;
     // console.log('newUrl===================', newUrl);
@@ -536,7 +623,7 @@ module.exports = class Tools {
   }
 
   // 处理属性转成长点名统一方法
-  async solveParams(type, tags = [], company_id = null) {
+  async solveParams (type, tags = [], company_id = null) {
     const { ctx } = this;
     // console.log('company_id', company_id);
     const attr_tags = JSON.parse(await this.getAttrsCache());
@@ -564,7 +651,7 @@ module.exports = class Tools {
   }
 
   // 处理属性转成长点名统一方法
-  async solveDownloadDataParams(type, tags = [], company_id = null) {
+  async solveDownloadDataParams (type, tags = [], company_id = null) {
     const { ctx } = this;
     const attr_tags = JSON.parse(await this.getAttrsCache());
     if (type === 1) {
