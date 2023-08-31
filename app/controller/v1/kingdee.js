@@ -37,7 +37,7 @@ class KingdeeController extends BaseController {
     let params = {};
     try {
       const key = app.utils.tools.md5(domain).slice(0, 16);
-      params = JSON.parse(await app.utils.tools.aesEncryptOld(ch, key));
+      params = JSON.parse(await app.utils.tools.aesDecrypt(ch, key));
     } catch (error) {
       this.UNAUTHORIZED({ message: '应用id不匹配' });
       ctx.logger.error(error);
@@ -229,7 +229,7 @@ class KingdeeController extends BaseController {
     let params = {};
     try {
       const key = app.utils.tools.md5(domain).slice(0, 16);
-      params = JSON.parse(await app.utils.tools.aesEncryptOld(ch, key));
+      params = JSON.parse(await app.utils.tools.aesDecrypt(ch, key));
     } catch (error) {
       this.UNAUTHORIZED({ message: '应用id不匹配' });
       ctx.logger.error(error);

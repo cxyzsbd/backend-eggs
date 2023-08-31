@@ -175,7 +175,7 @@ module.exports = class Tools {
 
 
   // AES加密
-  aesEncrypt (text) {
+  aesEncryptNew (text) {
     if (!text) {
       return text;
     }
@@ -186,7 +186,7 @@ module.exports = class Tools {
     return iv.toString('hex') + ':' + encrypted.toString('hex');
   }
   // AES解密
-  aesDecrypt (text) {
+  aesDecryptNew (text) {
     if (!text) {
       return text;
     }
@@ -200,14 +200,14 @@ module.exports = class Tools {
   }
 
   // AES加密
-  async aesEncryptOld (data, secretKey, iv = null) {
+  async aesEncrypt (data, secretKey, iv = null) {
     const cipher = crypto.createCipheriv('aes-128-ecb', secretKey, iv);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     return encrypted;
   }
   // AES解密
-  async aesDecryptOld (data, secretKey, iv = null) {
+  async aesDecrypt (data, secretKey, iv = null) {
     const decipher = crypto.createDecipheriv('aes-128-ecb', secretKey, iv);
     let decrypted = decipher.update(data, 'hex', 'utf8');
     decrypted += decipher.final('utf8');

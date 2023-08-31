@@ -40,10 +40,10 @@ module.exports = app => {
       comment: '密码',
       field: 'password',
       get () {
-        return app.utils.tools.aesDecrypt(this.getDataValue('password'), secretKey);
+        return app.utils.tools.aesDecryptNew(this.getDataValue('password'), secretKey);
       },
       set (val) {
-        this.setDataValue('password', app.utils.tools.aesEncrypt(val, secretKey));
+        this.setDataValue('password', app.utils.tools.aesEncryptNew(val, secretKey));
       },
     },
     creator: {
