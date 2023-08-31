@@ -232,15 +232,12 @@ module.exports = app => {
   router.get(`${apiV1}/super-user/companys`, validateSuperUser, controller.v1.companys.findAll);
   router.get(`${apiV1}/super-user/companys/:id`, validateSuperUser, controller.v1.companys.findOne);
   router.post(`${apiV1}/super-user/add-admin`, validateSuperUser, controller.v1.companys.addAdmin);
-  router.post(`${apiV1}/super-user/disable-company`, validateSuperUser, controller.v1.companys.disableCompany);
-  router.post(`${apiV1}/super-user/able-company`, validateSuperUser, controller.v1.companys.ableCompany);
 
   router.post(`${apiV1}/company/extend`, controller.v1.companyExtend.create);
   router.put(`${apiV1}/company/extend/:id`, controller.v1.companyExtend.update);
   router.get(`${apiV1}/company/extend`, controller.v1.companyExtend.findAll);
   router.get(`${apiV1}/company/extend/:id`, controller.v1.companyExtend.findOne);
   router.delete(`${apiV1}/company/extend/:id`, controller.v1.companyExtend.destroy);
-
 
 
   // router.delete(`${apiV1}/super-user/companys/:id`, controller.v1.companys.destroy);
