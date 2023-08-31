@@ -199,6 +199,21 @@ module.exports = class Tools {
     return decrypted.toString();
   }
 
+  // AES加密
+  async aesEncryptOld (data, secretKey, iv = null) {
+    const cipher = crypto.createCipheriv('aes-128-ecb', secretKey, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+  }
+  // AES解密
+  async aesDecryptOld (data, secretKey, iv = null) {
+    const decipher = crypto.createDecipheriv('aes-128-ecb', secretKey, iv);
+    let decrypted = decipher.update(data, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
   // sha1加密
   async sha1Encrypt (str) {
     const sha1 = crypto.createHash('sha1');
