@@ -242,7 +242,6 @@ module.exports = app => {
   router.delete(`${apiV1}/company/extend/:id`, controller.v1.companyExtend.destroy);
 
 
-
   // router.delete(`${apiV1}/super-user/companys/:id`, controller.v1.companys.destroy);
 
   // 站点
