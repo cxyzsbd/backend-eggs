@@ -17,7 +17,7 @@ const body = {
     name: {
       type: 'string',
       required: true,
-      max: 20,
+      max: 100,
       description: '属性名称',
     },
     desc: {

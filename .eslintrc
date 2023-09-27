@@ -6,9 +6,14 @@
     "es6": true
   },
   "rules": {
+    // "indent":["off",2],
+    // "space-before-function-paren":0,
     "prefer-const": 0,
     "no-unused-vars": "error", // 开启没有用过的变量检测
-    "semi": ["warn", "always"],
+    "semi": [
+      "warn",
+      "always"
+    ],
     "space-before-function-paren": [
       "error",
       {
