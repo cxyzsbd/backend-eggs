@@ -200,6 +200,9 @@ class devicesController extends BaseController {
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
+    if (ctx.query.ids) {
+      query.where.id = ctx.query.ids.split(',');
+    }
     const res = await service.devices.getDevicesWithAttrs(query, queryOrigin);
     this.SUCCESS(res);
   }
