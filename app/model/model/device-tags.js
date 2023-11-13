@@ -119,5 +119,8 @@ module.exports = app => {
     indexes: [],
   };
   const DeviceTagsModel = sequelize.define('device_tags_model', attributes, options);
+  DeviceTagsModel.associate = () => {
+    DeviceTagsModel.hasOne(app.model.Devices, { foreignKey: 'id', sourceKey: 'device_id' });
+  };
   return DeviceTagsModel;
 };

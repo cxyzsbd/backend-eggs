@@ -11,7 +11,7 @@ class UsersController extends BaseController {
     * @router post users
     * @request body userCreateBodyReq
     */
-  async create() {
+  async create () {
     const { ctx, app } = this;
     ctx.validate(ctx.rule.userCreateBodyReq, ctx.request.body);
     const res = await ctx.service.users.create(ctx.request.body);
@@ -29,7 +29,7 @@ class UsersController extends BaseController {
    * @request path number *id eg:1 用户id
    * @request body userPutBodyReq
    */
-  async update() {
+  async update () {
     const { ctx, service, app } = this;
     const { department_id } = ctx.request.header;
     const rules = {
@@ -76,7 +76,7 @@ class UsersController extends BaseController {
    * @router get users/:id
    * @request path number *id eg:1 用户id
    */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.userId, ctx.params);
     const res = await service.users.findOne({ id: ctx.params.id });
@@ -96,7 +96,7 @@ class UsersController extends BaseController {
    * @request query number pageNumber pageNumber
    * @router get users
    */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const params = {
       keyword: {
@@ -169,7 +169,7 @@ class UsersController extends BaseController {
    * @router delete users/id
    * @request path number *id eg:1 用户id
    */
-  async destroy() {
+  async destroy () {
     const { ctx, service, app } = this;
     ctx.validate(ctx.rule.userDelBodyReq, ctx.params);
     const res = await service.users.destroy(ctx.params);
@@ -188,7 +188,7 @@ class UsersController extends BaseController {
    * @router post users/login
    * @request body userLoginBodyReq
    */
-  async login() {
+  async login () {
     const { ctx, service, app } = this;
     const { username, password, is_configer = 0 } = ctx.request.body;
     ctx.validate(ctx.rule.userLoginBodyReq, ctx.request.body);
@@ -248,7 +248,7 @@ class UsersController extends BaseController {
    * @description 刷新token
    * @router post users/refresh-token
    */
-  async refreshToken() {
+  async refreshToken () {
     const { ctx, app } = this;
     const { CONFIGER_PREFIX, CONFIGER_CHECK_TIME } = app.config;
     const defaultRedis = app.redis.clients.get('default');
@@ -291,7 +291,7 @@ class UsersController extends BaseController {
   * @description 获取用户信息
   * @router get user-info
   */
-  async getInfo() {
+  async getInfo () {
     const { app, ctx } = this;
     const { request_user } = ctx.request.header;
     const res = await app.utils.tools.getRedisCacheUserinfo(request_user);
@@ -304,7 +304,7 @@ class UsersController extends BaseController {
   * @description 获取当前用户菜单列表
   * @router get user-menus
   */
-  async getMenus() {
+  async getMenus () {
     const { ctx, service } = this;
     const res = await service.users.userMenus();
     this.SUCCESS(res);
@@ -317,7 +317,7 @@ class UsersController extends BaseController {
   * @router post users/person-info
   * @request body updatePersonInfoBody
   */
-  async updateInfo() {
+  async updateInfo () {
     const { ctx, service, app } = this;
     let params = ctx.request.body;
     const { request_user } = ctx.request.header;
@@ -352,7 +352,7 @@ class UsersController extends BaseController {
   * @router put users/update-psw
   * @request body updatePasswordBody
   */
-  async updatePassword() {
+  async updatePassword () {
     const { ctx, service, app } = this;
     const params = ctx.request.body;
     const { new_password, old_password } = params;
@@ -384,12 +384,42 @@ class UsersController extends BaseController {
   * @router get permissions/:id/users
   * @request path number *id eg:1 permissionID
   */
-  async getUsersByPermission() {
+  async getUsersByPermission () {
     const { ctx, service, app } = this;
     const params = ctx.params;
     ctx.validate(ctx.rule.permissionDelBodyReq, params);
     const res = await service.users.getUsersByPermission(params);
     this.SUCCESS(res);
   }
+
+  async getUserTag () {
+    const { ctx, service } = this;
+    const rule = {
+      station_id: {
+        required: true,
+        type: 'number',
+        max: 60,
+      },
+      name: {
+        type: 'string',
+        required: false,
+        max: 60,
+      },
+      device_id: {
+        type: 'number',
+        required: false,
+        max: 60,
+      },
+    };
+    ctx.validate(rule, ctx.query);
+    const { allRule, query } = this.findAllParamsDeal({
+      rule,
+      queryOrigin: ctx.query,
+    });
+    ctx.validate(allRule, query);
+    const res = await service.stations.getTag(query);
+    this.SUCCESS(res);
+  }
+
 }
 module.exports = UsersController;

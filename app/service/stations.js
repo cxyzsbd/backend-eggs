@@ -120,6 +120,61 @@ class StationsService extends Service {
       ctx.logger.error(e);
     }
   }
+
+
+  async getTag (payload) {
+
+    const { ctx } = this;
+    if (!payload.where.device_id) {
+      const devices = await ctx.model.Devices.findAll({
+        where: {
+          station_id: payload.station_id,
+        },
+        raw: true,
+        attributes: [ 'id' ],
+      });
+      payload.where.device_id = devices.map(v => v.id);
+    }
+
+
+    const { pageSize, pageNumber, prop_order, order } = payload;
+    let where = payload.where;
+    delete where.station_id;
+    where.kind = 1;
+    let Order = [];
+    prop_order && order ? Order.push([ prop_order, order ]) : null;
+    const count = await ctx.model.DeviceTags.count({ where });
+    let tempObj = {
+      where,
+      order: Order,
+    };
+    if (pageSize > 0) {
+      tempObj = {
+        ...tempObj,
+        limit: pageSize,
+        include: [
+          {
+            model: ctx.model.Devices,
+          },
+        ],
+        offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
+      };
+    }
+    const data = await ctx.model.DeviceTags.findAll(tempObj);
+    let resObj = {
+      data,
+      total: count,
+    };
+    if (pageSize > 0) {
+      resObj = {
+        ...resObj,
+        pageNumber,
+        pageSize,
+      };
+    }
+    return resObj;
+  }
+
 }
 
 module.exports = StationsService;

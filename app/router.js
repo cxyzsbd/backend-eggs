@@ -21,6 +21,8 @@ module.exports = app => {
   router.post(`${apiV1}/users/login`, controller.v1.users.login);
   router.post(`${apiV1}/users/refresh-token`, controller.v1.users.refreshToken);
   router.post(`${apiV1}/users`, controller.v1.users.create);
+
+  router.get(`${apiV1}/users-tags`, controller.v1.users.getUserTag);
   router.put(`${apiV1}/users/:id`, controller.v1.users.update);
   router.post(`${apiV1}/users/person-info`, controller.v1.users.updateInfo);
   router.post(`${apiV1}/users/update-psw`, controller.v1.users.updatePassword);
