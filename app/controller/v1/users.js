@@ -397,14 +397,14 @@ class UsersController extends BaseController {
     const rule = {
       station_id: {
         required: true,
-        type: 'number',
+        type: 'string',
       },
       name: {
         type: 'string',
         required: false,
       },
       device_id: {
-        type: 'number',
+        type: 'string',
         required: false,
       },
     };
@@ -412,6 +412,7 @@ class UsersController extends BaseController {
     const { allRule, query } = this.findAllParamsDeal({
       rule,
       queryOrigin: ctx.query,
+      keywordLikeExcludeParams: [ 'device_id', 'station_id' ],
     });
     ctx.validate(allRule, query);
     const res = await service.stations.getTag(query);

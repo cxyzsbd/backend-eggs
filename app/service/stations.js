@@ -125,7 +125,7 @@ class StationsService extends Service {
   async getTag (payload) {
 
     const { ctx } = this;
-    if (!payload.where.device_id) {
+    if (!payload.where.device_id || payload.where.device_id.length == 0) {
       const devices = await ctx.model.Devices.findAll({
         where: {
           station_id: payload.station_id,
