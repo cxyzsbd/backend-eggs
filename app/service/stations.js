@@ -147,16 +147,16 @@ class StationsService extends Service {
     let tempObj = {
       where,
       order: Order,
+      include: [
+        {
+          model: ctx.model.Devices,
+        },
+      ],
     };
     if (pageSize > 0) {
       tempObj = {
         ...tempObj,
         limit: pageSize,
-        include: [
-          {
-            model: ctx.model.Devices,
-          },
-        ],
         offset: (pageSize * (pageNumber - 1)) > 0 ? (pageSize * (pageNumber - 1)) : 0,
       };
     }

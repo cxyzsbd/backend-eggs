@@ -398,17 +398,14 @@ class UsersController extends BaseController {
       station_id: {
         required: true,
         type: 'number',
-        max: 60,
       },
       name: {
         type: 'string',
         required: false,
-        max: 60,
       },
       device_id: {
         type: 'number',
         required: false,
-        max: 60,
       },
     };
     ctx.validate(rule, ctx.query);
