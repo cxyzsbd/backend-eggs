@@ -328,14 +328,14 @@ module.exports = appInfo => {
   config.isKingdee = true;
 
   config.multipart = {
-    fileSize: '50mb', // 文件大小限制
+    fileSize: '500mb', // 文件大小限制
     fileExtensions: [ '.doc', '.xls', '.xlsx', '.docx', '.json', '.png', 'jpg', '.jpeg', '.rar', '.zip', '.txt', '.pdf', '.gif' ], // 上传文件类型扩展
   };
 
   config.bodyParser = {
-    formLimit: '30mb',
-    jsonLimit: '30mb',
-    textLimit: '30mb',
+    formLimit: '500mb',
+    jsonLimit: '500mb',
+    textLimit: '500mb',
     enable: true,
     encoding: 'utf8',
     strict: true,
