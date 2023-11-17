@@ -43,7 +43,7 @@ class KingdeeController extends BaseController {
       ctx.logger.error(error);
     }
     console.log('params=================', params);
-    const { clientId: client_id, clientSecret: client_secret, authCode: auth_code, adminUser: a, rootOrgId: b } = params;
+    const { clientId: client_id, clientSecret: client_secret, authCode: auth_code, adminUser: a, rootOrgId: b, rootOrgName = null } = params;
     try {
       const res = await ctx.curl(`https://api.kingdee.com/auth/user/auth_code/validation?client_id=${client_id}&client_secret=${client_secret}&auth_code=${auth_code}`, {
         method: 'GET',
@@ -135,7 +135,7 @@ class KingdeeController extends BaseController {
             kingdee_company: b,
           },
           defaults: {
-            name: '默认公司',
+            name: rootOrgName || '默认公司',
           },
         });
         ctx.logger.warn('金蝶校验查找或创建用户', company, created);
@@ -238,7 +238,7 @@ class KingdeeController extends BaseController {
     const timestamp = Math.floor(Date.now() / 1000);
     const signature = await app.utils.tools.sha1Encrypt(`${client_id}${client_secret}${timestamp}${domain}`);
     try {
-      const res = await ctx.curl(`https://api.kingdee.com/auth/oauth2/logout?client_id=${client_id}&signiture=${signature}&timestamp=${timestamp}&redirect_uri=${domain}&access_token=${kingdee_access_token}`, {
+      const res = await ctx.curl(`https://passport.kingdee.com/passport/oauth2/logout?client_id=${client_id}&signiture=${signature}&timestamp=${timestamp}&redirect_uri=${domain}&access_token=${kingdee_access_token}`, {
         method: 'GET',
         rejectUnauthorized: false,
         timeout: 30000,

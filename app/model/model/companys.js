@@ -104,7 +104,7 @@ module.exports = app => {
       field: 'admin',
     },
     kingdee_company: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
