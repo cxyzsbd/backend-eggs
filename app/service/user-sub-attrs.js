@@ -4,18 +4,22 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class UserSubAttrsService extends Service {
-  async findAll(payload) {
+  async findAll (payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     let where = payload.where;
     where.user_id = request_user;
     const data = await ctx.model.UserSubAttrs.findAll({
       where,
+      include: [{
+        model: ctx.model.DeviceTags,
+        include: [{ model: ctx.model.Devices, attributes: [ 'name' ] }],
+      }],
     });
     return data;
   }
 
-  async bulkCreate(payload) {
+  async bulkCreate (payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     let tempArr = payload.attrs.map(attr => {
@@ -43,7 +47,7 @@ class UserSubAttrsService extends Service {
     return [];
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     return await ctx.model.UserSubAttrs.destroy({ where: {

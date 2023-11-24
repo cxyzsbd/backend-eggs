@@ -47,5 +47,8 @@ module.exports = app => {
     indexes: [],
   };
   const UserSubAttrsModel = sequelize.define('user_sub_attrs_model', attributes, options);
+  UserSubAttrsModel.associate = () => {
+    UserSubAttrsModel.hasOne(app.model.DeviceTags, { foreignKey: 'id', sourceKey: 'attr_id' });
+  };
   return UserSubAttrsModel;
 };

@@ -13,13 +13,20 @@ class UserSubAttrsController extends BaseController {
   * @description 获取所有订阅点位
   * @router get user-sub-attrs
   */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const { allRule, query } = this.findAllParamsDeal({
       rule: ctx.rule.userSubAttrsBodyReq,
       queryOrigin: ctx.query,
     });
     ctx.validate(allRule, query);
+    if (ctx.query.station_id && !query.where.attr_id) {
+      const arr = await service.stations.getTag({ where: {}, station_id: ctx.query.station_id });
+      query.where.attr_id = [];
+      if (arr && arr.data) {
+        query.where.attr_id = arr.data.map(v => v.id);
+      }
+    }
     const res = await service.userSubAttrs.findAll(query);
     this.SUCCESS(res);
   }
@@ -31,8 +38,9 @@ class UserSubAttrsController extends BaseController {
   * @router post user-sub-attrs
   * @request body userSubAttrsBodyReq
   */
-  async bulkOperation() {
-    const { ctx, service } = this;
+
+  async bulkOperation () {
+    const { ctx, service, app } = this;
     const { action_type } = ctx.request.body;
     ctx.validate(ctx.rule.userSubAttrsBodyReq, ctx.request.body);
     if (action_type === 1) {
