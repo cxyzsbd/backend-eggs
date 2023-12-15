@@ -33,16 +33,17 @@ class KingdeeController extends BaseController {
       },
     };
     ctx.validate(rule, ctx.query);
-    console.log('query====================', ctx.query);
+    ctx.logger.warn('金蝶校验用户参数校验通过', ctx.query);
     let params = {};
     try {
       const key = app.utils.tools.md5(domain).slice(0, 16);
       params = JSON.parse(await app.utils.tools.aesDecrypt(ch, key));
     } catch (error) {
+      ctx.logger.warn('金蝶校验用户参数解密失败', error);
       this.UNAUTHORIZED({ message: '应用id不匹配' });
-      ctx.logger.error(error);
+      return false;
     }
-    console.log('params=================', params);
+    ctx.logger.warn('金蝶校验用户参数解密结果参数params', params);
     const { clientId: client_id, clientSecret: client_secret, authCode: auth_code, adminUser: a, rootOrgId: b, rootOrgName = null } = params;
     try {
       const res = await ctx.curl(`https://api.kingdee.com/auth/user/auth_code/validation?client_id=${client_id}&client_secret=${client_secret}&auth_code=${auth_code}`, {
@@ -54,7 +55,7 @@ class KingdeeController extends BaseController {
         },
         dataType: 'json',
       }).catch(err => {
-        console.log(err);
+        ctx.logger.warn('金蝶校验用户校验出错', err);
         return false;
       });
       // 根据返回进行判断
