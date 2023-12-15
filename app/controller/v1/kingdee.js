@@ -79,6 +79,10 @@ class KingdeeController extends BaseController {
           const last_login = app.utils.tools.dayjs().format('YYYY-MM-DD HH:mm:ss');
           // 只有在金蝶那边是管理员并且在平台没有设置角色的情况下给用户添加管理员角色
           if (a) {
+            if (!asyncUser.userinfo.department_id && asyncUser.userinfo.department_id !== 0) {
+              ctx.logger.warn('金蝶校验用户是管理员并且部门没有-设置部门为根部门', a);
+              await service.users.update({ id: user_id, department_id: 0 });
+            }
             ctx.logger.warn('金蝶校验用户是管理员', a);
             const userRole = await ctx.model.UserRoles.findAll({ where: { user_id }, raw: true });
             if (!userRole || !userRole.length) {
