@@ -1,5 +1,5 @@
 module.exports = options => {
-  return async function desensitize(ctx, next) {
+  return async function desensitize (ctx, next) {
     await next();
     const { fields, res_type = 'array', res_name = '' } = options;
     if (res_type === 'array') {
@@ -11,8 +11,8 @@ module.exports = options => {
             if (typeof (item[unit_name]) === 'string') {
               item[unit_name] = JSON.parse(item[unit_name]);
             }
-            if (item[unit_name][field]) {
-              console.log('item[unit_name][field]', item[unit_name][field]);
+            if (item[unit_name] && item[unit_name][field]) {
+              // console.log('item[unit_name][field]', item[unit_name][field]);
               item[unit_name][field] = await ctx.app.utils.tools.desensitize(item[unit_name][field], rule);
             }
           } else {

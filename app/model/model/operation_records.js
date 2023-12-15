@@ -50,7 +50,7 @@ module.exports = app => {
       field: 'path',
     },
     request_body: {
-      type: DataTypes.TEXT,
+      type: DataTypes.JSON,
       allowNull: true,
       defaultValue: null,
       primaryKey: false,
@@ -84,6 +84,33 @@ module.exports = app => {
       autoIncrement: false,
       comment: null,
       field: 'company_id',
+    },
+    department_id: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: null,
+      field: 'department_id',
+    },
+    response_body: {
+      type: DataTypes.JSON,
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '响应体',
+      field: 'response_body',
+    },
+    client_ip: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      primaryKey: false,
+      autoIncrement: false,
+      comment: '客户端ip',
+      field: 'client_ip',
     },
   };
   const options = {

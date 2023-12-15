@@ -1,15 +1,25 @@
 'use strict';
 
 module.exports = () => {
-  return async function recordMiddleware(ctx, next) {
+  return async function recordMiddleware (ctx, next) {
     const { request, params } = ctx;
     const { method, url } = request;
+    let client_ip = ctx.request.get('x-real-ip') || null;
+    const xForwardedFor = ctx.request.get('x-forwarded-for');
+    if (!client_ip) {
+      if (xForwardedFor) {
+        client_ip = xForwardedFor.split(',')[0].trim();
+      } else {
+        client_ip = ctx.request.ip;
+      }
+    }
     const action = method.toLowerCase();
     if (action === 'get') {
       await next();
       return false;
     }
-    const { request_user, company_id } = request.header;
+    ctx.logger.error('client_ip=============', `x-real-ip:${ctx.request.get('x-real-ip')}`, `x-forwarded-for:${ctx.request.get('x-forwarded-for')}`, `ip:${ctx.request.ip}`);
+    const { request_user, company_id, department_id } = request.header;
     if (!request_user) {
       await next();
       return false;
@@ -31,9 +41,11 @@ module.exports = () => {
     let record = {
       user_id: request_user,
       company_id,
+      department_id,
       request_body: JSON.stringify(request_body) || null,
       action,
       path,
+      client_ip,
     };
     if (reg4.test(path)) {
       record.request_body = null;
@@ -58,9 +70,11 @@ module.exports = () => {
     // 从接口响应判断操作是否成功
     if (isInPermissions && isInPermissions.length) {
       record.response_code = ctx.status;
-      if ([ 200, 201 ].includes(record.response_code)) {
-        await ctx.model.OperationRecords.create(record);
-      }
+      record.response_body = ctx.body;
+      await ctx.model.OperationRecords.create(record);
+      // if ([ 200, 201 ].includes(record.response_code)) {
+      //   await ctx.model.OperationRecords.create(record);
+      // }
     }
   };
 };
