@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 class VisualSharesService extends Service {
-  async findAll(payload) {
+  async findAll (payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     const { pageSize, pageNumber, prop_order, order, type } = payload;
@@ -57,7 +57,7 @@ class VisualSharesService extends Service {
     return resObj;
   }
 
-  async findOne(payload) {
+  async findOne (payload) {
     const { ctx } = this;
     const { request_user } = ctx.request.header;
     if (request_user) {
@@ -78,7 +78,7 @@ class VisualSharesService extends Service {
     return res;
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx, app } = this;
     const { request_user, company_id } = ctx.request.header;
     payload.id = await app.utils.tools.SnowFlake();
@@ -91,17 +91,18 @@ class VisualSharesService extends Service {
     return await ctx.model.VisualShares.create(payload);
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     return await ctx.model.VisualShares.update(payload, { where: { id: payload.id } });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
-    return await ctx.model.VisualShares.destroy({ where: { id: payload.id } });
+    const { request_user } = ctx.request.header;
+    return await ctx.model.VisualShares.destroy({ where: { id: payload.id, creator: request_user } });
   }
 
-  async getConfig() {
+  async getConfig () {
     const { ctx, app } = this;
     const { visualId, configPath, viaualType } = ctx.request.header;
     // 校验可视化工程存不存在
