@@ -4,14 +4,16 @@ module.exports = () => {
   return async function recordMiddleware (ctx, next) {
     const { request, params } = ctx;
     const { method, url } = request;
-    let client_ip = ctx.request.get('x-real-ip') || null;
+    let client_ip = null;
+    const realIp = ctx.request.get('x-real-ip');
     const xForwardedFor = ctx.request.get('x-forwarded-for');
-    if (!client_ip) {
-      if (xForwardedFor) {
-        client_ip = xForwardedFor.split(',')[0].trim();
-      } else {
-        client_ip = ctx.request.ip;
-      }
+    // 获取顺序: x-forwarded-for > x-real-ip > ip
+    if (xForwardedFor && xForwardedFor.length) {
+      client_ip = xForwardedFor.split(',')[0].trim();
+    } else if (realIp && realIp.length) {
+      client_ip = realIp;
+    } else {
+      client_ip = ctx.request.ip;
     }
     const action = method.toLowerCase();
     if (action === 'get') {
