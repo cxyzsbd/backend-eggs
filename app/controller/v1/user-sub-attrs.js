@@ -26,6 +26,7 @@ class UserSubAttrsController extends BaseController {
       if (arr && arr.data) {
         query.where.attr_id = arr.data.map(v => v.id);
       }
+      delete query.where.station_id;
     }
     const res = await service.userSubAttrs.findAll(query);
     this.SUCCESS(res);
