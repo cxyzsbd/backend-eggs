@@ -373,6 +373,8 @@ module.exports = appInfo => {
       // 'put:/api/v1/roles/{id}',
       // 'delete:/api/v1/roles/{id}',
       'post:/api/v1/permissions',
+      'post:/api/v1/role/{id}/permissions',
+      'post:/api/v1/role/{id}/menus',
       'get:/api/v1/permissions',
       'get:/api/v1/permissions/{id}',
       'put:/api/v1/permissions/{id}',
