@@ -238,7 +238,7 @@ class UserService extends Service {
       attributes: { exclude: [ 'password', 'deleted_at' ] },
     });
     let arr = [];
-    const is_admin = await ctx.model.UserRoles.findOne({ where: { role_id: 1 } });
+    const is_admin = await ctx.model.UserRoles.findOne({ where: { role_id: 1, user_id: request_user } });
     if (is_admin) {
       arr = await ctx.model.Permissions.findAll({ raw: true });
     } else {
