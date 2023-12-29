@@ -9,7 +9,7 @@ class UserService extends Service {
    * @param {*} payload
    * @return
    */
-  async create(payload) {
+  async create (payload) {
     const { ctx, app } = this;
     const username_check = await ctx.model.Users.findOne({ where: {
       username: Sequelize.where(Sequelize.fn('BINARY', Sequelize.col('username')), payload.username),
@@ -40,7 +40,7 @@ class UserService extends Service {
       ctx.logger.error(e);
     }
   }
-  async findOne({ id = null, username = '' }, exclude = [ 'password', 'delete_at' ], include = true) {
+  async findOne ({ id = null, username = '' }, exclude = [ 'password', 'delete_at' ], include = true) {
     const { ctx } = this;
     let where = {};
     if (id) {
@@ -63,7 +63,7 @@ class UserService extends Service {
       attributes: { exclude },
     });
   }
-  async findAll(payload, departments = []) {
+  async findAll (payload, departments = []) {
     const { ctx, app } = this;
     // console.log('departments', departments);
     const { company_id } = ctx.request.header;
@@ -126,7 +126,7 @@ class UserService extends Service {
       total,
     };
   }
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
     const transaction = await ctx.model.transaction();
     try {
@@ -170,7 +170,7 @@ class UserService extends Service {
     }
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
     const transaction = await ctx.model.transaction();
     try {
@@ -207,7 +207,7 @@ class UserService extends Service {
    * @param user_id
    * @return
    */
-  async userInfo(user_id = null) {
+  async userInfo (user_id = null) {
     const { ctx, app } = this;
     const { request_user } = ctx.request.header;
     user_id = user_id || request_user;
@@ -238,18 +238,24 @@ class UserService extends Service {
       attributes: { exclude: [ 'password', 'deleted_at' ] },
     });
     let arr = [];
-    res.roles.forEach(e => {
-      e.permissions.forEach(ee => {
-        arr.push(ee);
+    const is_admin = await ctx.model.UserRoles.findOne({ where: { role_id: 1 } });
+    if (is_admin) {
+      arr = await ctx.model.Permissions.findAll({ raw: true });
+    } else {
+      res.roles.forEach(e => {
+        e.permissions.forEach(ee => {
+          arr.push(ee);
+        });
       });
-    });
-    arr = app.utils.tools.lodash.uniqWith(arr, (a, b) => a.id === b.id);
+      arr = app.utils.tools.lodash.uniqWith(arr, (a, b) => a.id === b.id);
+    }
     arr = arr.map(permission => `${permission.action}:${permission.url}`);
     res.dataValues.permissions = arr || [];
+    await ctx.service.cache.set(`userinfo_${request_user}`, res, app.config.jwt.expire, 'default');
     return res;
   }
 
-  async userMenus() {
+  async userMenus () {
     const { ctx, app } = this;
     let data = await ctx.model.Users.findAll({
       include: [
@@ -294,7 +300,7 @@ class UserService extends Service {
     return data;
   }
 
-  async getUserPermissions(id) {
+  async getUserPermissions (id) {
     const { ctx, app } = this;
     const { request_user } = ctx.request.header;
     // 获取所有资源列表和角色资源绑定关系
@@ -313,7 +319,7 @@ class UserService extends Service {
     return permissions;
   }
 
-  async getUsersByPermission(payload) {
+  async getUsersByPermission (payload) {
     const { ctx } = this;
     const { company_id } = ctx.request.header;
     // 权限获取角色

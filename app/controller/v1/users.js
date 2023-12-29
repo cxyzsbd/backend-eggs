@@ -321,9 +321,9 @@ class UsersController extends BaseController {
   */
   async getInfo () {
     const { app, ctx } = this;
-    const { request_user } = ctx.request.header;
-    const res = await app.utils.tools.getRedisCacheUserinfo(request_user);
-    // const res = await ctx.service.users.userInfo();
+    // const { request_user } = ctx.request.header;
+    // const res = await app.utils.tools.getRedisCacheUserinfo(request_user);
+    const res = await ctx.service.users.userInfo();
     res ? this.SUCCESS(res) : this.NOT_FOUND();
   }
   /**
