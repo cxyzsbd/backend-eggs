@@ -190,13 +190,36 @@ class UsersController extends BaseController {
    */
   async login () {
     const { ctx, service, app } = this;
+    const { md5 } = app.utils.tools;
+    const commonRedis = app.redis.clients.get('common');
     const { username, password, is_configer = 0 } = ctx.request.body;
     ctx.validate(ctx.rule.userLoginBodyReq, ctx.request.body);
+    let client_ip = null;
+    const realIp = ctx.request.get('x-real-ip');
+    const xForwardedFor = ctx.request.get('x-forwarded-for');
+    // 获取顺序: x-forwarded-for > x-real-ip > ip
+    if (xForwardedFor && xForwardedFor.length) {
+      client_ip = xForwardedFor.split(',')[0].trim();
+    } else if (realIp && realIp.length) {
+      client_ip = realIp;
+    } else {
+      client_ip = ctx.request.ip;
+    }
+    let key = `captcha_count_lv_${client_ip}_${md5(username)}`;
+    let captchaCount = await commonRedis.get(key) || 0;
+    console.log('captchaCount=============', captchaCount);
+    if (captchaCount >= 5) {
+      this.BAD_REQUEST({ message: '密码错误次数过多，请于稍后再试!' });
+      return false;
+    }
     // 判断用户是否存在
     const user = await service.users.findOne({ username }, []);
     // console.log('user=============', user);
     if (!user) {
-      this.BAD_REQUEST({ message: '用户不存在' });
+      this.BAD_REQUEST({
+        message: '登录失败',
+        errno: 100001,
+      });
       return false;
     }
     if (user.state !== 1) {
@@ -206,7 +229,12 @@ class UsersController extends BaseController {
     const { id } = user;
     // 判断密码是否一致
     if (user.password !== password) {
-      this.BAD_REQUEST({ message: '密码错误' });
+      commonRedis.set(key, Number(captchaCount) + 1);
+      commonRedis.expire(key, 10 * 60);
+      this.BAD_REQUEST({
+        message: '登录失败',
+        errno: 100002,
+      });
       return false;
     }
     // if (Number(is_configer) === 1) {

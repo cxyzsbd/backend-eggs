@@ -37,7 +37,7 @@ module.exports = () => {
       // 根据roles去拿权限列表
       role_permissions.forEach(item => {
         if (roles.includes(item.id)) {
-          // console.log('item========================',item);
+          // console.log('item========================', item);
           permissions = [ ...permissions, ...item.permissions ];
         }
       });
@@ -48,13 +48,17 @@ module.exports = () => {
           return new RegExp(item.replace(regexp, '[^\/]*') + '$');
         });
       } else {
-        // 将个人权限列表处理成正则表达式
-        permissions = permissions.map(item => {
-          const regexp = /\{[^\/]*\}/g;// 匹配占位符,匹配{*}
-          const p = `${item.action.toLowerCase()}:${item.url}`;
-          // 将返回的权限替换成改成正则表达式
-          return new RegExp(p.replace(regexp, '[^\/]*') + '$');
-        });
+        if (roles.includes(1) || roles.includes('1')) {
+          permissions = permissionsAll;
+        } else {
+          // 将个人权限列表处理成正则表达式
+          permissions = permissions.map(item => {
+            const regexp = /\{[^\/]*\}/g;// 匹配占位符,匹配{*}
+            const p = `${item.action.toLowerCase()}:${item.url}`;
+            // 将返回的权限替换成改成正则表达式
+            return new RegExp(p.replace(regexp, '[^\/]*') + '$');
+          });
+        }
       }
       let hasAuth = permissions.filter(item => item.test(regUrl));
       console.log('hasAuth===============', hasAuth);

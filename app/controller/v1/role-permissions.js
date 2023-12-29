@@ -17,7 +17,7 @@ class RolePermissionsController extends BaseController {
    * @request query number pageNumber
    * @router get role-permissions
    */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const params = ctx.query;
     const { allRule, query } = this.findAllParamsDeal({
@@ -41,7 +41,7 @@ class RolePermissionsController extends BaseController {
    * @router get role-permissions/:id
    * @request path number *id eg:1 role_permissionID
    */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.role_permissionId, ctx.params);
     const res = await service.rolePermissions.findOne(ctx.params.id);
@@ -55,7 +55,7 @@ class RolePermissionsController extends BaseController {
    * @router post role-permissions
    * @request body role_permissionBodyReq
    */
-  async create() {
+  async create () {
     const { ctx, service, app } = this;
     // console.log(123123);
     ctx.validate(ctx.rule.role_permissionBodyReq, ctx.request.body);
@@ -73,7 +73,7 @@ class RolePermissionsController extends BaseController {
    * @request path *id ex:1
    * @request body role_permissionPutBodyReq
    */
-  async update() {
+  async update () {
     const { ctx, service, app } = this;
     // const {department_id} = ctx.request.header
     const params = { ...ctx.params, ...ctx.request.body };
@@ -100,7 +100,7 @@ class RolePermissionsController extends BaseController {
    * @router delete /api/v1/role_permissions
    * @request body role_permissionDelBodyReq
    */
-  async destroy() {
+  async destroy () {
     const { ctx, service, app } = this;
     ctx.validate(ctx.rule.role_permissionDelBodyReq, ctx.request.body);
     const res = await service.rolePermissions.destroy(ctx.request.body);
@@ -118,7 +118,7 @@ class RolePermissionsController extends BaseController {
    * @request body role_permissionBodyReq
    * @request body string *type ex:"delete" 操作类型
    */
-  async bulkPremissions() {
+  async bulkPremissions () {
     const { ctx, app } = this;
     const rule = {
       role_id: ctx.rule.role_permissionBodyReq.role_id,
@@ -138,6 +138,10 @@ class RolePermissionsController extends BaseController {
     };
     const params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(rule, params);
+    if (Number(params.role_id) === 1) {
+      this.INVALID_REQUEST({ message: '不允许修改该角色' });
+      return false;
+    }
     switch (params.type) {
       case 'create':
         await ctx.service.rolePermissions.bulkCreatePremissions(params);

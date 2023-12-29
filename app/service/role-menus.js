@@ -4,7 +4,7 @@ const Service = require('egg').Service;
 const { Op } = require('sequelize');
 
 class _objectName_Service extends Service {
-  async findAll(payload) {
+  async findAll (payload) {
     const { ctx } = this;
     const { pageSize, pageNumber, prop_order, order, role_id = null } = payload;
     let where = payload.where;
@@ -35,12 +35,12 @@ class _objectName_Service extends Service {
     return resObj;
   }
 
-  async findOne(id) {
+  async findOne (id) {
     const { ctx } = this;
     return await ctx.model.RoleMenus.findOne({ where: { id } });
   }
 
-  async create(payload) {
+  async create (payload) {
     const { ctx } = this;
     const [ data, created ] = await ctx.model.RoleMenus.findOrCreate({
       where: payload,
@@ -49,8 +49,9 @@ class _objectName_Service extends Service {
     return created;
   }
 
-  async update(payload) {
+  async update (payload) {
     const { ctx } = this;
+    const { request_user } = ctx.request.header;
     const RoleMenus = ctx.model.RoleMenus;
     const data = await RoleMenus.findByPk(payload.id);
     if (!data) return { _wrong_code: 'NOT_FOUND' };
@@ -68,14 +69,37 @@ class _objectName_Service extends Service {
         _wrong_code: 'DATA_EXISTED',
       };
     }
+    let where = {
+      id: payload.id,
+    };
+    if (Number(request_user) !== 1) {
+      where = {
+        ...where,
+        role_id: {
+          [Op.not]: 1,
+        },
+      };
+    }
     return await RoleMenus.update(payload, {
-      where: { id: payload.id },
+      where,
     });
   }
 
-  async destroy(payload) {
+  async destroy (payload) {
     const { ctx } = this;
-    return await ctx.model.RoleMenus.destroy({ where: { id: payload.id } });
+    const { request_user } = ctx.request.header;
+    let where = {
+      id: payload.id,
+    };
+    if (Number(request_user) !== 1) {
+      where = {
+        ...where,
+        role_id: {
+          [Op.not]: 1,
+        },
+      };
+    }
+    return await ctx.model.RoleMenus.destroy({ where });
   }
 
   /**
@@ -83,7 +107,7 @@ class _objectName_Service extends Service {
    * @param payload
    * @return {Promise<void>}
    */
-  async bulkCreateMenus(payload) {
+  async bulkCreateMenus (payload) {
     const { ctx } = this;
     // 先查询该角色包含哪些菜单
     const menus = await ctx.model.RoleMenus.findAll({
@@ -109,7 +133,7 @@ class _objectName_Service extends Service {
    * @param payload.menu_ids
    * @return {Promise<void>}
    */
-  async bulkDeleteMenus({ role_id, menu_ids }) {
+  async bulkDeleteMenus ({ role_id, menu_ids }) {
     const { ctx } = this;
     return await ctx.model.RoleMenus.destroy({
       where: {

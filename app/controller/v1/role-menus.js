@@ -17,7 +17,7 @@ class RoleMenusController extends BaseController {
    * @request query number pageNumber
    * @router get role-menus
    */
-  async findAll() {
+  async findAll () {
     const { ctx, service } = this;
     const params = ctx.query;
     const { allRule, query } = this.findAllParamsDeal({
@@ -41,7 +41,7 @@ class RoleMenusController extends BaseController {
    * @router get role-menus/:id
    * @request query number *id eg:1 role_menuID
    */
-  async findOne() {
+  async findOne () {
     const { ctx, service } = this;
     ctx.validate(ctx.rule.role_menuId, ctx.params);
     const res = await service.roleMenus.findOne(ctx.params.id);
@@ -55,7 +55,7 @@ class RoleMenusController extends BaseController {
    * @router post role-menus
    * @request body role_menuBodyReq
    */
-  async create() {
+  async create () {
     const { ctx, app } = this;
     ctx.validate(ctx.rule.role_menuBodyReq, ctx.request.body);
     const res = await ctx.service.roleMenus.create(ctx.request.body);
@@ -72,7 +72,7 @@ class RoleMenusController extends BaseController {
    * @request path number *id ex:1
    * @request body role_menuPutBodyReq
    */
-  async update() {
+  async update () {
     const { ctx, service, app } = this;
     const params = { ...ctx.request.body, ...ctx.params };
     ctx.validate(ctx.rule.role_menuPutBodyReq, params);
@@ -93,7 +93,7 @@ class RoleMenusController extends BaseController {
    * @router delete role-menus/:id
    * @request body role_menuId
    */
-  async destroy() {
+  async destroy () {
     const { ctx, service, app } = this;
     ctx.validate(ctx.rule.role_menuId, ctx.params);
     const res = await service.roleMenus.destroy(ctx.params);
@@ -111,7 +111,7 @@ class RoleMenusController extends BaseController {
    * @request body string *type ex:"delete" 操作类型
    * @request body array *menu_ids ex:[1,2] menu_ids
    */
-  async bulkMenus() {
+  async bulkMenus () {
     const { ctx, app } = this;
     const rule = {
       role_id: ctx.rule.role_menuPutBodyReq.role_id,
@@ -131,6 +131,11 @@ class RoleMenusController extends BaseController {
     };
     const params = { ...ctx.params, ...ctx.request.body };
     ctx.validate(rule, params);
+    ctx.validate(rule, params);
+    if (Number(params.role_id) === 1) {
+      this.INVALID_REQUEST({ message: '不允许修改该角色' });
+      return false;
+    }
     switch (params.type) {
       case 'create':
         await ctx.service.roleMenus.bulkCreateMenus(params);

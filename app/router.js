@@ -258,6 +258,7 @@ module.exports = app => {
 
   // 文件
   router.post(`${apiV1}/files`, controller.v1.files.upload);
+  router.post(`${apiV1}/upload-images`, controller.v1.files.uploadImages);
 
   // 流程图
   router.post(`${apiV1}/flows`, controller.v1.flows.create);
