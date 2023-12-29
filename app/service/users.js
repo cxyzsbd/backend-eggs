@@ -238,7 +238,7 @@ class UserService extends Service {
       attributes: { exclude: [ 'password', 'deleted_at' ] },
     });
     let arr = [];
-    const is_admin = await ctx.model.UserRoles.findOne({ where: { role_id: 1, user_id: request_user } });
+    const is_admin = await ctx.model.UserRoles.findOne({ where: { role_id: 1, user_id } });
     if (is_admin) {
       arr = await ctx.model.Permissions.findAll({ raw: true });
     } else {
@@ -251,7 +251,7 @@ class UserService extends Service {
     }
     arr = arr.map(permission => `${permission.action}:${permission.url}`);
     res.dataValues.permissions = arr || [];
-    await ctx.service.cache.set(`userinfo_${request_user}`, res, app.config.jwt.expire, 'default');
+    await ctx.service.cache.set(`userinfo_${user_id}`, res, app.config.jwt.expire, 'default');
     return res;
   }
 
