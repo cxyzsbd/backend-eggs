@@ -1,5 +1,5 @@
 module.exports = options => {
-  return async function jwt_verify(ctx, next) {
+  return async function jwt_verify (ctx, next) {
     const { url, header: { authorization }, body } = ctx.request;
     // 判断接口路径是否在白名单（在 “router 中使用中间件”中不需要验证这一步）
     const regUrl = url.slice(0, (url.indexOf('?') > 0 ? url.indexOf('?') : url.length));
@@ -45,11 +45,12 @@ module.exports = options => {
         ctx.request.header = { ...ctx.request.header, request_user: null, department_id, company_id };
         await next();
         return false;
-      } else if (body.param_type && body.param_type === 1) {
-        // 无用户信息并且是数据相关接口且参数类型是id型则无需校验用户
-        await next();
-        return false;
       }
+      // else if (body.param_type && body.param_type === 1) {
+      //   // 无用户信息并且是数据相关接口且参数类型是id型则无需校验用户
+      //   await next();
+      //   return false;
+      // }
     }
     // 拿到前端传过来的 token
     const token = authorization;
