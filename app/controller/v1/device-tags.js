@@ -309,7 +309,7 @@ class DeviceTagsController extends BaseController {
     let updateArr = [];
     addArr.forEach(item => {
       if (!failDataNames.includes(item['属性名'])) {
-        if (item['属性名'].length > 20) {
+        if (item['属性名'].length > 100) {
           failArr.push({
             ...item,
             fail_reason: '属性名长度不符合规则',

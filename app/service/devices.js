@@ -236,7 +236,7 @@ class DevicesService extends Service {
         company_id,
       };
       if (!failDataNames.includes(item.name)) {
-        if (item.name.length > 20) {
+        if (item.name.length > 100) {
           failArr.push({
             ...item,
             fail_reason: '属性名长度不符合规则',
