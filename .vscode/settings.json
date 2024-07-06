@@ -25,7 +25,7 @@
   "editor.formatOnSave": false, // #每次保存的时候自动格式化
   "editor.formatOnPaste": false, // #每次粘贴的时候自动格式化
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "powermode.enabled": true,
   "powermode.presets": "simple-rift",
